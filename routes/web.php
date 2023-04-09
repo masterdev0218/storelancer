@@ -252,6 +252,7 @@ Route::get('{id}/get-payment-status{slug?}', [PaypalController::class,'GetPaymen
 
 // product rapyd payments
 Route::post('pay-with-rapyd/{slug?}', [RapydController::class, 'pay'])->name('pay.with.rapyd')->middleware(['XSS']);
+Route::get('{id}/get-rapyd-payment-status{slug?}', [RapydController::class,'GetPaymentStatus'])->name('get.rapyd.payment.status')->middleware(['XSS']);
 
 Route::get('{slug?}/customerorder/{id}', [StoreController::class,'customerorder'])->name('customer.order');
 Route::get('{slug?}/order/{id}', [StoreController::class,'userorder'])->name('user.order');
