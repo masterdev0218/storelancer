@@ -78,8 +78,6 @@ class RapydController extends Controller
         $err = curl_error($curl);
         curl_close($curl);
 
-        dd($response);
-
         if ($err) {
             throw new Exception("cURL Error #:" . $err);
         } else {
