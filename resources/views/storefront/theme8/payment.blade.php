@@ -153,6 +153,35 @@
                         </form>
                     @endif
 
+                    <!-- Add money using Rapyd -->
+                    @if(isset($store_payments['is_rapyd_enabled']) && $store_payments['is_rapyd_enabled'] == 'on')
+                    <div class="card">
+                        <div class="box-space">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8 col-sm-12">
+                                    <label class="h6 mb-0 lh-180" for="radio-payment-paypal">{{('Rapyd')}}</label>
+                                    <p class="text-muted mt-2 mb-0 text-12">{{__('
+                                        Rapyd liberates global commerce, making complex international payments simple. Our powerful fintech allows your enterprise to collect, hold or send funds across currencies with ease, so you can focus on building your business. Accept payments globally using hundreds of payment methods in 100+ countries.')}}</p>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12 text-right">
+                                    <img alt="Image placeholder" src="{{asset('assets/theme1/img/rapyd.png')}}" width="100" class="ml-2">
+                                    <form class="w3-container w3-display-middle w3-card-4" method="POST" action="{{ route('pay.with.rapyd',$store->slug) }}">
+                                        @csrf
+                                        <input type="hidden" name="product_id">
+                                        <div class="form-group mt-3">
+                                            <button class="btn btn-primary btn-sm" type="submit">
+                                                <i class="mdi mdi-cash-multiple mr-1"></i> {{__('Pay Now')}}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                     <!-- Add money using PayPal -->
                     @if (isset($store_payments['is_paypal_enabled']) && $store_payments['is_paypal_enabled'] == 'on')
                         <div class="card">
