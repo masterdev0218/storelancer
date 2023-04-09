@@ -149,8 +149,8 @@ class RapydController extends Controller
 
                 $country = "US";
                 $language = "en";
-                $successURL = route('get.payment.status', $store->slug);
-                $cancelURL = route('get.payment.status', $store->slug);
+                $successURL = route('get.rapyd.payment.status', $store->slug);
+                $cancelURL = route('get.rapyd.payment.status', $store->slug);
 
                 $body = [
                     "amount" => (int)$price,
