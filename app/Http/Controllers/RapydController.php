@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\ProductVariantOption;
+use Illuminate\Support\Facades\Session;
 
 class RapydController extends Controller
 {
@@ -168,6 +169,8 @@ class RapydController extends Controller
 
                     $redirect_url = $object["data"]["redirect_url"];
 
+                    Session::put('rapyd_payment_id', $object['data']['id']);
+
                     echo "<script>window.location.href='" . $redirect_url . "';</script>";
                     exit;
                 } catch (Exception $e) {
@@ -277,32 +280,14 @@ class RapydController extends Controller
         $user = Auth::user();
 
         if ($product) {
-                $country = "US";
-                $language = "en";
-                $successURL = route('get.payment.status', $store->slug);
-                $cancelURL = route('get.payment.status', $store->slug);
-
-                $body = [
-                    "amount" => (int)$price,
-                    "complete_checkout_url" => $successURL,
-                    "country" => $country,
-                    "currency" => 'USD',
-                    "cancel_checkout_url" => $cancelURL,
-                    "language" => $language,
-                ];
-
-                try {
-                    $object = $this->rapyd_make_request('post', '/v1/checkout', $body);
-
-                    $redirect_url = $object["data"]["redirect_url"];
-
-                    echo "<script>window.location.href='" . $redirect_url . "';</script>";
-                    exit;
-                } catch (Exception $e) {
-                    echo "Error =>$e";
-                }
-
             $payment_id = Session::get('rapyd_payment_id');
+
+            try {
+                $response = $this->rapyd_make_request('get', '/v1/checkout/' . $payment_id);
+            } catch (Exception $e) {
+                echo "Error =>$e";
+            }
+
 
             $order_id = strtoupper(str_replace('.', '', uniqid('', true)));
 
