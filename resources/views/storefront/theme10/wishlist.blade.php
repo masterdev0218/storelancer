@@ -9,88 +9,65 @@
 
     @endphp
 @section('content')
-    <section class="my-cart-section pt-5 mb-5 ">
+<div class="wrapper">
+    <section class="wishlist-page padding-bottom padding-top ">
         <div class="container">
-            <div class="tab-content  py-3 px-3 px-sm-0 tabs-container d-block" id="nav-tabContent">
-                <div class=" pro-cards ">
-
-                    <div class="row">
-
-                        @foreach ($products as $k => $product)
-
-                                <div class="col-lg-3 col-sm-6 col-md-4 product-box swiper-slide">
-                                    <div class="border-0 card card-product rounded-0 shadow">
-                                        <div
-                                            class="align-items-center border-0 card-header d-flex justify-content-between p-0 pt-4 pr-3">
-                                            <button data-toggle="tooltip" data-original-title="Wishlist"
-                                            type="button"
-                                            class="bg-transparent border-0 p-0 position-absolute right-4 top-3 zindex-100 delete_wishlist_item"
-                                            data-id="{{ $product['product_id'] }}" id="delete_wishlist_item1" >
-                                            <i class="fas fa-heart text-primary"></i>
-                                            </button>
-                                        </div>
-                                        <div class="card-image col-8 mx-auto pt-4 pb-4">
-
-                                            <a
-                                            href="{{ route('store.product.product_view', [$store->slug,$product['product_id']]) }}">
-
-                                            @if (!empty($product['image']))
-                                                <img alt="Image placeholder" src="{{ $imgpath.$product['image'] }}"
-                                                    class="img-center img-fluid">
-                                            @else
-                                                <img alt="Image placeholder"
-                                                    src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}"
-                                                    class="img-center img-fluid">
-                                            @endif
-                                        </a>
-                                        </div>
-                                        <div class="card-body pt-0 pb-4 px-4 px-md-3 px-lg-4">
-                                            <h6 class="mb-0">
-                                                <a class="font-weight-600"
-                                                    href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}">
-                                                    {{ $product['product_name'] }}
-                                                </a>
-                                            </h6>
-                                            <span class="font-weight-600 text-black-50 text-small">
-                                                {{ __('Category:') }}
-                                            {{ \App\Models\Product::getCategoryById($product['product_id']) }}
-                                            </span>
-                                            <div class="mb-2">
-                                                <span class="font-weight-600 text-lg text-primary">
-                                                    @if ($product['enable_product_variant'] == 'on')
-                                                        {{ __('In variant') }}
-                                                    @else
-                                                    {{ \App\Models\Utility::priceFormat($product['price']) }}
-                                                    @endif
-                                                </span>
-                                                <del class="font-size-12 font-weight-600 text-black-50 ml-2">
-                                                    @if ($product['enable_product_variant'] == 'off')
-                                                        {{ \App\Models\Utility::priceFormat(\App\Models\Product::getProductById($product['product_id'])->last_price) }}
-                                                    @endif
-                                                </del>
-                                            </div>
-                                            @if ($product['enable_product_variant'] == 'on')
-                                                <a href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}"
-                                                    class="border-0 btn btn-block btn-primary ">
-                                                    {{ __('ADD TO CART') }}
-                                                </a>
-                                            @else
-                                                <a href="javascript:void(0)"
-                                                    class="border-0 btn btn-block btn-primary  add_to_cart"
-                                                    data-id="{{ $product['product_id'] }}">
-                                                    {{ __('ADD TO CART') }}
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </div>
+            <div class="section-title">
+                <h2>{{ __('Wishlist') }}</h2>
+            </div>
+            <div class="row product-row">
+                @foreach ($products as $k => $product)
+                    <div class="col-lg-3 col-sm-6 col-md-6 col-12 product-card">
+                        <div class="product-card-inner">
+                            <div class="product-content-top d-flex align-items-center justify-content-between ">
+                                <span>
+                                
+                                </span>
+                                <a href="#" class="wish-btn delete_wishlist_item" id="delete_wishlist_item1" data-id="{{ $product['product_id'] }}"><i class="fas fa-heart"></i></a>
+                            </div>
+                            <div class="product-img">
+                                <a href="{{ route('store.product.product_view', [$store->slug,$product['product_id']]) }}">
+                                    @if (!empty($product['image']))
+                                        <img src="{{ $imgpath.$product['image'] }}" alt="">
+                                    @else
+                                        <img src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}" alt="">
+                                    @endif
+                                </a>
+                            </div>
+                            <div class="product-content">
+                                <h6>
+                                    <a href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}">{{ $product['product_name'] }}</a>
+                                </h6>
+                                <p>{{ __('Category:') }}: <b> {{ \App\Models\Product::getCategoryById($product['product_id']) }}</b></p>
+                                <div class="price">
+                                    <ins>
+                                        @if ($product['enable_product_variant'] == 'on')
+                                            {{ __('In variant') }}
+                                        @else
+                                            {{ \App\Models\Utility::priceFormat($product['price']) }}
+                                        @endif
+                                    </ins>
+                                    <del>
+                                        @if ($product['enable_product_variant'] == 'off')
+                                            {{ \App\Models\Utility::priceFormat(\App\Models\Product::getProductById($product['product_id'])->last_price) }}
+                                        @endif
+                                    </del>
                                 </div>
-
-                        @endforeach
+                            </div>
+                            <div class="product-bottom">
+                                @if ($product['enable_product_variant'] == 'on')
+                                    <a href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}" class="cart-btn btn"> {{ __('ADD TO CART') }}</a>
+                                @else
+                                    <a href="#" class="cart-btn btn add_to_cart" data-id="{{ $product['product_id'] }}"> {{ __('ADD TO CART') }}</a>
+                                @endif
+                            </div>
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
+</div>
 @endsection
 @push('script-page')
     <script>

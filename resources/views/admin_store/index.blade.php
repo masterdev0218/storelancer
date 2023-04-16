@@ -21,10 +21,11 @@
 
         <a href="{{ route('store.grid') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
             data-bs-placement="top" title="{{ __('Grid View') }}"><i class="ti ti-grid-dots"></i></a>
-
+    
         <a href="#" data-size="md" data-url="{{ route('store-resource.create') }}" data-ajax-popup="true"
             data-title="{{ __('Create New Store') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
             data-bs-placement="top" title="{{ __('Create') }}"><i class="ti ti-plus"></i></a>
+            
     </div>
 @endsection
 @section('filter')
@@ -70,47 +71,29 @@
                                             </div>
                                         </td>
                                         <td class="Action">
-                                            <span>
-                                                <div class="action-btn  bg-info ms-2">
-                                                    <a href="#" data-size="md"
-                                                        data-url="{{ route('store-resource.edit', $usr->id) }}"
-                                                        data-ajax-popup="true" data-title="{{ __('Edit Store') }}"
-                                                        class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="{{ __('Edit') }}"><i
-                                                            class="ti ti-pencil text-white"></i></a>
-                                                </div>
-                                                <div class="action-btn bg-success ms-2">
-                                                    <a href="#" data-url="{{ route('plan.upgrade', $usr->id) }}"
-                                                        data-ajax-popup="true" data-title="{{ __('Upgrade Plan') }}"
-                                                        class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="{{ __('Upgrade Plan') }}"> <i
-                                                            class="ti ti-trophy text-white"></i></a>
-                                                </div>
-                                                <div class="action-btn bg-danger ms-2">
-                                                    <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
-                                                        href="#" data-title="{{ __('Delete Lead') }}"
-                                                        data-confirm="{{ __('Are You Sure?') }}"
-                                                        data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                        data-confirm-yes="delete-form-{{ $usr->id }}"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="{{ __('Delete ') }}">
-                                                        <i class="ti ti-trash"></i>
-                                                    </a>
-                                                    {!! Form::open(['method' => 'DELETE', 'route' => ['store-resource.destroy', $usr->id], 'id' => 'delete-form-' . $usr->id]) !!}
-                                                    {!! Form::close() !!}
-                                                </div>
-                                                <div class="action-btn bg-warning ms-2">
-                                                    <a href="#" data-size="md"
-                                                        data-url="{{ route('user.reset', \Crypt::encrypt($usr->id)) }}"
-                                                        data-ajax-popup="true" data-title="{{ __('Reset Password') }}"
-                                                        class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="{{ __('Reset Password') }}"> <i
-                                                            class="fas fa-key text-white"></i></a>
-                                                </div>
-                                            </span>
+                                            <div class="d-flex">
+                                                <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-url="{{ route('store-resource.edit', $usr->id) }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit') }}" data-title="{{ __('Edit Store') }}">
+                                                    <i  class="ti ti-edit f-20"></i>
+                                                </a>
+                                                <a data-url="{{ route('plan.upgrade', $usr->id) }}" class="btn btn-sm btn-icon  bg-light-secondary me-2" data-tooltip="Edit" data-ajax-popup="true" data-title="{{ __('Upgrade Plan') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Upgrade Plan') }}" data-tooltip="View">
+                                                    <i   class="ti ti-trophy f-20"></i>
+                                                </a>
+                                                <a class="bs-pass-para btn btn-sm btn-icon bg-light-secondary me-2" href="#"
+                                                    data-title="{{ __('Delete Lead') }}"
+                                                    data-confirm="{{ __('Are You Sure?') }}"
+                                                    data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                    data-confirm-yes="delete-form-{{ $usr->id }}"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    title="{{ __('Delete') }}">
+                                                    <i class="ti ti-trash f-20"></i>
+                                                </a>
+                                                {!! Form::open(['method' => 'DELETE', 'route' => ['store-resource.destroy', $usr->id], 'id' => 'delete-form-' . $usr->id]) !!}
+                                                {!! Form::close() !!}
+
+                                                <a data-url="{{ route('user.reset', \Crypt::encrypt($usr->id)) }}" class="btn btn-sm btn-icon  bg-light-secondary me-2" data-tooltip="Edit" data-ajax-popup="true" data-title="{{ __('Reset Password') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Reset Password') }}" data-tooltip="View">
+                                                    <i   class="fas fa-key f-20"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

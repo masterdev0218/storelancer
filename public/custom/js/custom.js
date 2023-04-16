@@ -159,14 +159,15 @@ $(document).ready(function () {
             buttons: [
                 {
                     text: me.data('confirm-text-yes') || 'Yes',
-                    class: 'btn btn-sm btn-primary btn-icon rounded-pill',
+                    class: 'btn btn-sm btn rounded-pill',
                     handler: function () {
                         eval(me.data('confirm-yes'));
                     }
                 },
                 {
                     text: me.data('confirm-text-cancel') || 'Cancel',
-                    class: 'btn btn-sm btn-danger btn-icon rounded-pill',
+                    class: 'btn btn-sm btn-secondary ',
+                    id : 'close-button',
                     handler: function (modal) {
                         $.destroyModal(modal);
                         eval(me.data('confirm-no'));
@@ -274,7 +275,6 @@ $(document).on('click', 'a[data-ajax-popup="true"], button[data-ajax-popup="true
     $.ajax({
         url: url,
         success: function (data) {
-
             $('#commonModal .modal-body').html(data);
             $("#commonModal").modal('show');
             taskCheckbox();
@@ -291,8 +291,6 @@ $(document).on('click', 'a[data-ajax-popup="true"], button[data-ajax-popup="true
                 $( $(".multi-select") ).each(function( index,element ) {
                     console.log($(element));
                     var id = $(element).attr('id');
-                    console.log(id);
-
                        var multipleCancelButton = new Choices(
                             '#'+id, {
                                 removeItemButton: true,
@@ -344,6 +342,7 @@ function show_toastr(title, message, type) {
     var cls = '';
     if (type == 'success') {
         icon = 'fas fa-check-circle';
+        // $('.toast-body').addClass('bg-success');
         cls = 'primary';
     } else {
         icon = 'fas fa-times-circle';
@@ -493,6 +492,7 @@ function common_bind_confirmation() {
                 {
                     text: me.data('confirm-text-cancel') || 'Cancel',
                     class: 'btn btn-secondary',
+                    id : 'close-button',
                     handler: function (modal) {
                         $.destroyModal(modal);
                         eval(me.data('confirm-no'));
@@ -567,7 +567,6 @@ function taskCheckbox() {
                 trigger_button = $('.' + trigger_class);
 
             $(this).addClass(trigger_class);
-
             // Get modal body
             let body = options.body;
 
@@ -582,14 +581,14 @@ function taskCheckbox() {
             }
 
             // Modal base template
-            var modal_template = '   <div class="modal' + (options.animation == true ? ' fade' : '') + '" tabindex="-1" role="dialog" id="' + id + '">  ' +
-                '     <div class="modal-dialog ' + options.size + (options.center ? ' modal-dialog-centered' : '') + '" role="document">  ' +
-                '       <div class="modal-content">  ' +
+            var modal_template = '   <div class="modal' + (options.animation == true ? ' fade' : '') + ' modal-popup " tabindex="-1" role="dialog" id="' + id + '">  ' +
+                '     <div class="modal-dialog-inner  modal-dialog ' + options.size + (options.center ? ' modal-dialog-centered' : '') + '" role="document">  ' +
+                '       <div class="modal-content">  ' + '<div class="popup-content">' +
                 ((options.header == true) ?
-                    '         <div class="modal-header">  ' +
+                    '         <div class="modal-header popup-header align-items-center">  ' +
                     '           <h5 class="modal-title">' + options.title + '</h5>  ' +
                     ((options.closeButton == true) ?
-                        '           <button type="button" class="close" data-dismiss="modal" aria-label="Close">  ' +
+                        '           <button type="button" class="close close-button" id="close-button" data-dismiss="modal" aria-label="Close">  ' +
                         '             <span aria-hidden="true">&times;</span>  ' +
                         '           </button>  '
                         : '') +
@@ -602,6 +601,7 @@ function taskCheckbox() {
                     '         </div>  '
                     : '') +
                 '       </div>  ' +
+                '</div>' +
                 '     </div>  ' +
                 '  </div>  ';
 
@@ -613,7 +613,6 @@ function taskCheckbox() {
             options.buttons.forEach(function (item) {
                 // get option 'id'
                 let id = "id" in item ? item.id : '';
-
                 // Button template
                 this_button = '<button type="' + ("submit" in item && item.submit == true ? 'submit' : 'button') + '" class="' + item.class + '" id="' + id + '">' + item.text + '</button>';
 
@@ -693,9 +692,14 @@ function taskCheckbox() {
 
             $(document).on("click", '.' + trigger_class, function () {
                 $('#' + id).modal(options.modal);
-
+                $('#' + id).addClass('show');
                 return false;
             });
+            $(document).on('click','#close-button',function(){
+                $('#' + id).removeClass('show');
+                $('body').removeClass('no-scroll');
+            });
+           
         });
     }
 

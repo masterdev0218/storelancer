@@ -74,76 +74,81 @@ class OrderController extends Controller
      */
     public function show($order)
     {
-        $id    = Crypt::decrypt($order);
-        $order = Order::find($id);
-
-        $store = Store::where('id', $order->user_id)->first();
-
-        $user_details = UserDetail::where('id', $order->user_address_id)->first();
-
-        if (!empty($order->shipping_data)) {
-            $shipping_data = json_decode($order->shipping_data);
-            $location_data = Location::where('id', $shipping_data->location_id)->first();
-        } else {
-            $shipping_data = '';
-            $location_data = '';
-        }
-
-        $order_products = json_decode($order->product);
-        $sub_total      = 0;
-        if (!empty($order_products)) {
-            $grand_total = 0;
-            $total_taxs  = 0;
-            foreach ($order_products as $product) {
-                if (isset($product->variant_id) && $product->variant_id != 0) {
-                    if (!empty($product->tax)) {
-                        foreach ($product->tax as $tax) {
-                            $sub_tax    = ($product->variant_price * $product->quantity * $tax->tax) / 100;
-                            $total_taxs += $sub_tax;
-                        }
-                    }
-
-                    $totalprice  = $product->variant_price * $product->quantity + $total_taxs;
-                    $subtotal    = $product->variant_price * $product->quantity;
-                    $sub_total   += $subtotal;
-                    $grand_total += $totalprice;
-                } else {
-                    if (!empty($product->tax)) {
-                        foreach ($product->tax as $tax) {
-                            $sub_tax    = ($product->price * $product->quantity * $tax->tax) / 100;
-                            $total_taxs += $sub_tax;
-                        }
-                    }
-
-                    $totalprice  = $product->price * $product->quantity + $total_taxs;
-                    $subtotal    = $product->price * $product->quantity;
-                    $sub_total   += $subtotal;
-                    $grand_total += $totalprice;
-                }
-            }
-
-            if (!empty($order->coupon_json)) {
-                $coupon = json_decode($order->coupon_json);
-            }
-            if (!empty($order->discount_price)) {
-                $discount_price = $order->discount_price;
+        try{
+            $id    = Crypt::decrypt($order);
+            $order = Order::find($id);
+            $store = Store::where('id', $order->user_id)->first();
+    
+            $user_details = UserDetail::where('id', $order->user_address_id)->first();
+    
+            if (!empty($order->shipping_data)) {
+                $shipping_data = json_decode($order->shipping_data);
+                $location_data = Location::where('id', $shipping_data->location_id)->first();
             } else {
-                $discount_price = '';
+                $shipping_data = '';
+                $location_data = '';
             }
-            $discount_value = 0;
-            if (!empty($coupon)) {
-                if ($coupon->enable_flat == 'on') {
-                    $discount_value = $coupon->flat_discount;
+    
+            $order_products = json_decode($order->product);
+            $sub_total      = 0;
+            if (!empty($order_products)) {
+                $grand_total = 0;
+                $total_taxs  = 0;
+                foreach ($order_products as $product) {
+                    if (isset($product->variant_id) && $product->variant_id != 0) {
+                        if (!empty($product->tax)) {
+                            foreach ($product->tax as $tax) {
+                                $sub_tax    = ($product->variant_price * $product->quantity * $tax->tax) / 100;
+                                $total_taxs += $sub_tax;
+                            }
+                        }
+    
+                        $totalprice  = $product->variant_price * $product->quantity + $total_taxs;
+                        $subtotal    = $product->variant_price * $product->quantity;
+                        $sub_total   += $subtotal;
+                        $grand_total += $totalprice;
+                    } else {
+                        if (!empty($product->tax)) {
+                            foreach ($product->tax as $tax) {
+                                $sub_tax    = ($product->price * $product->quantity * $tax->tax) / 100;
+                                $total_taxs += $sub_tax;
+                            }
+                        }
+    
+                        $totalprice  = $product->price * $product->quantity + $total_taxs;
+                        $subtotal    = $product->price * $product->quantity;
+                        $sub_total   += $subtotal;
+                        $grand_total += $totalprice;
+                    }
+                }
+    
+                if (!empty($order->coupon_json)) {
+                    $coupon = json_decode($order->coupon_json);
+                }
+                if (!empty($order->discount_price)) {
+                    $discount_price = $order->discount_price;
                 } else {
-                    $discount_value = ($grand_total / 100) * $coupon->discount;
+                    $discount_price = '';
+                }
+                $discount_value = 0;
+                if (!empty($coupon)) {
+                    if ($coupon->enable_flat == 'on') {
+                        $discount_value = $coupon->flat_discount;
+                    } else {
+                        $discount_value = ($grand_total / 100) * $coupon->discount;
+                    }
                 }
             }
+            $store_payment_setting = \Utility::getPaymentSetting($store->id);
+            $order_id              = Crypt::encrypt($order->id);
+    
+    
+            return view('orders.view', compact('store_payment_setting', 'discount_price', 'order', 'store', 'grand_total', 'order_products', 'sub_total', 'total_taxs', 'user_details', 'order_id', 'shipping_data', 'location_data', 'discount_value'));
         }
-        $store_payment_setting = \Utility::getPaymentSetting($store->id);
-        $order_id              = Crypt::encrypt($order->id);
-
-
-        return view('orders.view', compact('store_payment_setting', 'discount_price', 'order', 'store', 'grand_total', 'order_products', 'sub_total', 'total_taxs', 'user_details', 'order_id', 'shipping_data', 'location_data', 'discount_value'));
+        catch(\Exception $e){
+            return redirect()->back()->with('error','Invalid Url');
+        }
+        
     }
 
     /**
@@ -242,11 +247,9 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
        //  order is Cancel
-
        if($order->status != 'Cancel Order')
        {
            $Products_order = json_decode($order->product);
-
            foreach($Products_order as $PurchasedProduct)
            {
                $product = Product::where('id',$PurchasedProduct->product_id)->first();
@@ -335,8 +338,24 @@ class OrderController extends Controller
 
         $name = 'Order_' . date('Y-m-d i:h:s');
         $data = Excel::download(new OrderExport(), $name . '.xlsx');
-
-
         return $data;
+    }
+    public function delete_order_item($id, $variant_id = 0, $order_id, $key)
+    {
+        $order_item = Order::where('order_id', $order_id)->first();
+        $order_json =  json_decode($order_item->product, true);
+        foreach ($order_json as $orderkey => $json) {
+
+            if ($key == $orderkey) {
+                unset($order_json[$orderkey]);
+            }
+        }
+        $order_item->product = json_encode($order_json);
+        $order_item->update();
+        if($order_item->product == '[]'){
+            $order_item->delete();
+            return redirect()->route('orders.index')->with('success', __('Order Item Deleted!'));
+        }
+        return redirect()->back()->with('success', __('Order Item Deleted!'));
     }
 }

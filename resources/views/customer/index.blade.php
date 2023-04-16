@@ -12,6 +12,11 @@
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ __('Store Customers') }}</li>
 @endsection
+@section('action-btn')
+<a class="btn btn-sm btn-icon  bg-light-secondary me-2" href="{{ route('customer.export') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Export') }}"> 
+    <i  data-feather="download"></i>
+</a>
+@endsection
 @section('content')
     <div class="row">
         <div class="col-md-12">
@@ -45,15 +50,11 @@
                                         <td>{{ $customer->email}}</td>
                                         <td>{{ $customer->phone_number}}</td>
                                         <td class="Action">
-                                            <span>
-                                                <div class="action-btn bg-warning ms-2">
-                                                    <a href="{{ route('customer.show',$customer->id) }}"
-                                                        class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="{{ __('View') }}"><i
-                                                            class="ti ti-eye text-white"></i></a>
-                                                </div>
-                                            </span>
+                                            <div class="d-flex">
+                                                <a href="{{ route('customer.show', $customer->id) }}" class="btn btn-sm btn-icon  bg-light-secondary me-2" data-tooltip="View" data-original-title="{{ __('View') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('View') }}" data-tooltip="View">
+                                                    <i  class="ti ti-eye f-20"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

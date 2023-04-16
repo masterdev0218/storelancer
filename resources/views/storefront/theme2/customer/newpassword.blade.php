@@ -36,7 +36,7 @@
 @push('script-page')
     <script>
         if('{!! !empty($is_cart) && $is_cart==true !!}'){
-            show_toastr('Error', 'You need to login!', 'error');
+            show_toastr('Error', __('You need to login!'), 'error');
         }
     </script>
 @endpush

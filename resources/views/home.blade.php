@@ -11,7 +11,9 @@ $logo1=\App\Models\Utility::get_file('uploads/is_cover_image/');
 // $logo = asset(Storage::url('uploads/logo/'));
 $company_logo = \App\Models\Utility::getValByName('company_logo');
 @endphp
-
+@section('breadcrumb')
+<li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{__('Home')}}</a></li>
+@endsection
 @push('script-page')
     <script>
         var today = new Date()
@@ -25,518 +27,593 @@ $company_logo = \App\Models\Utility::getValByName('company_logo');
         } else {
             target.innerHTML = "{{ __('Good Evening,') }}";
         }
+
+    </script>
+    <script>
+        $(document).on('click', '#code-generate', function() {
+            var length = 10;
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            $('#auto-code').val(result);
+        });
     </script>
 @endpush
-
 @section('content')
 @php
-// $logo = asset(Storage::url('uploads/logo/'));
-$logo=\App\Models\Utility::get_file('uploads/logo/');
-$company_logo = \App\Models\Utility::getValByName('company_logo');
-$profile=\App\Models\Utility::get_file('uploads/profile/');
-$logo1=\App\Models\Utility::get_file('uploads/is_cover_image/');
+    $logo=\App\Models\Utility::get_file('uploads/logo/');
+    $company_logo = \App\Models\Utility::getValByName('company_logo');
+    $profile=\App\Models\Utility::get_file('uploads/profile/');
+    $logo1=\App\Models\Utility::get_file('uploads/is_cover_image/');
 @endphp
-    <!-- [ Main Content ] start -->
-    @if (\Auth::user()->type == 'Owner')
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="row">
-                    <div class="col-xxl-5">
-                        <div class="card">
-                            <div class="card-body stats welcome-card">
-                                <div class="row align-items-center mb-4">
-                                    <div class="col-xxl-12">
-                                        <h3 class="mb-1" id="greetings"></h3>
-                                        <h4 class="f-w-400">
-                                            <a href="{{ asset(Storage::url('uploads/profile/' . (!empty(Auth::user()->avatar) ? Auth::user()->avatar : 'avatar.png'))) }}" target="_blank">
-                                            {{-- <img
-                                                src="{{ asset(Storage::url('uploads/profile/' . (!empty(Auth::user()->avatar) ? Auth::user()->avatar : 'avatar.png'))) }}"
-                                                alt="user-image" class="wid-35 me-2 img-thumbnail rounded-circle"> --}}
-                                                <img
-                                                src="{{ !empty($users->avatar) ? $profile . '/' . $users->avatar : $profile . '/avatar.png' }}"
-                                                    class="wid-35 me-2 img-thumbnail rounded-circle">
-                                            </a>
-                                            {{ __(Auth::user()->name) }}</h4>
-                                        <p>{{ __('Have a nice day! Did you know that you can quickly add your favorite product or category to the store?') }}
-                                        </p>
-                                        <div class="dropdown quick-add-btn">
-                                            <a class="btn btn-primary btn-q-add dropdown-toggle" data-bs-toggle="dropdown"
-                                                href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                                                <i class="ti ti-plus drp-icon"></i>
-                                                <span class="ms-2 me-2">{{ __('Quick add') }}</span>
-                                            </a>
-                                            <div class="dropdown-menu">
-                                                <a href="{{ route('product.create') }}"
-                                                    class="dropdown-item"><span>{{ __('Add new product') }}</span></a>
-                                                <a href="#" data-size="md"
-                                                    data-url="{{ route('product_tax.create') }}" data-ajax-popup="true"
-                                                    data-title="{{ __('Create New Product Tax') }}" class="dropdown-item"
-                                                    data-bs-placement="top "><span>{{ __('Add new product tax') }}</span></a>
-
-                                                <a href="#" data-size="md"
-                                                    data-url="{{ route('product_categorie.create') }}"
-                                                    data-ajax-popup="true"
-                                                    data-title="{{ __('Create New Product Category') }}"
-                                                    class="dropdown-item"
-                                                    data-bs-placement="top"><span>{{ __('Add new product category') }}</span></a>
-
-                                                <a href="#" data-size="md"
-                                                    data-url="{{ route('product-coupon.create') }}"
-                                                    data-ajax-popup="true"
-                                                    data-title="{{ __('Create New Product Coupon') }}"
-                                                    class="dropdown-item"
-                                                    data-bs-placement="top "><span>{{ __('Add new product coupon') }}</span></a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
+@if (\Auth::user()->type == 'Owner')
+<!-- [ Main Content ] start -->
+<div class="row">
+    <!-- [ sample-page ] start -->
+    <div class="col-sm-12">
+        <div class="row mb-5 gy-4">
+            <div class="col-lg-4">
+                <div class="welcome-card border bg-light-primary p-3 border-primary rounded text-dark h-100">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-2">
+                            <img src="{{ !empty($users->avatar) ? $profile . '/' . $users->avatar : $profile . '/avatar.png' }}" alt="" class="theme-avtar">
                         </div>
-                        <div class="card min-h-390 overflow-auto">
-                            <div class="card-header d-flex justify-content-between">
-                                <h5>{{ __('Top Products') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" class="sort" data-sort="name">
-                                                    {{ __('Product') }}
-                                                </th>
-                                                <th scope="col" class="sort" data-sort="budget">
-                                                    {{ __('Quantity') }}
-                                                </th>
-                                                <th scope="col" class="sort text-right" data-sort="completion">
-                                                    {{ __('Price') }}</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            @foreach ($products as $product)
-                                                @foreach ($item_id as $k => $item)
-                                                    @if ($product->id == $item)
-                                                        <tr>
-                                                            <td>
-                                                                <div class="d-flex align-items-center">
-                                                                    @if (!empty($product->is_cover))
-                                                                        <a href="{{$logo1 . $product->is_cover }}" target="_blank">
-                                                                            <img src="{{ $logo1 . $product->is_cover }}"
-                                                                                class="wid-25" alt="images">
-                                                                        </a>
-                                                                    @else
-                                                                        <a href="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}" target="_blank">
-                                                                            <img src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}"
-                                                                            class="wid-25" alt="images">
-                                                                        </a>
-                                                                    @endif
-                                                                    <div class="ms-3">
-                                                                        <h6 class="m-0">{{ $product->name }}
-                                                                        </h6>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="m-0">{{ $product->quantity }}</h6>
-                                                            </td>
-                                                            <td>
-                                                                <small
-                                                                    class="text-muted">{{ \App\Models\Utility::priceFormat($product->price) }}</small>
-                                                                <h6 class="m-0">{{ $totle_qty[$k] }}
-                                                                    {{ __('Sold') }}</h6>
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                @endforeach
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                        <div>
+                            <h5 class="mb-0">
+                                <span class="d-block" id="greetings"></span>
+                                <b class="f-w-700">{{ __(Auth::user()->name) }}</b>
+                            </h5>
                         </div>
                     </div>
-                    <div class="col-xxl-7">
-                        <div class="row">
-                            <div class="col-lg-3 col-6">
-                                <div class="card">
-                                    <div class="card-body stats">
-                                        <div class="theme-avtar bg-primary qrcode">
-                                            {!! QrCode::generate($store_id['store_url']) !!}
-                                        </div>
-                                        <h6 class="mb-3 mt-4 ">{{ $store_id->name }}</h6>
-                                        <a href="#" class="btn btn-primary btn-sm text-sm cp_link"
-                                            data-link="{{  $store_id['store_url'] }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="top"
-                                            title="{{ __('Click to copy link') }}">{{ __('Store Link') }}
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <div class="card">
-                                    <div class="card-body stats">
-                                        <div class="theme-avtar bg-info">
-                                            <i class="fas fa-cube"></i>
-                                        </div>
-                                        <h6 class="mb-3 mt-4 ">{{ __('Total Products') }}</h6>
-                                        <h3 class="mb-0">{{ $newproduct }}</h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <div class="card">
-                                    <div class="card-body stats">
-                                        <div class="theme-avtar bg-warning">
-                                            <i class="fas fa-cart-plus"></i>
-                                        </div>
-                                        <h6 class="mb-3 mt-4 ">{{ __('Total Sales') }}</h6>
-                                        <h3 class="mb-0">{{ \App\Models\Utility::priceFormat($totle_sale) }}
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-6">
-                                <div class="card">
-                                    <div class="card-body stats">
-                                        <div class="theme-avtar bg-danger">
-                                            <i class="fas fa-shopping-bag"></i>
-                                        </div>
-                                        <h6 class="mb-3 mt-4 ">{{ __('Total Orders') }}</h6>
-                                        <h3 class="mb-0">{{ $totle_order }}</h3>
-                                    </div>
-                                </div>
-                            </div>
+                    <p class="mb-0">{{ __('Have a nice day! Did you know that you can quickly add your favorite product or category to the store?') }}</p>
+                    <div class="btn-group mt-4">
+                        <button class="btn  btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i data-feather="plus" class="me-2"></i>
+                            {{ __('Quick add') }}</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ route('product.create') }}">{{ __('Add new product') }}</a>
+                            <a href="#" data-size="md" data-url="{{ route('product_tax.create') }}" data-ajax-popup="true" data-title="{{ __('Create New Product Tax') }}" class="dropdown-item" data-bs-placement="top ">
+                                <span>{{ __('Add new product tax') }}</span>
+                            </a>
+                            <a href="#" data-size="md" data-url="{{ route('product_categorie.create') }}" data-ajax-popup="true" data-title="{{ __('Create New Product Category') }}" class="dropdown-item" data-bs-placement="top">
+                                <span>{{ __('Add new product category') }}</span>
+                            </a>
+                            <a href="#" data-size="md" data-url="{{ route('product-coupon.create') }}" data-ajax-popup="true" data-title="{{ __('Create New Product Coupon') }}" class="dropdown-item" data-bs-placement="top ">
+                                <span>{{ __('Add new product coupon') }}</span>
+                            </a>
                         </div>
-                        <div class="card min-h-390 overflow-auto">
-                            <div class="card-header">
-                                <h5>{{ __('Orders') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="apex-dashborad" data-color="primary" data-height="230"></div>
-                            </div>
-                        </div>
-
                     </div>
-
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between">
-                                <h5>{{ __('Recent Orders') }}</h5>
+            </div>
+            <div class="col-lg-8">
+                <div class="row gy-4">
+                    <div class="col-xl-3 col-lg-6 col-sm-6">
+                        <div class="card shadow-none mb-0">
+                            <div class="card-body border rounded  p-3">
+                                <div class="mb-4 d-flex align-items-center justify-content-between">
+                                    <h6 class="mb-0">{{ $store_id->name }}</h6>
+                                    <span>
+                                        <i data-feather="arrow-up-right"></i>
+                                    </span>
+                                </div>
+                                <div class="mb-4 qrcode">
+                                    {!! QrCode::generate($store_id['store_url']) !!}
+                                </div>
+                                <a href="#!" class="btn btn-light-primary w-100 cp_link" data-link="{{  $store_id['store_url'] }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Click to copy link') }}">
+                                    {{ __('Store Link') }}
+                                    <i class="ms-3"data-feather="copy"></i>
+                                </a>
                             </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">{{ __('Orders') }}</th>
-                                                <th scope="col" class="sort">{{ __('Date') }}</th>
-                                                <th scope="col" class="sort">{{ __('Name') }}</th>
-                                                <th scope="col" class="sort">{{ __('Value') }}</th>
-                                                <th scope="col" class="sort text-end">{{ __('Payment Type') }}</th>
-                                                <th scope="col" class="sort text-center">{{ __('Status') }}</th>
-                                                <th scope="col" class="text-end">{{ __('Action') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (!empty($new_orders))
-                                                @foreach ($new_orders as $order)
-                                                    @if ($order->status != 'Cancel Order')
-                                                        <tr>
-                                                            <td>
-                                                                <div class="d-flex align-items-center">
-                                                                    <a href="{{ route('orders.show', \Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}"
-                                                                        class="btn btn-outline-primary btn-sm text-sm cp_link order-badge"
-                                                                        data-link="{{ $store_id['store_url'] }}" data-bs-toggle="tooltip"
-                                                                        title="{{__('Details')}}"
-                                                                        data-toggle="tooltip"
-                                                                        data-original-title="{{ __('Click to copy link') }}">
-                                                                        {{-- <span class="btn-inner--icon"><i --}}
-                                                                        {{-- class="fas fa-download"></i></span> --}}
-                                                                        <span
-                                                                            class="btn-inner--text">{{ $order->order_id }}</span>
-                                                                    </a>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="m-0">
-                                                                    {{ \App\Models\Utility::dateFormat($order->created_at) }}
-                                                                </h6>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="m-0">{{ $order->name }}</h6>
-                                                            </td>
-                                                            <td>
-                                                                <h6 class="m-0">
-                                                                    {{ \App\Models\Utility::priceFormat($order->price) }}
-                                                                    <h6>
-                                                            </td>
-                                                            <td class="text-end">
-                                                                <h6 class="m-0">{{ $order->payment_type }}<h6>
-                                                            </td>
-                                                            <td>
-                                                                <div class="actions ml-3">
-                                                                    <div class="d-flex row justify-content-center">
-                                                                        <button type="button"
-                                                                            class="btn btn-sm {{ $order->status == 'pending' ? 'btn-soft-info' : 'btn-soft-success' }} btn-icon rounded-pill">
-                                                                            <span class="btn-inner--icon">
-                                                                                @if ($order->status == 'pending')
-                                                                                    <i class="fas fa-check soft-info"></i>
-                                                                                @else
-                                                                                    <i class="fa fa-check-double soft-success"></i>
-                                                                                @endif
-                                                                            </span>
-                                                                            @if ($order->payment_status == 'approved' && $order->status == 'pending')
-                                                                                <span class="btn-inner--text">
-                                                                                    {{ __('Paid') }}:
-                                                                                    {{ \App\Models\Utility::dateFormat($order->created_at) }}
-                                                                                @else
-                                                                                </span><span class="btn-inner--text">
-                                                                                    {{ __('Delivered') }}:
-                                                                                    {{ \App\Models\Utility::dateFormat($order->updated_at) }}
-                                                                                </span>
-                                                                            @endif
-
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-end">
-                                                                <div class="action-btn bg-warning ms-2">
-                                                                    <a href="{{ route('orders.show', \Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}"
-                                                                        class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-bs-placement="top"
-                                                                        title="{{ __('Details') }}"><i
-                                                                            class="ti ti-eye text-white"></i></a>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                @endforeach
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-sm-6">
+                        <div class="card shadow-none mb-0">
+                            <div class="card-body border rounded  p-3">
+                                <div class="mb-3 d-flex align-items-center justify-content-between">
+                                    <h6 class="mb-0">{{ __('Total Products') }}</h6>
+                                    <span>
+                                        <i data-feather="arrow-up-right"></i>
+                                    </span>
+                                </div>
+                                <div class="mb-3 d-flex align-items-center justify-content-between">
+                                    <span class="f-30 f-w-600">{{ $newproduct }}</span>
+                                </div>
+                                {{--  <div class="chart-wrapper">
+                                    <div id="TotalProducts" class="remove-min"></div>
+                                </div>  --}}
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-sm-6">
+                        <div class="card shadow-none mb-0">
+                            <div class="card-body border rounded  p-3">
+                                <div class="mb-3 d-flex align-items-center justify-content-between">
+                                    <h6 class="mb-0">{{ __('Total Sales') }}</h6>
+                                    <span>
+                                        <i data-feather="arrow-up-right"></i>
+                                    </span>
+                                </div>
+                                <div class="mb-3 d-flex align-items-center justify-content-between">
+                                    <span class="f-30 f-w-600">{{ \App\Models\Utility::priceFormat($totle_sale) }}</span>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <div id="TotalSales" class="remove-min"></div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6 col-sm-6">
+                        <div class="card shadow-none mb-0">
+                            <div class="card-body border rounded  p-3">
+                                <div class="mb-3 d-flex align-items-center justify-content-between">
+                                    <h6 class="mb-0">{{ __('Total Orders') }}</h6>
+                                    <span>
+                                        <i data-feather="arrow-up-right"></i>
+                                    </span>
+                                </div>
+                                <div class="mb-3 d-flex align-items-center justify-content-between">
+                                    <span class="f-30 f-w-600">{{ $totle_order }}</span>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <div id="TotalOrders" class="remove-min"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h4 >{{ __('Top Products') }}</h4>
+                <div class="card mb-0 shadow-none">
+                    <div class="card-body border border-bottom-0 overflow-hidden rounded pb-0 table-border-style">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-transparent" colspan="4">{{ __('Product') }}</th>
+                                        <th class="bg-transparent"> {{ __('Quantity') }}</th>
+                                        <th class="bg-transparent">{{ __('Price') }}</th>
+                                        <th class="bg-transparent"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($products as $product)
+                                        @foreach ($item_id as $k => $item)
+                                            @if ($product->id == $item)
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="theme-avtar me-2">
+                                                                @if (!empty($product->is_cover))
+                                                                    <img src="{{ $logo1 . $product->is_cover }}" alt="">
+                                                                @else
+                                                                    <img src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}" alt="">
+                                                                @endif                                                                
+                                                            </div>
+                                                            <a href="#" class=" text-dark f-w-600">{{ $product->name }}</a>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $product->quantity }}</td>
+                                                    <td><span class="f-w-700">{{ \App\Models\Utility::priceFormat($product->price) }}</span></td>
+                                                    <td><span class="badge rounded p-2 f-10 bg-light-primary">{{ $totle_qty[$k] }}
+                                                        {{ __('Sold') }}</span></td>
+                                                </tr>
                                             @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                                        @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-
+            <div class="col-lg-6">
+                <h4>{{ __('Orders') }}</h4>
+                <div class="card shadow-none mb-0">
+                    <div class="card-body p-3 rounded border">
+                        <div id="traffic-chart"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-    @else
         <div class="row">
-            <!-- [ sample-page ] start -->
-            <div class="col-sm-12">
+            <div class="col-12">
+                <h2 class="f-w-900 mb-3">{{ __('Recent Orders') }}</h2>
+            </div>
+            <div class="col-12">
+                <div class="card mb-0 shadow-none">
+                    <div class="card-body border border-bottom-0 overflow-hidden rounded pb-0 table-border-style">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-transparent">{{ __('Orders') }}</th>
+                                        <th class="bg-transparent">{{ __('Date') }}</th>
+                                        <th class="bg-transparent">{{ __('Name') }}</th>
+                                        <th class="bg-transparent">{{ __('Value') }}</th>
+                                        <th class="bg-transparent">{{ __('Payment Type') }}</th>
+                                        <th class="bg-transparent">{{ __('Status') }}</th>
+                                        <th class="bg-transparent">{{ __('Action') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (!empty($new_orders))
+                                        @foreach ($new_orders as $order)
+                                            @if ($order->status != 'Cancel Order')
+                                                <tr>
+                                                    <td>
+                                                    <a href="{{ route('orders.show', \Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}" class="btn  btn-outline-primary"  data-link="{{ $store_id['store_url'] }}" data-bs-toggle="tooltip" data-toggle="tooltip" data-bs-original-title="{{__('Details')}}" title="{{__('Details')}}">{{ $order->order_id }}</a>
+                                                    </td>
+                                                    <td> {{ \App\Models\Utility::dateFormat($order->created_at) }}</td>
+                                                    <td>{{ $order->name }}</td>
+                                                    <td> {{ \App\Models\Utility::priceFormat($order->price) }}</td>
+                                                    <td>{{ $order->payment_type }}</td>
+                                                    <td>
+                                                        @if ($order->payment_status == 'approved' && $order->status == 'pending')
+                                                            <span class="badge me-2 rounded p-2  bg-light-primary">{{ __('Paid') }}</span>
+                                                            {{ \App\Models\Utility::dateFormat($order->created_at) }}
+                                                        @else
+                                                            <span class="badge me-2 rounded p-2  bg-light-secondary">{{ __('Delivered') }}</span>
+                                                            {{ \App\Models\Utility::dateFormat($order->updated_at) }}
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ route('orders.show', \Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}" class="btn btn-sm btn-icon  bg-light-secondary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Details') }}"> <i  class="ti ti-eye f-20"></i></a>
+                                                    </td>
+                                                </tr>        
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- [ sample-page ] end -->
+</div>
+<!-- [ Main Content ] end -->
+@else
+<div class="row">
+    <!-- [ sample-page ] start -->
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-xxl-6">
                 <div class="row">
-                    <div class="col-xxl-6">
-                        <div class="row">
-                            <div class="col-lg-4 col-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="theme-avtar bg-primary">
-                                            <i class="fas fa-cube"></i>
-                                        </div>
-                                        <h6 class="mb-3 mt-4 ">{{ __('Total Store') }}</h6>
-                                        <h3 class="mb-0">{{ $user->total_user }}</h3>
-                                        {{-- <h6 class="mb-3 mt-4 ">{{ __('Paid Store') }}</h6>
-                                        <h3 class="mb-0">{{ $user['total_paid_user'] }}</h3> --}}
-                                    </div>
+                    <div class="col-lg-4 col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="theme-avtar bg-primary">
+                                    <i class="fas fa-cube"></i>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="theme-avtar bg-warning">
-                                            <i class="fas fa-cart-plus"></i>
-                                        </div>
-                                        <h6 class="mb-3 mt-4 ">{{ __('Total Orders') }}</h6>
-                                        <h3 class="mb-0">{{ $user->total_orders }}</h3>
-                                        {{-- <h6 class="mb-3 mt-4 ">{{ __('Total Order Amount') }}</h6>
-                                        <h3 class="mb-0">
-                                            {{ env('CURRENCY_SYMBOL') . $user['total_orders_price'] }}</h3> --}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="theme-avtar bg-danger">
-                                            <i class="fas fa-shopping-bag"></i>
-                                        </div>
-                                        <h6 class="mb-3 mt-4 ">{{ __('Total Plans') }}</h6>
-                                        <h3 class="mb-0">{{ $user['total_plan'] }}</h3>
-                                        {{-- <h6 class="mb-3 mt-4 ">{{ __('Most Purchase Plan') }}</h6>
-                                        <h3 class="mb-0">
-                                            {{ !empty($user['most_purchese_plan']) ? $user['most_purchese_plan'] : '-' }}</h3> --}}
-                                    </div>
-                                </div>
+                                <h6 class="mb-3 mt-4 ">{{ __('Total Store') }}</h6>
+                                <h3 class="mb-0">{{ $user->total_user }}</h3>
+                                {{-- <h6 class="mb-3 mt-4 ">{{ __('Paid Store') }}</h6>
+                                <h3 class="mb-0">{{ $user['total_paid_user'] }}</h3> --}}
                             </div>
                         </div>
                     </div>
-                    <div class="col-xxl-6">
+                    <div class="col-lg-4 col-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h5>{{ __('Recent Orders') }}</h5>
-                            </div>
                             <div class="card-body">
-                                <div id="plan_order" data-color="primary" data-height="230"></div>
+                                <div class="theme-avtar bg-warning">
+                                    <i class="fas fa-cart-plus"></i>
+                                </div>
+                                <h6 class="mb-3 mt-4 ">{{ __('Total Orders') }}</h6>
+                                <h3 class="mb-0">{{ $user->total_orders }}</h3>
+                               
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="theme-avtar bg-danger">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </div>
+                                <h6 class="mb-3 mt-4 ">{{ __('Total Plans') }}</h6>
+                                <h3 class="mb-0">{{ $user['total_plan'] }}</h3>
+                                {{-- <h6 class="mb-3 mt-4 ">{{ __('Most Purchase Plan') }}</h6>
+                                <h3 class="mb-0">
+                                    {{ !empty($user['most_purchese_plan']) ? $user['most_purchese_plan'] : '-' }}</h3> --}}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- [ sample-page ] end -->
+            <div class="col-xxl-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>{{ __('Recent Orders') }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="plan_order" data-color="primary" data-height="230"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-    @endif
-    <!-- [ Main Content ] end -->
+    </div>
+    <!-- [ sample-page ] end -->
+</div>
+
+@endif
 @endsection
 @push('script-page')
-    @if (\Auth::user()->type == 'Owner')
-        <script>
-            $(document).ready(function() {
-                $('.cp_link').on('click', function() {
-                    var value = $(this).attr('data-link');
-                    var $temp = $("<input>");
-                    $("body").append($temp);
-                    $temp.val(value).select();
-                    document.execCommand("copy");
-                    $temp.remove();
-                    show_toastr('Success', '{{ __('Link copied') }}', 'success')
-                });
-            });
+@if (\Auth::user()->type == 'Owner')
+<script>
+    $(document).ready(function() {
+        $('.cp_link').on('click', function() {
+            var value = $(this).attr('data-link');
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val(value).select();
+            document.execCommand("copy");
+            $temp.remove();
+            show_toastr('Success', '{{ __('Link copied') }}', 'success')
+        });
+    });
+    (function () {
+        var options = {
+            chart: {
+                height: 250,
+                type: 'area',
+                toolbar: {
+                    show: false,
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                width: 2,
+                curve: 'smooth'
+            },
+            series: [{
+                name: "{{ __('Order') }}",
+                data: {!! json_encode($chartData['data']) !!}
+            }],
+            xaxis: {
+                axisBorder: {
+                    show: !1
+                },
+                type: "MMM",
+                categories: {!! json_encode($chartData['label']) !!},
+                title: {
+                    text: '{{ __("Days") }}'
+                }
+            },
+            colors: ['#ffa21d', '#FF3A6E'],
 
-            (function() {
-                var options = {
-                    chart: {
-                        height: 250,
-                        type: 'area',
-                        toolbar: {
-                            show: false,
-                        },
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        width: 2,
-                        curve: 'smooth'
-                    },
+            grid: {
+                strokeDashArray: 4,
+            },
+            legend: {
+                show: false,
+            },
+            yaxis: {
+                tickAmount: 3,
+                title: {
+                text: '{{ __("Amount") }}'
+            },
+            }
+        };
+        var chart = new ApexCharts(document.querySelector("#traffic-chart"), options);
+        chart.render();
+    })();
+    (function () {
+        var options = {
+            chart: {
+                height: 80,
+                type: 'area',
+                toolbar: {
+                    show: false,
+                },
+            },
+            dataLabels: {
+                enabled: false,
+                show:false,
+            },
+            stroke: {
+                width: 2,
+                curve: 'smooth',
+            },
+            series: [{
+                name: "{{ __('Sales') }}",
+                data: {!! json_encode($saleData['data']) !!}
+            }],
+            colors: ['#6FD943'],
+            grid: {
+                strokeDashArray: 4,
+                show: false,
+            },
+            legend: {
+                show: false,
+            },
+            markers: {
+                enabled: false
+            },
+            yaxis: {
+                show: false,
+            },
+            xaxis: {
+                labels: {
+                    show: false,
+                },
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+                tooltip: {
+                    enabled: false,
+                }
+            },
+            tooltip: {
+                enabled: false,
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: "horizontal",
+                    shadeIntensity: 0,
+                    gradientToColors: undefined, 
+                    inverseColors: true,
+                    opacityFrom: 0,
+                    opacityTo: 0,
+                    stops: [0, 50, 100],
+                    colorStops: []
+                }
+            }
+        };
+        var chart = new ApexCharts(document.querySelector("#TotalSales"), options);
+        chart.render();
+    })();
+    (function () {
+        var options = {
+            chart: {
+                height: 80,
+                type: 'area',
+                toolbar: {
+                    show: false,
+                },
+            },
+            dataLabels: {
+                enabled: false,
+                show:false,
+            },
+            stroke: {
+                width: 2,
+                curve: 'smooth',
+            },
+            series: [{
+                name: "{{ __('Order') }}",
+                data: {!! json_encode($chartData['data']) !!}
+            }],
+            colors: ['#6FD943'],
+            grid: {
+                strokeDashArray: 4,
+                show: false,
+            },
+            legend: {
+                show: false,
+            },
+            markers: {
+                enabled: false
+            },
+            yaxis: {
+                show: false,
+            },
+            xaxis: {
+                labels: {
+                    show: false,
+                },
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+                tooltip: {
+                    enabled: false,
+                }
+            },
+            tooltip: {
+                enabled: false,
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: "horizontal",
+                    shadeIntensity: 0,
+                    gradientToColors: undefined, 
+                    inverseColors: true,
+                    opacityFrom: 0,
+                    opacityTo: 0,
+                    stops: [0, 50, 100],
+                    colorStops: []
+                }
+            }
+        };
+        var chart = new ApexCharts(document.querySelector("#TotalOrders"), options);
+        chart.render();
+    })();
+</script>
+@else
+<script>
+    (function() {
+        var options = {
+            chart: {
+                height: 250,
+                type: 'area',
+                toolbar: {
+                    show: false,
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                width: 2,
+                curve: 'smooth'
+            },
 
 
-                    series: [{
-                        name: "Order",
-                        data: {!! json_encode($chartData['data']) !!}
-                    }],
+            series: [{
+                name: "{{ __('Order') }}",
+                data: {!! json_encode($chartData['data']) !!}
+                // data: [10,20,30,40,50,60,70,40,20,50,60,20,50,70]
+            }],
 
-                    xaxis: {
-                        axisBorder: {
-                            show: !1
-                        },
-                        type: "MMM",
-                        categories: {!! json_encode($chartData['label']) !!},
-                        title: {
-                            text: '{{ __("Days") }}'
-                        }
-                    },
-                    colors: ['#e83e8c'],
+            xaxis: {
+                axisBorder: {
+                    show: !1
+                },
+                type: "MMM",
+                categories: {!! json_encode($chartData['label']) !!},
+                title: {
+                    text: '{{ __("Days") }}'
+                }
+            },
+            colors: ['#e83e8c'],
 
-                    grid: {
-                        strokeDashArray: 4,
-                    },
-                    legend: {
-                        show: false,
-                    },
-                    // markers: {
-                    //     size: 4,
-                    //     colors: ['#FFA21D'],
-                    //     opacity: 0.9,
-                    //     strokeWidth: 2,
-                    //     hover: {
-                    //         size: 7,
-                    //     }
-                    // },
-                    yaxis: {
-                        tickAmount: 3,
-                        title: {
-                        text: '{{ __("Amount") }}'
-                    },
-                    }
-                };
-                var chart = new ApexCharts(document.querySelector("#apex-dashborad"), options);
-                chart.render();
-            })();
-            var scrollSpy = new bootstrap.ScrollSpy(document.body, {
-                target: '#useradd-sidenav',
-                offset: 300
-            })
-        </script>
-    @else
-        <script>
-            (function() {
-                var options = {
-                    chart: {
-                        height: 250,
-                        type: 'area',
-                        toolbar: {
-                            show: false,
-                        },
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        width: 2,
-                        curve: 'smooth'
-                    },
-
-
-                    series: [{
-                        name: "Order",
-                        data: {!! json_encode($chartData['data']) !!}
-                        // data: [10,20,30,40,50,60,70,40,20,50,60,20,50,70]
-                    }],
-
-                    xaxis: {
-                        axisBorder: {
-                            show: !1
-                        },
-                        type: "MMM",
-                        categories: {!! json_encode($chartData['label']) !!},
-                        title: {
-                            text: '{{ __("Days") }}'
-                        }
-                    },
-                    colors: ['#e83e8c'],
-
-                    grid: {
-                        strokeDashArray: 4,
-                    },
-                    legend: {
-                        show: false,
-                    },
-                    // markers: {
-                    //     size: 4,
-                    //     colors: ['#FFA21D'],
-                    //     opacity: 0.9,
-                    //     strokeWidth: 2,
-                    //     hover: {
-                    //         size: 7,
-                    //     }
-                    // },
-                    yaxis: {
-                        tickAmount: 3,
-                        title: {
-                        text: '{{ __("Amount") }}'
-                    },
-                    }
-                };
-                var chart = new ApexCharts(document.querySelector("#plan_order"), options);
-                chart.render();
-            })();
-        </script>
-    @endif
+            grid: {
+                strokeDashArray: 4,
+            },
+            legend: {
+                show: false,
+            },
+            // markers: {
+            //     size: 4,
+            //     colors: ['#FFA21D'],
+            //     opacity: 0.9,
+            //     strokeWidth: 2,
+            //     hover: {
+            //         size: 7,
+            //     }
+            // },
+            yaxis: {
+                tickAmount: 3,
+                title: {
+                text: '{{ __("Amount") }}'
+            },
+            }
+        };
+        var chart = new ApexCharts(document.querySelector("#plan_order"), options);
+        chart.render();
+    })();
+   
+</script>
+@endif
 @endpush
+

@@ -91,11 +91,6 @@ class AuthenticatedSessionController extends Controller
             {
                 if($plan->duration != 'Unlimited')
                 {
-                    // $datetime1=new \Datetime($user->plan_expire_date);
-                    // $datetime2=new \Datetime(date('Y-m-d'));
-                    // $interval =$datetime2->diff($datetime1);
-                    // $days=$interval->format('%r%a');
-                    // if($days <= 0)
 
                     $datetime1 = $user->plan_expire_date;
                     $datetime2 = date('Y-m-d');

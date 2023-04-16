@@ -44,7 +44,7 @@ $logo=\App\Models\Utility::get_file('uploads/logo/');
         <div class="auth-content">
             <nav class="navbar navbar-expand-md navbar-light default">
                 <div class="container-fluid pe-2">
-                    <a class="navbar-brand" href="/">
+                    <a class="navbar-brand" href="#">
                         <img src="{{$logo.$company_logo}}" alt="{{ config('app.name', 'Storego') }}" class="navbar-brand-img auth-navbar-brand">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -55,13 +55,13 @@ $logo=\App\Models\Utility::get_file('uploads/logo/');
                     <div class="collapse navbar-collapse" id="navbarTogglerDemo01" style="flex-grow: 0;">
                         <ul class="navbar-nav align-items-center ms-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link active" href="/contact.html">{{ __('Support')}}</a>
+                                <a class="nav-link active" href="#">{{ __('Support')}}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/terms.html">{{ __('Terms')}}</a>
+                                <a class="nav-link" href="#">{{ __('Terms')}}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/privacy.html">{{ __('Privacy')}}</a>
+                                <a class="nav-link" href="#">{{ __('Privacy')}}</a>
                             </li>
                         </ul>
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -70,10 +70,29 @@ $logo=\App\Models\Utility::get_file('uploads/logo/');
                     </div>
                 </div>
             </nav>
-            @yield('content')
+            <div class="card">
+                <div class="row align-items-center">
+                    @yield('content')
+                    <div class="col-xl-6 img-card-side">
+                        {{-- <div class="auth-img-content">
+                            <img src="{{ asset('assets/images/auth/img-auth-3.svg') }}" alt=""
+                                class="img-fluid">
+                            <h3 class="text-white mb-4 mt-5">{{ __('“Attention is the new currency”') }}</h3>
+                            <p class="text-white">
+                                {{ 'The more effortless the writing looks, the more effort the writer
+                                                                actually put into the process.' }}
+                            </p>
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
             <div class="auth-footer">
                 <div class="container-fluid">
-                    <p class="">{{__('Copyright')}} &copy; {{ (Utility::getValByName('footer_text')) ? Utility::getValByName('footer_text') :config('app.name', 'WorkGo') }} {{date('Y')}}</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <!-- {{ __('Copyright') }} &copy; {{ Utility::getValByName('footer_text') ? Utility::getValByName('footer_text') : config('app.name', 'LeadGo') }} {{ date('Y') }}  -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

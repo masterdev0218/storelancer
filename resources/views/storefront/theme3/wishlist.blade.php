@@ -9,23 +9,27 @@
 
     @endphp
 @section('content')
-<section class="my-cart-section product-section pt-3">
-    <div class="container mt-8">
-            <div class="row">
+<div class="wrapper">
+    <section class="wishlist-page padding-bottom padding-top ">
+        <div class="container">
+            <div class="section-title">
+                <h2>{{ __('Wishlist') }}</h2>
+            </div>
+            <div class="row product-row ">
                 @foreach($products as $k => $product)
-                    <div class="col-xl-3 col-lg-4 col-sm-6 product-box wishlist_{{$product['product_id']}}">
-                        <div class="card card-product">
-                            <div class="card-image">
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 product-card wishlist_{{$product['product_id']}}">
+                        <div class="product-card-inner">
+                            <div class="product-img">
                                 <a href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}">
                                     @if(!empty($product['image']))
-                                        <img alt="Image placeholder" src="{{$imgpath.$product['image']}}" class="img-center img-fluid" style="width:auto; height:221px;">
+                                        <img src="{{$imgpath.$product['image']}}" alt="">
                                     @else
-                                        <img src="{{asset(Storage::url('uploads/is_cover_image/default.jpg'))}}" class="img-center img-fluid" style="width:auto; height:221px;">
+                                        <img src="{{asset(Storage::url('uploads/is_cover_image/default.jpg'))}}" alt="">
                                     @endif
                                 </a>
                             </div>
-                            <div class="card-body pt-4">
-                                <span class="static-rating static-rating-sm">
+                            <div class="product-content">
+                                <div class="product-rating">
                                     @if($store['enable_rating'] == 'on')
                                         @for($i =1;$i<=5;$i++)
                                             @php
@@ -44,39 +48,26 @@
                                             <i class="star fas {{$icon .' '. $color}}"></i>
                                         @endfor
                                     @endif
-                                </span>
-                                <h6><a class="t-black13" href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}">{{$product['product_name']}}</a></h6>
-                                <p class="text-sm">
-                                    <span class="td-gray">{{__('Category')}}:</span> {{\App\Models\Product::getCategoryById($product['product_id'])}}
-                                </p>
-                            </div>
-                            <div class="card-body pt-0">
-                                @if($product['enable_product_variant'] == 'on')
-                                    <div class="product-price">
-                                        <a href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}">
-                                            <button type="button" class="btn btn-sm btn-primary rounded-pill btn-icon shadow hover-shadow-lg hover-translate-y-n3 add_to_cart">
-
-                                                <span class="btn-inner--text"> {{__('In variant')}}</span>
-                                                <span class="btn-inner--icon text-white">
-                                                    <b class="fas fa-shopping-basket text-white"></b>
-                                                </span>
-                                            </button>
-                                        </a>
-                                        <button type="button" class="ml-1 btn btn-sm btn-primary rounded-pill btn-icon hover-translate-y-n3 delete_wishlist_item" id="delete_wishlist_item1" data-id="{{$product['product_id']}}">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="product-price">
-                                        <span class="card-price t-black15">{{\App\Models\Utility::priceFormat($product['price'])}}</span>
-                                        <button type="button" class="btn btn-sm btn-primary rounded-pill btn-icon hover-translate-y-n3 add_to_cart" data-id="{{$product['product_id']}}">
-                                            <i class="fas fa-shopping-basket"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-primary rounded-pill btn-icon hover-translate-y-n3 delete_wishlist_item" id="delete_wishlist_item1" data-id="{{$product['product_id']}}">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                @endif
+                                </div>
+                                <h5>
+                                    <a href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}">{{$product['product_name']}}</a>
+                                </h5>
+                                <p>{{__('Category')}}: {{\App\Models\Product::getCategoryById($product['product_id'])}}</p>
+                                <div class="product-content-bottom">
+                                    @if($product['enable_product_variant'] == 'on')
+                                        <div class="price">
+                                            <ins>{{__('In variant')}}</ins>
+                                        </div>
+                                        <a href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}" class="btn cart-btn add_to_cart"><i class="fas fa-shopping-basket"></i></a>
+                                        <a href="#" class="btn wishlist-btn delete_wishlist_item" id="delete_wishlist_item1" data-id="{{$product['product_id']}}"><i class="fas fa-heart"></i></a>
+                                    @else
+                                        <div class="price">
+                                            <ins>{{\App\Models\Utility::priceFormat($product['price'])}}</ins>
+                                        </div>
+                                        <a class="btn cart-btn add_to_cart" data-id="{{$product['product_id']}}"> <i class="fas fa-shopping-basket"></i></a>
+                                        <a class="btn wishlist-btn delete_wishlist_item" id="delete_wishlist_item1" data-id="{{$product['product_id']}}"><i class="fas fa-heart"></i></a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,6 +75,7 @@
             </div>
         </div>
     </section>
+</div>
 @endsection
 @push('script-page')
     <script>
@@ -102,12 +94,36 @@
                         show_toastr('Success', response.message, 'success');
                         $('.wishlist_' + response.id).remove();
                         $('.wishlist_count').html(response.count);
-
+                        
                     } else {
                         show_toastr('Error', response.message, 'error');
                     }
                 },
                 error: function (result) {
+                }
+            });
+        });
+
+        $(document).on('click', '.add_to_cart', function (e) {
+            e.preventDefault();
+            var id = $(this).attr('data-id');
+            $.ajax({
+                type: "POST",
+                url: '{{route('user.addToCart', ['__product_id',$store->slug])}}'.replace('__product_id', id),
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                },
+                success: function (response) {
+                    if (response.status == "Success") {
+                        show_toastr('Success', response.success, 'success');
+                        $(".shoping_counts").attr("value", response.item_count);
+                        $(".shoping_counts").html(response.item_count);
+                    } else {
+                        show_toastr('Error', response.error, 'error');
+                    }
+                },
+                error: function (result) {
+                    console.log('error');
                 }
             });
         });

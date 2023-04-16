@@ -1,10 +1,24 @@
-
 @extends('storefront.layout.theme6')
 @section('page-title')
     {{ ucfirst($pageoption->name) }}
 @endsection
 @push('css-page')
+    <style>
+        .shoping_count:after {
+            content: attr(value);
+            font-size: 14px;
+            background: #273444;
+            border-radius: 50%;
+            padding: 1px 5px 1px 4px;
+            position: relative;
+            left: -5px;
+            top: -10px;
+        }
 
+        .pagedetails {
+            word-break: break-all;
+        }
+    </style>
 @endpush
 @php
     if(!empty(session()->get('lang')))
@@ -15,24 +29,18 @@
     }
     $languages=\App\Models\Utility::languages();
 @endphp
-
 @section('content')
-
 <div class="wrapper">
-    <section class="blog-section padding-top padding-bottom">
-       <div class="container">
-          <div class="row">
-             <div class="col-lg-8 col-12 mx-auto">
-                <div class="blog-car-view">
-                   <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="h4 d-inline-block font-weight-bold mb-0 pt-4"> {{ ucfirst($pageoption->name) }}</h5>
-                   </div>
-                   {!! $pageoption->contents !!}
-                </div>
-             </div>
-       </div>
+    <section class="contact-us-section padding-top padding-bottom">
+        <div class="container">
+            <div class="contact-content">
+                <h4>{{ ucfirst($pageoption->name) }}</h4>
+                <p>{!! $pageoption->contents !!}
+                </p>
+            </div>
+        </div>
     </section>
- </div>
+</div>
 @endsection
 
 

@@ -185,7 +185,7 @@ class CustomerLoginController extends Controller
         }
 
         Auth::guard('customers')->logout();
-        \Session::forget($slug);
+        // \Session::forget($slug);
 
         return redirect()->route('store.slug', $slug);
     }

@@ -90,9 +90,9 @@
     border: 1px solid #a9a9a9 !important;
     border-radius: 6px;
 }
-.bs-pass-para.btn {
+/* .bs-pass-para.btn {
     color: #ffffff !important;
-}
+} */
 .img-center {
     display: block;
     margin-left: auto;
@@ -519,41 +519,7 @@ a.btn.btn-xs.btn-info.send_email {
     top: 10px;
 }
 
-.plan_card {
-    width: 25% !important;
-    float: left !important;
-}
-@media only screen and (max-width: 1700px) {
-    .plan_card {
-        width: 33.33% !important;
-        float: left !important;
-    }
-}
 
-@media only screen and (max-width: 1440px) {
-    .plan_card {
-        width: 33.33% !important;
-        float: left !important;
-    }
-}
-@media only screen and (max-width: 1366px) {
-    .plan_card {
-        width: 50% !important;
-        float: left !important;
-    }
-}
-@media only screen and (max-width: 1199px) {
-    .plan_card {
-        width: 50% !important;
-        float: left !important;
-    }
-}
-@media only screen and (max-width: 991px) {
-    .plan_card {
-        width: 100%;
-        float: left;
-    }
-}
 
 .btn.noHover.btn-primary.btn-icon{
     pointer-events: none;
@@ -597,7 +563,7 @@ a.btn.btn-xs.btn-info.send_email {
 }
 .setting-card .logo-content img{
     width: auto;
-    max-width: 100%;
+    max-width: 165px;
     max-height: 100%;
 }
 
@@ -616,4 +582,27 @@ img#shadow-img{
 .homepage-category-tag-image{
     width: auto;
     height: 28px;
+}
+
+
+
+/* faq */
+.faq .accordion .accordion-item {
+    border-radius: 10px;
+    overflow: hidden;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.faq .accordion .accordion-item .accordion-button:not(.collapsed) {
+    border-radius: 10px;
+    background: transparent;
+    box-shadow: 0 6px 30px rgba(182, 186, 203, 0.3);
+}
+.faq .accordion .accordion-item .accordion-button span > i {
+    font-size: 20px;
+    margin-right: 8px;
+}
+.faq .accordion .accordion-item .accordion-body {
+    padding: 2.3rem 2.3rem 2.3rem 3rem;
 }

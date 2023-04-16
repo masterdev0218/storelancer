@@ -206,7 +206,6 @@ class BlogController extends Controller
         {
             return view('blog.store_soicalblog');
         }
-
     }
 
     public function storeSocialblog(Request $request)

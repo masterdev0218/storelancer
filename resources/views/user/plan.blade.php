@@ -22,7 +22,7 @@
             <div class="col-auto">
                 @if($user->plan==$plan->id)
                 <span class="d-flex align-items-center ">
-                    <i class="f-10 lh-1 fas fa-circle text-success"></i>
+                    <i class="f-10 lh-1 fas fa-circle text-primary"></i>
                     <span class="ms-2">{{ __('Active')}}</span>
                 </span>
                 @else

@@ -19,9 +19,16 @@ if(!empty(session()->get('lang')))
     $currantLang = $store->lang;
 }
 $languages=\App\Models\Utility::languages();
+$data = DB::table('settings');
+    $data = $data
+        ->where('created_by', '>', 1)
+        ->where('store_id', $store->id)
+        ->where('name', 'SITE_RTL')
+        ->first(); 
+    
 @endphp
 <!DOCTYPE html>
-<html class="{{ $color }}">
+<html class="{{ $color }}" dir="{{ empty($data) ? '' : ($data->value == 'on' ? 'rtl' : '' )}}">
   <head>
     <meta charset="utf-8" />
     <meta
@@ -57,7 +64,9 @@ $languages=\App\Models\Utility::languages();
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/style.css')}}">
     <!-- custom css -->
     <link rel="stylesheet" href="{{ asset('custom/css/custom.css') }}">
-
+    @if(isset($data->value) && $data->value == 'on')
+        <link rel="stylesheet" href="{{ asset('css/bootstrap-rtl.css') }}">
+    @endif
 
     @if($cust_darklayout=='on')
     <link rel="stylesheet" href="{{ asset('assets/css/style-dark.css')}}">
@@ -228,6 +237,7 @@ $languages=\App\Models\Utility::languages();
                                                             </td>
                                                         </tr>
                                                     @endif
+                                                  
                                                     @if($order->status == 'delivered' && !empty($product->downloadable_prodcut))
                                                     <tr>
                                                         <td colspan="4">
@@ -329,31 +339,31 @@ $languages=\App\Models\Utility::languages();
                                     <h5>{{__('Shipping Information')}}</h5>
                                 </div>
                                 <div class="">
-                                    <address class="mb-0 text-sm">
-                                        <dl class="row mt-4 align-items-center">
+                                    <ul class="mb-0 text-sm">
+                                        <li class="row mt-4 align-items-center">
 
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Name')}}</dt>
-                                            <dd class="col-sm-9 text-sm"> {{$user_details->name}}</dd>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Name')}}</span>
+                                            <span class="col-sm-6 text-sm"> {{$user_details->name}}</span>
 
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Company')}}</dt>
-                                            <dd class="col-sm-9 text-sm"> {{$user_details->shipping_address}}</dd>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Company')}}</span>
+                                            <span class="col-sm-6 text-sm"> {{$user_details->shipping_address}}</span>
 
-                                            <dt class="col-sm-3 h6 text-sm">{{__('City')}}</dt>
-                                            <dd class="col-sm-9 text-sm">{{$user_details->shipping_city}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Country')}}</dt>
-                                            <dd class="col-sm-9 text-sm"> {{$user_details->shipping_country}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Postal Code')}}</dt>
-                                            <dd class="col-sm-9 text-sm">{{$user_details->shipping_postalcode}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Phone')}}</dt>
-                                            <dd class="col-sm-9 text-sm">{{$user_details->phone}}</dd>
+                                            <span class="col-sm-6 h6 text-sm">{{__('City')}}</span>
+                                            <span class="col-sm-6 text-sm">{{$user_details->shipping_city}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Country')}}</span>
+                                            <span class="col-sm-6 text-sm"> {{$user_details->shipping_country}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Postal Code')}}</span>
+                                            <span class="col-sm-6 text-sm">{{$user_details->shipping_postalcode}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Phone')}}</span>
+                                            <span class="col-sm-6 text-sm">{{$user_details->phone}}</span>
                                             @if(!empty($location_data && $shipping_data))
-                                                <dt class="col-sm-3 h6 text-sm">{{__('Location')}}</dt>
-                                                <dd class="col-sm-9 text-sm">{{$location_data->name}}</dd>
-                                                <dt class="col-sm-3 h6 text-sm">{{__('Shipping Method')}}</dt>
-                                                <dd class="col-sm-9 text-sm">{{$shipping_data->shipping_name}}</dd>
+                                                <span class="col-sm-6 h6 text-sm">{{__('Location')}}</span>
+                                                <span class="col-sm-6 text-sm">{{$location_data->name}}</span>
+                                                <span class="col-sm-6 h6 text-sm">{{__('Shipping Method')}}</span>
+                                                <span class="col-sm-6 text-sm">{{$shipping_data->shipping_name}}</span>
                                             @endif
-                                        </dl>
-                                    </address>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -363,28 +373,28 @@ $languages=\App\Models\Utility::languages();
                                     <h5>{{__('Billing Information')}}</h5>
                                 </div>
                                 <div class="">
-                                    <address class="mb-0 text-sm">
-                                        <dl class="row mt-4 align-items-center">
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Name')}}</dt>
-                                            <dd class="col-sm-9 text-sm"> {{$user_details->name}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Company')}}</dt>
-                                            <dd class="col-sm-9 text-sm"> {{$user_details->billing_address}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('City')}}</dt>
-                                            <dd class="col-sm-9 text-sm">{{$user_details->billing_city}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Country')}}</dt>
-                                            <dd class="col-sm-9 text-sm"> {{$user_details->billing_country}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Postal Code')}}</dt>
-                                            <dd class="col-sm-9 text-sm">{{$user_details->billing_postalcode}}</dd>
-                                            <dt class="col-sm-3 h6 text-sm">{{__('Phone')}}</dt>
-                                            <dd class="col-sm-9 text-sm">{{$user_details->phone}}</dd>
+                                    <ul class="mb-0 text-sm">
+                                        <li class="row mt-4 align-items-center">
+                                            <span class="col-sm-6 h6 text-sm">{{__('Name')}}</span>
+                                            <span class="col-sm-6 text-sm"> {{$user_details->name}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Company')}}</span>
+                                            <span class="col-sm-6 text-sm"> {{$user_details->billing_address}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('City')}}</span>
+                                            <span class="col-sm-6 text-sm">{{$user_details->billing_city}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Country')}}</span>
+                                            <span class="col-sm-6 text-sm"> {{$user_details->billing_country}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Postal Code')}}</span>
+                                            <span class="col-sm-6 text-sm">{{$user_details->billing_postalcode}}</span>
+                                            <span class="col-sm-6 h6 text-sm">{{__('Phone')}}</span>
+                                            <span class="col-sm-6 text-sm">{{$user_details->phone}}</span>
                                             @if(!empty($location_data && $shipping_data))
-                                                <dt class="col-sm-3 h6 text-sm">{{__('Location')}}</dt>
-                                                <dd class="col-sm-9 text-sm">{{$location_data->name}}</dd>
-                                                <dt class="col-sm-3 h6 text-sm">{{__('Shipping Method')}}</dt>
-                                                <dd class="col-sm-9 text-sm">{{$shipping_data->shipping_name}}</dd>
+                                                <span class="col-sm-6 h6 text-sm">{{__('Location')}}</span>
+                                                <span class="col-sm-6 text-sm">{{$location_data->name}}</span>
+                                                <span class="col-sm-6 h6 text-sm">{{__('Shipping Method')}}</span>
+                                                <span class="col-sm-6 text-sm">{{$shipping_data->shipping_name}}</span>
                                             @endif
-                                        </dl>
-                                    </address>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

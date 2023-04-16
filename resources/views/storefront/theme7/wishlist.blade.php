@@ -4,79 +4,67 @@
 @endsection
 @push('css-page')
 @endpush
-@php
+    @php
     $imgpath=\App\Models\Utility::get_file('uploads/is_cover_image/');
-
     @endphp
 @section('content')
-    <section class="my-cart-section pt-5 mb-5">
+<div class="wrapper">
+    <section class="wishlist-section padding-top padding-bottom">
         <div class="container">
-            <div class="tab-content  theme6 py-3 px-3 px-sm-0 tabs-container " id="nav-tabContent">
-
-                <div class=" pro-cards ">
-                    <div class="row">
-                        @foreach ($products as $k => $product)
-                            <div class="col-lg-3 col-sm-6 product-box d-flex  wishlist_{{ $product['product_id'] }} mt-4">
-                                <div class="border-0 bg-white card card-product rounded-0 w-100">
-                                    <div
-                                        class="align-items-center border-0 card-header d-flex justify-content-between p-0 pt-4 pr-3">
-                                        <span
-                                            class="badge badge-secondary font-size-12 font-weight-300 ls-1 px-4 py-3 text-uppercase rounded-0">{{ __('Bestseller') }}</span>
-                                        <button type="button"
-                                            class="ml-3 action-item wishlist-icon delete_wishlist_item"
-                                            id="delete_wishlist_item1" data-id="{{ $product['product_id'] }}">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                    </div>
-                                    <div
-                                        class="card-image col-6 mx-auto pt-5 pb-4 d-flex justify-content-center align-items-center">
-
-                                        @if (!empty($product['image']))
-                                            <img alt="Image placeholder" src="{{$imgpath.$product['image'] }}"
-                                                class="img-center img-fluid">
-                                        @else
-                                            <img alt="Image placeholder"
-                                                src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}"
-                                                class="img-center img-fluid">
-                                        @endif
-                                    </div>
-                                    <div class="card-body pt-0 text-center">
-                                        <h6 class="mb-3"><span class="d-block">{{ $product['product_name'] }}</span>
-
-                                        </h6>
-                                        <p class="text-sm">
-                                            <span class="td-gray">{{ __('Category') }}:</span>
-                                            {{ \App\Models\Product::getCategoryById($product['product_id']) }}
-                                        </p>
-                                        <span class="card-price mb-4">
-                                            @if ($product['enable_product_variant'] == 'on')
-                                                {{ __('In variant') }}
-                                            @else
-                                                {{ \App\Models\Utility::priceFormat($product['price']) }}
-                                            @endif
-                                        </span>
-
-                                        @if ($product['enable_product_variant'] == 'on')
-                                            <a href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}"
-                                                class="border-0 btn btn-block btn-secondary pcart-icon py-4 rounded-0 text-underline">
-                                                {{ __('ADD TO CART') }}
-                                            </a>
-                                        @else
-                                            <a href="javascript:void(0)"
-                                                class="border-0 btn btn-block btn-secondary pcart-icon py-4 rounded-0 text-underline add_to_cart"
-                                                data-id="{{ $product['product_id'] }}">
-                                                {{ __('ADD TO CART') }}
-                                            </a>
-                                        @endif
-                                    </div>
+            <div class="row product-row">
+                @foreach ($products as $k => $product)
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="product-card">
+                            <div class="product-card-inner">
+                                <div class="bestseller-tag">
+                                    <p>{{ __('BESTSELLER') }}</p>
                                 </div>
+                                <div class="product-card-body">
+                                    <div class="card-img">
+                                        <a href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}">
+                                            @if (!empty($product['image']))
+                                                <img src="{{  $imgpath.$product['image'] }}">
+                                            @else
+                                                <img src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}">
+                                            @endif
+                                        </a>
+                                    
+                                        <a class="heart-icon action-item wishlist-icon bg-light-gray delete_wishlist_item" id="delete_wishlist_item1" data-id="{{ $product['product_id'] }}">
+                                            <i class="fas fa-heart"></i>
+                                        </a>
+                                    </div>
+                                    <div class="card-content">
+                                        <h6>
+                                            <a href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}">{{ $product['product_name'] }}</a>
+                                        </h6>
+                                    <p><span>{{ __('Category') }}:</span>{{ \App\Models\Product::getCategoryById($product['product_id']) }}</p>
+                                    <div class="price">
+                                        @if ($product['enable_product_variant'] == 'on')
+                                            <ins>{{ __('In variant') }}</ins>
+                                        @else  
+                                            <ins>{{ \App\Models\Utility::priceFormat($product['price']) }}</ins>
+                                        @endif
+                                    </div>
+                                    @if ($product['enable_product_variant'] == 'on')
+                                        <div class="last-btn">
+                                            <a href="{{ route('store.product.product_view', [$store->slug, $product['product_id']]) }}" class="btn" tabindex="0">{{ __('Add to cart') }}</a>
+                                        </div>
+                                    @else   
+                                        <div class="last-btn">
+                                            <a href="javascript:void(0)" class="btn add_to_cart" tabindex="0" data-id="{{ $product['product_id'] }}">{{ __('Add to cart') }}</a>
+                                        </div>
+                                    @endif
+                                    </div>
+                                </div>    
                             </div>
-                        @endforeach
+                            
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
-    </section>
+    </section>    
+</div>  
 @endsection
 @push('script-page')
 <script>

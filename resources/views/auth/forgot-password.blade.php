@@ -5,9 +5,9 @@
 @section('language-bar')
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
-            <select name="language" id="language" class="btn-primary custom_btn ms-2 me-2 language_option_bg" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
+            <select name="language" id="language" class="btn btn-light-primary dropdown-toggle custom_btn ms-2 me-2 language_option_bg" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
                 @foreach(App\Models\Utility::languages() as $language)
-                    <option @if($lang == $language) selected @endif value="{{ url('/forgot-password',$language) }}">{{Str::upper($language)}}</option>
+                    <option class="dropdown-item" @if($lang == $language) selected @endif value="{{ route('login',$language) }}">{{Str::upper($language)}}</option>
                 @endforeach
             </select>
         </li>
@@ -64,6 +64,8 @@
             <div class="auth-img-content">
                 <img src="{{ asset('assets/images/auth/img-auth-3.svg') }}" alt="" class="img-fluid">
                 <h3 class="text-white mb-4 mt-5"> {{ __('“Attention is the new currency”') }}</h3>
+                <p class="text-white"> {{__('The more effortless the writing looks, the more effort the writer
+                    actually put into the process.')}}</p>
             </div>
         </div>
     </div>

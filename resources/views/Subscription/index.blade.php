@@ -13,11 +13,10 @@
     <li class="breadcrumb-item active" aria-current="page">{{ __('Subscriber') }}</li>
 @endsection
 @section('action-btn')
-    <div class="pr-2">
-        <a href="#" data-size="md" data-url="{{ route('subscriptions.create') }}" data-ajax-popup="true"
-            data-title="{{ __('Add Subscriber') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="{{ __('Add Subscriber') }}"><i class="ti ti-plus"></i></i></a>
-    </div>
+   
+    <a class="btn btn-sm btn-icon  btn-primary me-2 text-white" data-url="{{ route('subscriptions.create') }}" data-title="{{ __('Add Subscriber') }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Add Subscriber') }}">
+        <i  data-feather="plus"></i>
+    </a>
 @endsection
 @section('filter')
 @endsection
@@ -40,21 +39,21 @@
                                     <tr data-name="{{ $sub->email }}">
                                         <td>{{ $sub->email }}</td>
                                         <td class="Action">
-                                            <span>
-                                                <div class="action-btn bg-danger ms-2">
-                                                    <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
-                                                        href="#" data-title="{{ __('Delete Lead') }}"
-                                                        data-confirm="{{ __('Are You Sure?') }}"
-                                                        data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                        data-confirm-yes="delete-form-{{ $sub->id }}"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="{{ __('Delete') }}" data-tooltip="{{__('Delete')}}">
-                                                        <i class="ti ti-trash"></i>
-                                                    </a>
-                                                    {!! Form::open(['method' => 'DELETE', 'route' => ['subscriptions.destroy', $sub->id], 'id' => 'delete-form-' . $sub->id]) !!}
-                                                    {!! Form::close() !!}
-                                                </div>
-                                            </span>
+                                          
+                                            <div class="d-flex">
+                                                <a class="bs-pass-para btn btn-sm btn-icon bg-light-secondary" href="#"
+                                                    data-title="{{ __('Delete Lead') }}"
+                                                    data-confirm="{{ __('Are You Sure?') }}"
+                                                    data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                    data-confirm-yes="delete-form-{{ $sub->id }}"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    title="{{ __('Delete') }}">
+                                                    <i class="ti ti-trash f-20"></i>
+                                                </a>
+                                                {!! Form::open(['method' => 'DELETE', 'route' => ['subscriptions.destroy', $sub->id], 'id' => 'delete-form-' . $sub->id]) !!}
+                                                {!! Form::close() !!}
+                                            </div>
+                                            
                                         </td>
                                     </tr>
                                 @endforeach

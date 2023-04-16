@@ -24,13 +24,13 @@
                                 <tr>
                                     <th class="sorting" tabindex="0" aria-controls="selection-datatable" rowspan="1"
                                         colspan="1" aria-label=" Coupon: activate to sort column ascending"
-                                        style="width: 354px;"> Coupon</th>
+                                        style="width: 354px;"> {{ __('Coupon') }}</th>
                                     <th class="sorting" tabindex="0" aria-controls="selection-datatable" rowspan="1"
                                         colspan="1" aria-label=" User: activate to sort column ascending"
-                                        style="width: 411px;"> User</th>
+                                        style="width: 411px;"> {{ __('Username') }}</th>
                                     <th class="sorting" tabindex="0" aria-controls="selection-datatable" rowspan="1"
                                         colspan="1" aria-label=" Date: activate to sort column ascending"
-                                        style="width: 642px;"> Date</th>
+                                        style="width: 642px;"> {{ __('Date') }}</th>
                                 </tr>
                             </thead>    
                             <tbody>

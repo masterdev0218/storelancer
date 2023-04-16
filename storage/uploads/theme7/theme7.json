@@ -127,7 +127,7 @@
                 "field_type": "text area"
             },
             {
-                "field_name": "Bckground Image",
+                "field_name": "Background Image",
                 "field_slug": "homepage-header-bg-image",
                 "field_help_text": "",
                 "field_default_text": "theme7/header/banner_img.jpg",

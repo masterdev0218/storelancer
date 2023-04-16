@@ -77,6 +77,13 @@
                 for="shipping_method">{{ __('Enable Shipping Method') }}</label>
         </div>
     </div>
+    <div class="col-6">
+        <div class="custom-control form-switch pt-2">
+            <input type="checkbox" class="form-check-input" name="pwa_store" id="pwa_store">
+        <label class="custom-control-label form-check-label"
+            for="pwa_store">{{ __('Progressive Web App (PWA)') }}</label>
+        </div>
+    </div>
 </div>
 <div class="col-12 mt-3">
     <div class="form-group">

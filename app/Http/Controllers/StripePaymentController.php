@@ -53,23 +53,27 @@ class StripePaymentController extends Controller
 
     public function stripe($code)
     {
-        $plan_id = \Illuminate\Support\Facades\Crypt::decrypt($code);
-        $plan    = Plan::find($plan_id);
-        if($plan)
-        {
-            $admin_payments_details = Utility::getAdminPaymentSetting();
+        try {
+            $plan_id = \Illuminate\Support\Facades\Crypt::decrypt($code);
+            $plan    = Plan::find($plan_id);
+            if($plan)
+            {
+                $admin_payments_details = Utility::getAdminPaymentSetting();
 
-            return view('plans/stripe', compact('plan', 'admin_payments_details'));
+                return view('plans/stripe', compact('plan', 'admin_payments_details'));
+            }
+            else
+            {
+                return redirect()->back()->with('error', __('Plan is deleted.'));
+            }
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', __('Plan is not found.'));
         }
-        else
-        {
-            return redirect()->back()->with('error', __('Plan is deleted.'));
-        }
+       
     }
 
     public function stripePost(Request $request, $slug)
     {
-
         $cart     = session()->get($slug);
         $products = $cart['products'];
          $cust_details = $cart['customer'];
@@ -228,7 +232,7 @@ class StripePaymentController extends Controller
                     }
                     $order = Order::create(
                         [
-                            'order_id' => $orderID,
+                            'order_id' => time(),
                             'name' => $request->name,
                             'email'=> $cust_details['email'],
                             'card_number' => isset($data['payment_method_details']['card']['last4']) ? $data['payment_method_details']['card']['last4'] : '',
@@ -311,7 +315,7 @@ class StripePaymentController extends Controller
         }
         else
         {
-            return redirect()->back()->with('error', __('Plan is deleted.'));
+            return redirect()->back()->with('error', __('product is not available.'));
         }
     }
 

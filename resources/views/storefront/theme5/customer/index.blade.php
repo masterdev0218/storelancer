@@ -2,122 +2,73 @@
 @section('page-title')
     {{ __('Cart') }}
 @endsection
+@php
+if (!empty(session()->get('lang'))) {
+    $currantLang = session()->get('lang');
+} else {
+    $currantLang = $store->lang;
+}
+\App::setLocale($currantLang);
+@endphp
 @section('content')
 @section('head-title')
     {{ __('Welcome') . ', ' . \Illuminate\Support\Facades\Auth::guard('customers')->user()->name }}
 @endsection
 @section('content')
-
-    {{-- HEADER IMG --}}
-    @if ($storethemesetting['enable_header_img'] == 'on')
-        <section class="contain-product container">
-            <div class="row">
-                <div class="col-lg-6 col-md-12">
-                    <div class="banner-contain">
-                        <h1>{{ __('Products you purchased') }}</h1>
-                        <p>
-                        </p>
-                        <a href="{{ route('store.slug', $store->slug) }}"
-                            class="btn btn-sm btn-primary btn-icon shadow hover-shadow-lg hover-translate-y-n3"
-                            id="pro_scroll">
-                            <span class="btn-inner--text">{{ __('Back to home') }}</span>
-                            <span class="btn-inner--icon">
-                                <i class="fas fa-shopping-basket"></i>
-                            </span>
-                        </a>
+<div class="wrapper">
+    <div class="wrapper">
+        <section class="customer-home padding-top padding-bottom">
+            <div class="container">
+                @if(!empty($orders) && count($orders) > 0)
+                    <div class="section-title d-flex align-items-center justify-content-between">
+                        <h2><b>{{__('Products you purchased')}}</b></h2>
+                        <a href="{{route('store.slug',$store->slug)}}" class="btn">{{__('Back to home')}}  <i class="fas fa-home"></i></a>
                     </div>
-                </div>
-
-            </div>
-        </section>
-    @endif
-
-
-    <section class="slice slice-lg delimiter-bottom">
-        <div class="container">
-
-            @if (!empty($orders) && count($orders) > 0)
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table align-items-center">
+                    <div class="purchased-list">
+                        <table class="purchased-tabel">
                             <thead>
                                 <tr>
-                                    <th scope="col">{{ __('Order') }}</th>
-                                    <th scope="col" class="sort">{{ __('Date') }}</th>
-                                    <th scope="col" class="sort">{{ __('Value') }}</th>
-                                    <th scope="col" class="sort">{{ __('Payment Type') }}</th>
-                                    <th scope="col" class="text-right">{{ __('Action') }}</th>
+                                    <th>{{__('Order')}}</th>
+                                    <th>{{__('Date')}}</th>
+                                    <th>{{__('Value')}}</th>
+                                    <th>{{__('Payment Type')}}</th>
+                                    <th>{{__("Action")}}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($orders as $order)
+                                @foreach($orders as $order)
                                     <tr>
-                                        <th scope="row">
-                                            <a href="{{ route('customer.order', [$store->slug, Crypt::encrypt($order->id)]) }}"
-                                                class="btn btn-sm btn-white btn-icon rounded-pill text-dark">
-                                                <span class="btn-inner--text">{{ '#' . $order->order_id }}</span>
-                                            </a>
-                                        </th>
-                                        <td class="order">
-                                            <span
-                                                class="h6 text-sm font-weight-bold mb-0">{{ \App\Models\Utility::dateFormat($order->created_at) }}</span>
-                                        </td>
-
+                                        <td><a href="{{route('customer.order',[$store->slug,Crypt::encrypt($order->id)])}}">{{'#'.$order->order_id}}</a></td>
+                                        <td>{{\App\Models\Utility::dateFormat($order->created_at)}}</td>
+                                        <td>{{\App\Models\Utility::priceFormat($order->price)}}</td>
+                                        <td>{{$order->payment_type}}</td>
                                         <td>
-                                            <span
-                                                class="value text-sm mb-0">{{ \App\Models\Utility::priceFormat($order->price) }}</span>
-                                        </td>
-                                        <td>
-                                            <span class="taxes text-sm mb-0">{{ $order->payment_type }}</span>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-end">
-                                                @if ($order->status != 'Cancel Order')
-                                                    <button type="button"
-                                                        class="btn btn-sm {{ $order->status == 'pending' ? 'btn-soft-info' : 'btn-soft-success' }} btn-icon rounded-pill">
-                                                        <span class="btn-inner--icon">
-                                                            @if ($order->status == 'pending')
-                                                                <i class="fas fa-check soft-success"></i>
-                                                            @else
-                                                                <i class="fa fa-check-double soft-success"></i>
-                                                            @endif
-                                                        </span>
-                                                        @if ($order->status == 'pending')
-                                                            <span class="btn-inner--text">
-                                                                {{ __('Pending') }}:
-                                                                {{ \App\Models\Utility::dateFormat($order->created_at) }}
-                                                            </span>
+                                            <div class="actions-wrapper">
+                                                @if($order->status != 'Cancel Order')
+                                                    <span class="badge rounded-pill">
+                                                        @if($order->status == 'pending')
+                                                            <i class="fas fa-check soft-success"></i>
                                                         @else
-                                                            <span class="btn-inner--text">
-                                                                {{ __('Delivered') }}:
-                                                                {{ \App\Models\Utility::dateFormat($order->updated_at) }}
-                                                            </span>
+                                                            <i class="fa fa-check-double soft-success"></i>
                                                         @endif
-                                                    </button>
+                                                    </span>
+                                                    @if($order->status == 'pending')
+                                                        {{__('Pending')}}: {{\App\Models\Utility::dateFormat($order->created_at)}}
+                                                    @else
+                                                        {{__('Delivered')}}: {{\App\Models\Utility::dateFormat($order->updated_at)}}
+                                                    @endif
                                                 @else
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-soft-danger btn-icon rounded-pill">
-                                                        <span class="btn-inner--icon">
-                                                            @if ($order->status == 'pending')
-                                                                <i class="fas fa-check soft-success"></i>
-                                                            @else
-                                                                <i class="fa fa-check-double soft-success"></i>
-                                                            @endif
-                                                        </span>
-                                                        <span class="btn-inner--text">
-                                                            {{ __('Cancel Order') }}:
-                                                            {{ \App\Models\Utility::dateFormat($order->created_at) }}
-                                                        </span>
-                                                    </button>
+                                                    <span class="badge rounded-pill">
+                                                        @if($order->status == 'pending')
+                                                            <i class="fas fa-check soft-success"></i>
+                                                        @else
+                                                            <i class="fa fa-check-double soft-success"></i>
+                                                        @endif
+                                                    </span>
+                                                
+                                                    {{__('Cancel Order')}}: {{\App\Models\Utility::dateFormat($order->created_at)}}
                                                 @endif
-                                                <!-- Actions -->
-                                                <div class="actions ml-3">
-                                                    <a href="{{ route('customer.order', [$store->slug, Crypt::encrypt($order->id)]) }}"
-                                                        class="action-item mr-2" data-toggle="tooltip"
-                                                        data-title="{{ __('Details') }}">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                </div>
+                                                <a href="{{route('customer.order',[$store->slug,Crypt::encrypt($order->id)])}}" data-toggle="tooltip" data-title="{{__('Details')}}" class="view-btn"><i class="fas fa-eye"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -125,21 +76,21 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            @else
-                <tr>
-                    <td colspan="7">
-                        <div class="text-center">
-                            <i class="fas fa-folder-open text-gray" style="font-size: 48px;"></i>
-                            <h2>{{ __('Opps...') }}</h2>
-                            <h6> {!! __('No data Found.') !!} </h6>
-                        </div>
-                    </td>
-                </tr>
-            @endif
-
-        </div>
-    </section>
+                @else
+                    <tr>
+                        <td colspan="7">
+                            <div class="text-center">
+                                <i class="fas fa-folder-open text-gray" style="font-size: 48px;"></i>
+                                <h2>{{ __('Opps...') }}</h2>
+                                <h6> {!! __('No data Found.') !!} </h6>
+                            </div>
+                        </td>
+                    </tr>
+                @endif
+            </div>
+        </section>
+    </div>
+</div>
 @endsection
 @push('script-page')
 @endpush

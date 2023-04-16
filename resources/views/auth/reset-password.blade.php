@@ -53,44 +53,4 @@
         </div>
     </div>
 </div>
-
-
 @endsection
-
-
-
-  <script>
- 
-    $(".navbar-toggler").click(function(){
-    $(".collapse").addClass("show");
-});
-
-$('html').click(function() {
-    $(".collapse.show").removeClass("show");
-});
-
-$('.collapse').click(function(event){
-    event.stopPropagation();
-});
- 
-    $(document).ready(function(){ 
-    $('.navbar-toggler').click(
-        function(){ 
-            $('.collapse').removeClass('show'); 
-            $('.collapse').toggleClass('show'); 
-            return false;       
-        }); 
-});
-
-$(document).mouseup(function (e)
-{
-    var container = $(".navbar-toggler");
-
-    if (!container.is(e.target) // if the target of the click isn't the container...
-        && container.has(e.target).length === 0) // ... nor a descendant of the container
-    {
-        container.removeClass('show');
-    }
-});
- 
-  </script>

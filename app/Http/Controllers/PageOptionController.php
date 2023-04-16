@@ -57,6 +57,7 @@ class PageOptionController extends Controller
      */
     public function store(Request $request)
     {
+       
         $validator = \Validator::make(
             $request->all(), [
                                'name' => 'required|max:120',

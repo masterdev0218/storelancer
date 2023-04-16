@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\ProductVariantOption;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 
 class RapydController extends Controller
@@ -169,10 +170,12 @@ class RapydController extends Controller
 
                     $redirect_url = $object["data"]["redirect_url"];
 
+                    // session()->put('rapyd_payment_id', $object['data']['id']);
                     Session::put('rapyd_payment_id', $object['data']['id']);
 
-                    echo "<script>window.location.href='" . $redirect_url . "';</script>";
-                    exit;
+                    if (isset($redirect_url)) {
+                        return redirect()->away($redirect_url);
+                    }
                 } catch (Exception $e) {
                     echo "Error =>$e";
                 }
@@ -336,7 +339,6 @@ class RapydController extends Controller
                     $order->card_number = '';
                     $order->card_exp_month = '';
                     $order->card_exp_year = '';
-                    $order->status = 'pending';
                     $order->user_address_id = $user_details['id'];
                     $order->shipping_data = !empty($shipping_data) ? $shipping_data : '';
                     $order->coupon = $price;
@@ -346,7 +348,7 @@ class RapydController extends Controller
                     $order->product = json_encode($products);
                     $order->price_currency = $store->currency_code;
                     $order->txn_id = $payment_id;
-                    $order->payment_type = __('PAYPAL');
+                    $order->payment_type = __('RAPYD');
                     $order->payment_status = $statuses;
                     $order->receipt = '';
                     $order->user_id = $store['id'];

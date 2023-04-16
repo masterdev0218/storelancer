@@ -8,15 +8,18 @@
     </div>
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('product.index') }}">{{ __('Product') }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
+<li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
+<li class="breadcrumb-item"><a href="{{ route('product.index') }}">{{ __('Product') }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ $product->name }}</li>
 @endsection
 @section('action-btn')
-    <div class="">
-        <a href="{{ route('product.edit', $product->id) }}" class="btn btn-sm btn-primary btn-icon m-1"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit Product') }}"><i
-                class="ti ti-pencil text-white"></i></a>
+    <div class="d-flex align-items-center justify-content-end">
+        <a class="btn btn-primary me-3 text-white" data-bs-toggle="tooltip" data-size="md" data-toggle="modal" data-url="{{ route('rating', [$store->slug, $product->id]) }}"  data-ajax-popup="true" data-title="{{ __('Create New Rating') }}" data-bs-placement="top" title="{{ __('Create New Rating') }}"> 
+            <i data-feather="star" class="me-2"></i> {{ __('Add Ratting') }}
+        </a>
+        <a href="{{ route('product.edit', $product->id) }}" class="btn btn-primary"> 
+            <i data-feather="edit" class="me-2"></i> {{ __('Edit Product') }}
+        </a>
     </div>
 @endsection
 @section('filter')
@@ -26,252 +29,150 @@
     $p_logo=\App\Models\Utility::get_file('uploads/product_image/');
 @endphp
 @section('content')
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card">
-                <div class="card-body">
-                    <!-- Product title -->
-                    <h5 class="h4">{{ $product->name }}</h5>
-                    <!-- Rating -->
-                    <div class="row align-items-center">
-                        <div class="col-sm-6">
-                            <span class="static-rating static-rating-sm d-block">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    @php
-                                        $icon = 'fa-star';
-                                        $color = '';
-                                        $newVal1 = $i - 0.5;
-                                        if ($avg_rating < $i && $avg_rating >= $newVal1) {
-                                            $icon = 'fa-star-half-alt';
-                                        }
-                                        if ($avg_rating >= $newVal1) {
-                                            $color = 'text-warning';
-                                        }
-                                    @endphp
-                                    <i class="fas {{ $icon . ' ' . $color }}"></i>
-                                @endfor
-                                {{ $avg_rating }}/5 ({{ $user_count }} {{ __('reviews') }})
-                            </span>
-                        </div>
-                        <div class="col-sm-6 text-sm-right">
-                            <ul class="list-inline mb-0">
-                                <li class="list-inline-item">
-                                    <span
-                                        class="badge badge-pill badge-soft-info">{{ __('ID: #') }}{{ $product->SKU }}</span>
-                                </li>
-                                <li class="list-inline-item">
-                                    @if ($product->enable_product_variant != 'on')
-                                        @if ($product->quantity == 0)
-                                            <span class="badge badge-pill badge-soft-danger">
-                                                {{ __('Out of stock') }}
-                                            </span>
-                                        @else
-                                            <span class="badge badge-pill badge-soft-success">
-                                                {{ __('In stock') }}
-                                            </span>
-                                        @endif
-                                    @endif
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- Description -->
-                    {!! $product->description !!}
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="card-body p-3 d-flex justify-content-between">
-                    <h5 class="float-left mb-0 pt-2">{{ __('Rating') }}</h5>
-                    <a href="#" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip" data-size="md"
-                        data-toggle="modal" data-url="{{ route('rating', [$store->slug, $product->id]) }}"
-                        data-ajax-popup="true" data-title="{{ __('Create New Rating') }}" data-bs-placement="top"
-                        title="{{ __('Create New Rating') }}"><i class="ti ti-plus"></i></a>
-                </div>
-                @foreach ($product_ratings as $product_key => $product_rating)
-                    <div id="review_list" class="px-3 pt-2 border-top pb-0">
-                        <div class="d-flex justify-content-between">
-                            <div class="theme-review float-left" id="comment_126267">
-                                <div class="theme_review_item">
-                                    <div class="theme-review__heading">
-                                        <div class="theme-review__heading__item text-sm small">
-                                            <h6>{{ $product_rating->title }}</h6>
-                                            <tr class="list-dotted ">
-                                                <td class="list-dotted__item">by {{ $product_rating->name }} :</td>
-                                                <td class="list-dotted__item">
-                                                    {{ $product_rating->created_at->diffForHumans() }}</td>
-                                            </tr>
-                                        </div>
-                                    </div>
+<div class="row">
+    <!-- [ sample-page ] start -->
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card border border-primary shadow-none">
+                    <div class="card-body">
+                        <div class="d-flex mb-3 align-items-center gap-2 flex-sm-row flex-column justify-content-between">
+                            <h4>{{ $product->name }}</h4>
+                            <div class="ps-3 d-flex align-items-center ">
+                                    @if($product->enable_product_variant =='on')
+                                    <span class="badge rounded p-2 bg-light-primary "><span class="variant_qty">0</span>  {{ __('Total Avl.Quantity') }}</span>
+                                    @else
+                                    <span class="badge rounded p-2 bg-light-primary"> {{$product->quantity}}  {{ __('Total Avl.Quantity') }}</span>
+                                    @endif
+                                <div class="text-end ms-3">
+                                    <span>{{ __('Price') }}:</span>
+                                    <h5 class="variasion_price">
+                                    @if ($product->enable_product_variant == 'on')
+                                        {{ \App\Models\Utility::priceFormat(0) }}
+                                    @else
+                                        {{ \App\Models\Utility::priceFormat($product->price) }}
+                                    @endif
+                                    </h5>
                                 </div>
                             </div>
-                            <div class="">
-                                    <span class="m-0">
-                                        <div class="action-btn  bg-info ms-2">
-                                            <a href="#" data-size="md"
-                                                class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                data-url="{{ route('rating.edit', $product_rating->id) }}"
-                                                data-ajax-popup="true" data-title="{{ __('Edit Rating') }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="{{ __('Edit Rating ') }}"><i
-                                                    class="ti ti-pencil text-white"></i></a>
-                                        </div>
-                                        <div class="action-btn bg-danger ms-2">
-                                        <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"  data-bs-toggle="tooltip" data-bs-placement="top"
-                                        title="{{ __('Delete') }}" href="#" data-title="{{__('Delete Lead')}}" data-confirm="{{__('Are You Sure?')}}" data-text="{{__('This action can not be undone. Do you want to continue?')}}" data-confirm-yes="delete-form-{{$product_rating->id}}">
-                                            <i class="ti ti-trash"></i>
+                        </div>
+                        <div class="d-flex flex-lg-row flex-column align-items-center justify-content-between ">
+                            <p><b>{{ __('Categories') }}:{{  $product->categories->name ?? ''  }} </b></p> <p><b>{{ __('SKU') }}: {{ $product->SKU }}</b></p>
+                            <p class="d-inline-flex align-items-center">
+                                @foreach ($product_ratings as $product_key => $product_rating)
+                                    @for ($i = 0; $i < 5; $i++)
+                                    <i class="fas fa-star {{ $product_rating->ratting > $i ? 'text-success' : 'text-secondary' }}"></i>
+                                    @endfor
+                                    <span class="ms-2 d-block">{{ __('Rating') }}: {{ $product_rating->ratting }}/5 ({{ $user_count }} {{ __('reviews') }})</span>
+                                @endforeach
+                            </p>
+                        </div>
+                        <div class="border mb-4 rounded border-primary product_image">
+                            @if (!empty($product->is_cover))
+                                <img src="{{ asset(Storage::url('uploads/is_cover_image/' . $product->is_cover)) }}" alt="" class="w-100">
+                            @else
+                                <img src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}" alt="" class="w-100">
+                            @endif
+                        </div>
+                        <p class="mb-2">{{ __('Description') }}:</p>
+                        <p>{!! $product->description !!}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-sm-6">
+                @if ($product->enable_product_variant == 'on')
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <input type="hidden" id="product_id" value="{{ $product->id }}">
+                                <input type="hidden" id="variant_id" value="">
+                                <input type="hidden" id="variant_qty" value="">
+                                @foreach ($product_variant_names as $key => $variant)
+                                    <div class="col-sm-6 mb-4 mb-sm-0">
+                                        <span class="d-block h6 mb-0">
+                                            <th>
+                                                <label for="" class="col-form-label"> {{ ucfirst($variant->variant_name) }}</label>
 
+                                            </th>
+                                            <select name="product[{{$key}}]" id='choices-multiple-{{$key}}'  class="form-control multi-select  pro_variants_name{{$key}} change_price">
+                                            <option value="">{{ __('Select')  }}</option>
+                                                @foreach ($variant->variant_options as $key => $values)
+                                                <option value="{{$values}}">{{$values}}</option>
+                                            @endforeach
+                                        </select>
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                <div class="d-flex justify-content-between">
+                    <h4>{{ __('Ratings') }}</h4>
+                </div>
+               
+                <div class="card border shadow-none">
+                    <div class="card-body p-0">
+                        @foreach ($product_ratings as $product_key => $product_rating)
+                            <div class="border-bottom p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h3 class="mb-0">{{ $product_rating->title }}</h3>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="form-check form-switch mb-0">
+                                            <input type="checkbox" class="form-check-input rating_view" name="rating_view" id="enable_rating{{ $product_key }}" data-id="{{ $product_rating['id'] }}" {{ $product_rating->rating_view == 'on' ? 'checked' : '' }}>
+                                            <label class="form-check-label f-w-600 pl-1" for="enable_rating{{ $product_key }}"></label>
+                                        </div>
+                                        <a href="#!" class="btn btn-icon btn-sm btn-light-secondary me-2"  data-url="{{ route('rating.edit', $product_rating->id) }}"  data-ajax-popup="true" data-title="{{ __('Edit Rating') }}"  data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit Rating ') }}">
+                                            <i data-feather="edit"></i>
+                                        </a>
+                                        <a href="#!" class="bs-pass-para btn-icon btn-sm btn-light-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Delete') }}" data-title="{{__('Delete Lead')}}" data-confirm="{{__('Are You Sure?')}}" data-text="{{__('This action can not be undone. Do you want to continue?')}}" data-confirm-yes="delete-form-{{$product_rating->id}}">
+                                            <i data-feather="trash"></i>
                                         </a>
                                         {!! Form::open(['method' => 'DELETE', 'route' => ['rating.destroy', $product_rating->id],'id'=>'delete-form-'.$product_rating->id]) !!}
                                         {!! Form::close() !!}
-
-
-
+                                    </div>
+                                </div>
+                                <p>{{ $product_rating->description }}</p>
+                                <div class="d-flex align-items-center">
+                                    <div class="ps-2">
+                                        <div class="d-flex">
+                                            @for ($i = 0; $i < 5; $i++)
+                                                <i class="fas fa-star {{ $product_rating->ratting > $i ? 'text-success' : 'text-secondary' }}"></i>
+                                            @endfor
                                         </div>
-                                    </span>
-                                <div class="rate">
-                                    @for ($i = 0; $i < 5; $i++)
-                                        <i
-                                            class="fas fa-star {{ $product_rating->ratting > $i ? 'text-warning' : '' }}"></i>
-                                    @endfor
-                                </div>
-                            </div>
-                        </div>
-                        <span class="clearfix"></span>
-                        <div class="d-flex mt-2 justify-content-end">
-                            <div class="custom-control form-switch">
-                                <input type="checkbox" class="form-check-input rating_view" name="rating_view"
-                                    id="enable_rating{{ $product_key }}" data-id="{{ $product_rating['id'] }}"
-                                    {{ $product_rating->rating_view == 'on' ? 'checked' : '' }}>
-                                    <label class="custom-control-label form-check-label"
-                                    for="enable_rating{{ $product_key }}"></label>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="main_reply_body">
-                            <p class="small pt-2">{{ $product_rating->description }}</p>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-        <div class="col-lg-6">
-            @if ($product->enable_product_variant == 'on')
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <input type="hidden" id="product_id" value="{{ $product->id }}">
-                            <input type="hidden" id="variant_id" value="">
-                            <input type="hidden" id="variant_qty" value="">
-                            @foreach ($product_variant_names as $key => $variant)
-                                <div class="col-sm-6 mb-4 mb-sm-0">
-                                    <span class="d-block h6 mb-0">
-                                        <th>
-                                            <label for="" class="col-form-label"> {{ ucfirst($variant->variant_name) }}</label>
-
-                                        </th>
-                                        <select name="product[{{$key}}]" id='choices-multiple-{{$key}}'  class="form-control multi-select  pro_variants_name{{$key}} change_price">
-                                        <option value="">{{ __('Select')  }}</option>
-                                            @foreach ($variant->variant_options as $key => $values)
-                                            <option value="{{$values}}">{{$values}}</option>
-                                        @endforeach
-                                    </select>
-                                    </span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
-            <div class="card">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-sm-6 mb-4 mb-sm-0">
-                            <span class="d-block h3 mb-0 variasion_price">
-                                @if ($product->enable_product_variant == 'on')
-                                    {{ \App\Models\Utility::priceFormat(0) }}
-                                @else
-                                    {{ \App\Models\Utility::priceFormat($product->price) }}
-                                @endif
-
-                            </span>
-                            {{ !empty($product->product_taxs) ? $product->product_taxs->name : '' }}
-                            {{ !empty($product->product_taxs->rate) ? $product->product_taxs->rate . '%' : '' }}
-                        </div>
-                        <div class="col-sm-6 d-flex justify-content-end">
-                            <button class="btn noHover btn-primary btn-icon ">
-                                <span class="btn-inner--icon variant_qty  ">
-                                     @if($product->enable_product_variant =='on')
-                                        0
-                                    @else
-                                        {{$product->quantity}}
-                                    @endif
-                                </span>
-                                <span class="btn-inner--text">
-                                    {{ __('Total Avl.Quantity') }}
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Product images -->
-            <div class="card">
-                <div class="card-body">
-                    @if (!empty($product->is_cover))
-                        <a href="{{ asset(Storage::url('uploads/is_cover_image/' . $product->is_cover)) }}"
-                            data-fancybox="product">
-                            <img alt="Image placeholder"
-                                src="{{ asset(Storage::url('uploads/is_cover_image/' . $product->is_cover)) }}"
-                                class="img-center pro_max_width1">
-                        </a>
-                    @else
-                        <a href="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}"
-                            data-fancybox="product">
-                            <img alt="Image placeholder"
-                                src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}"
-                                class="img-center pro_max_width1">
-                        </a>
-                    @endif
-                    <div class="row mt-4">
-                        @foreach ($product_image as $key => $products)
-                            <div class="col-4">
-                                <div class="p-3 border rounded">
-                                    @if (!empty($product_image[$key]->product_images))
-                                        {{-- <a href="{{ asset(Storage::url('uploads/product_image/' . $product_image[$key]->product_images)) }}"
-                                            class="stretched-link" data-fancybox="product">
-                                            <img alt="Image placeholder"
-                                                src="{{ asset(Storage::url('uploads/product_image/' . $product_image[$key]->product_images)) }}"
-                                                class="img-fluid">
-                                        </a> --}}
-                                        <a href="{{$p_logo.(isset($product_image[$key]->product_images) && !empty($product_image[$key]->product_images)?$product_image[$key]->product_images:'is_cover_image.png')}}"
-                                            class="stretched-link" data-fancybox="product">
-                                            <img alt="Image placeholder"
-                                            src="{{$p_logo.(isset($product_image[$key]->product_images) && !empty($product_image[$key]->product_images)?$product_image[$key]->product_images:'is_cover_image.png')}}"
-                                                class="img-fluid">
-                                        </a>
-                                    @else
-                                        {{-- <a href="{{ asset(Storage::url('uploads/product_image/default.jpg')) }}"
-                                            class="stretched-link" data-fancybox="product">
-                                            <img alt="Image placeholder"
-                                                src="{{ asset(Storage::url('uploads/product_image/default.jpg')) }}"
-                                                class="img-fluid">
-                                        </a> --}}
-                                        <a href="{{$p_logo.(isset($product_image[$key]->product_images) && !empty($product_image[$key]->product_images)?$product_image[$key]->product_images:'is_cover_image.png')}}"
-                                            class="stretched-link" data-fancybox="product">
-                                            <img alt="Image placeholder"
-                                            src="{{$p_logo.(isset($product_image[$key]->product_images) && !empty($product_image[$key]->product_images)?$product_image[$key]->product_images:'is_cover_image.png')}}"
-                                                class="img-fluid">
-                                        </a>
-                                    @endif
+                                        <small>by {{ $product_rating->name }} : {{ $product_rating->created_at->diffForHumans() }}</small>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 </div>
             </div>
+            <div class="col-xl-3 col-lg-6 col-sm-6">
+                <h4>{{ __('Gallery') }}</h4>
+                <div class="card border  shadow-none">
+                    <div class="card-body ">
+                        <div class="row gy-3 gx-3">
+                            @foreach ($product_image as $key => $products)
+                            <div class="col-sm-6">
+                                <div class="p-2 border border-primary rounded">
+                                    @if (!empty($product_image[$key]->product_images))
+                                        <img src="{{$p_logo.(isset($product_image[$key]->product_images) && !empty($product_image[$key]->product_images)?$product_image[$key]->product_images:'is_cover_image.png')}}" alt="" class="w-100">
+                                    @else
+                                        <img src="{{$p_logo.(isset($product_image[$key]->product_images) && !empty($product_image[$key]->product_images)?$product_image[$key]->product_images:'is_cover_image.png')}}" alt="" class="w-100">
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <!-- [ sample-page ] end -->
+</div>
 @endsection
 @push('script-page')
     <script>

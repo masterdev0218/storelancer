@@ -345,6 +345,11 @@ header.price-header {
     }
 
 }
+@media (min-width: 500px) {
+    .dataTable-top > div:last-child{
+        float: left;
+    }
+    }
 
 @media only screen and (max-width: 330px)
 {

@@ -16,7 +16,7 @@
                     <p class="lead text-lg mb-5">
                         {{__("Service Unavailable.")}}
                     </p>
-                    @if(\Auth::check())
+                    {{--  @if(\Auth::check())
                         <a href="{{ route('dashboard') }}" class="btn btn-white btn-icon rounded-pill hover-translate-y-n3">
                             <span class="btn-inner--icon"><i class="fas fa-home"></i></span>
                             <span class="btn-inner--text">{{__('Return home')}}</span>
@@ -26,7 +26,11 @@
                             <span class="btn-inner--icon"><i class="fas fa-home"></i></span>
                             <span class="btn-inner--text">{{__('Return home')}}</span>
                         </a>
-                    @endif
+                    @endif  --}}
+                    <a class="btn btn-white btn-icon rounded-pill hover-translate-y-n3" onclick="Previous()">
+                        <span class="btn-inner--icon"><i class="fas fa-home"></i></span>
+                        <span class="btn-inner--text">{{__('Return home')}}</span>
+                    </a>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
                     <figure class="w-100">
@@ -36,4 +40,9 @@
             </div>
         </div>
     </div>
+    <script>
+        function Previous() {
+            window.history.back()
+        }
+    </script>
 @endsection

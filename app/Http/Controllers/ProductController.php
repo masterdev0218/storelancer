@@ -72,7 +72,8 @@ class ProductController extends Controller
         $store_id = Store::where('id', $user->current_store)->first();
 
         $validator = \Validator::make(
-            $request->all(), [
+            $request->all(),
+            [
                 'name' => 'required|max:120',
             ]
         );
@@ -88,7 +89,8 @@ class ProductController extends Controller
         // dd($request->all());
         if ($request->enable_product_variant == '') {
             $validator = \Validator::make(
-                $request->all(), [
+                $request->all(),
+                [
                     'price' => 'required',
                     'quantity' => 'required',
                     'name' => 'required',
@@ -131,13 +133,11 @@ class ProductController extends Controller
 
                 $dir = 'uploads/product_image/';
                 $path = Utility::keyWiseUpload_file($request, 'multiple_files', $fileNameToStore, $dir, $key, []);
-// dd($path);
                 if ($path['flag'] == 1) {
                     $url = $path['url'];
                     $file_name[] = $fileNameToStore;
                 }
             }
-
         }
         if (!empty($request->is_cover_image)) {
             $filenameWithExt = $request->file('is_cover_image')->getClientOriginalName();
@@ -156,7 +156,6 @@ class ProductController extends Controller
             } else {
                 return redirect()->back()->with('error', __($path['msg']));
             }
-
         }
 
         if (!empty($request->attachment)) {
@@ -192,7 +191,6 @@ class ProductController extends Controller
             } else {
                 return redirect()->back()->with('error', __($path['msg']));
             }
-
         }
 
         if (!empty($request->product_tax)) {
@@ -248,7 +246,6 @@ class ProductController extends Controller
             $product['custom_value_3'] = $request->custom_value_3;
             $product['custom_field_4'] = $request->custom_field_4;
             $product['custom_value_4'] = $request->custom_value_4;
-
             $product['product_display'] = isset($request->product_display) ? 'on' : 'off';
             $product['enable_product_variant'] = isset($request->enable_product_variant) ? 'on' : 'off';
             $product['variants_json'] = $request->hiddenVariantOptions;
@@ -259,7 +256,6 @@ class ProductController extends Controller
             $product['specification'] = $request->specification;
             $product['detail'] = $request->detail;
             $product['created_by'] = \Auth::user()->creatorId();
-
             $product->save();
 
             if (!empty($file_name)) {
@@ -272,10 +268,12 @@ class ProductController extends Controller
                     );
                 }
             }
+
             if ($request->enable_product_variant == 'on') {
                 $product->variants_json = json_decode($product->variants_json, true);
 
                 $variant_options = array_column($product->variants_json, 'variant_options');
+
                 $possibilities = Product::possibleVariants($variant_options);
 
 
@@ -330,7 +328,6 @@ class ProductController extends Controller
             $avg_rating = number_format($ratting / $user_count, 1);
         } else {
             $avg_rating = number_format($ratting / 1, 1);
-
         }
 
         $variant_name = json_decode($product->variants_json);
@@ -389,20 +386,21 @@ class ProductController extends Controller
 
     public function productUpdate(Request $request, $product_id)
     {
-
         $product = Product::find($product_id);
 
         $user = \Auth::user();
         $store_id = Store::where('id', $user->current_store)->first();
 
         $validator = \Validator::make(
-            $request->all(), [
+            $request->all(),
+            [
                 'name' => 'required|max:120',
             ]
         );
         if ($request->enable_product_variant == '') {
             $validator = \Validator::make(
-                $request->all(), [
+                $request->all(),
+                [
                     'price' => 'required',
                     'quantity' => 'required',
                     'is_cover_image' => 'mimes:jpeg,png,jpg,gif,svg,pdf,doc|max:20480',
@@ -415,7 +413,7 @@ class ProductController extends Controller
                 if (!empty($request->verians)) {
                     foreach ($request->verians as $k => $items) {
                         foreach ($items as $item_k => $item) {
-                            if (empty($item)) {
+                            if (!isset($item)) {
                                 $msg['flag'] = 'error';
                                 $msg['msg'] = __('Please Fill The Form');
 
@@ -426,7 +424,7 @@ class ProductController extends Controller
                 } else {
                     foreach ($request->variants as $k => $items) {
                         foreach ($items as $item_k => $item) {
-                            if (empty($item)) {
+                            if (!isset($item)) {
                                 $msg['flag'] = 'error';
                                 $msg['msg'] = __('Please Fill The Form');
 
@@ -435,7 +433,6 @@ class ProductController extends Controller
                         }
                     }
                 }
-
             } else {
                 $msg['flag'] = 'error';
                 $msg['msg'] = __('Please Add Variants');
@@ -461,7 +458,7 @@ class ProductController extends Controller
                 $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                 $extension = $file->getClientOriginalExtension();
                 $fileNameToStore = $filename . '_' . time() . '.' . $extension;
-                $file_name[] = $fileNameToStore;
+                // $file_name[] = $fileNameToStore;
                 $settings = Utility::getStorageSetting();
 
                 $dir = 'uploads/product_image/';
@@ -478,7 +475,6 @@ class ProductController extends Controller
                 // }
                 // $path = $file->storeAs('uploads/product_image/', $fileNameToStore);
             }
-
         }
 
         if (!empty($request->attachment)) {
@@ -625,35 +621,78 @@ class ProductController extends Controller
         $product['attachment'] = !empty($request->attachment) ? $fileAttachment : '';
         $product['downloadable_prodcut'] = !empty($request->downloadable_prodcut) ? $filedownloadable : '';
         $product['product_display'] = isset($request->product_display) ? 'on' : 'off';
-        $product['enable_product_variant'] = isset($request->enable_product_variant) ? 'on' : 'off';
+
+        $product['variants_json'] = !empty($request->hiddenVariantOptions) ? $request->hiddenVariantOptions : $product->variants_json;
 
         if ($request->enable_product_variant == 'on') {
-            $product['variants_json'] = $product->variants_json = !empty($request->hiddenVariantOptions) ? $request->hiddenVariantOptions : $product->variants_json;
-
-            foreach ($request->verians ?? $request->variants as $key => $possibility) {
-
-                $possibilities = ProductVariantOption::find($key);
-                if ($possibilities != null) {
-
-                    // $possibilities->name = $possibility['variants'][0][0];
-                    $possibilities->price = $possibility['price'];
-                    $possibilities->quantity = $possibility['quantity'];
-                    $possibilities->save();
-                } else {
-
-                    $VariantOptionNew = new ProductVariantOption();
-                    $VariantOptionNew->name = $possibility['name'];
-                    $VariantOptionNew->product_id = $product->id;
-                    $VariantOptionNew->price = $possibility['price'];
-                    $VariantOptionNew->quantity = $possibility['qty'];
-                    $VariantOptionNew->created_by = Auth::user()->creatorId();
-
-                    $VariantOptionNew->save();
-                }
-
-            }
-
+            $product['enable_product_variant'] = 'on';
+        } else {
+            $product['enable_product_variant'] = 'off';
         }
+
+        if ($request->enable_product_variant == 'on' && $request->hiddenhidden == 'now_in_var') {
+            $hiddnopt = !empty($request->hiddenVariantOptions) ? $request->hiddenVariantOptions : $product->variants_json;
+            $variant_options = array_column(json_decode($hiddnopt, true), 'variant_options');
+
+            $possibilities_possibilities = Product::possibleVariants($variant_options);
+
+            foreach ($possibilities_possibilities as $key => $possibility) {
+                $VariantOption = new ProductVariantOption();
+                $VariantOption->name = $possibility;
+                $VariantOption->product_id = $product->id;
+                $VariantOption->price = $request->verians[$key]['price'];
+                $VariantOption->quantity = $request->verians[$key]['qty'];
+                $VariantOption->created_by = Auth::user()->creatorId();
+                $VariantOption->save();
+            }
+        } else {
+            if ($request->enable_product_variant == 'on') {
+
+                // $product['enable_product_variant'] = 'on';
+                // $product['variants_json'] = !empty($request->hiddenVariantOptions) ? $request->hiddenVariantOptions : $product->variants_json;
+                // dd($request->verians);
+
+                if (!empty($request->verians) && count($request->verians) > 0) {
+                    foreach ($request->verians as $key => $possibility) {
+
+                        $possibilities = ProductVariantOption::find($key);
+
+                        if (!empty($possibilities) && isset($possibility['variants'])) {
+                            $possibilities->price = $possibility['price'];
+                            $possibilities->quantity = $possibility['quantity'] ?? $possibility['qty'];
+
+                            $possibilities->save();
+                        } else {
+
+                            $VariantOptionNew = new ProductVariantOption();
+                            $VariantOptionNew->name = $possibility['name'];
+                            $VariantOptionNew->product_id = $product->id;
+                            $VariantOptionNew->price = $possibility['price'];
+                            $VariantOptionNew->quantity = $possibility['quantity'] ?? $possibility['qty'];
+                            $VariantOptionNew->created_by = Auth::user()->creatorId();
+                            $VariantOptionNew->save();
+                        }
+                    }
+                } else if (!empty($request->variants) && count($request->variants) > 0) {
+
+
+                    foreach ($request->variants as $key => $possibility) {
+
+                        $possibilities = Product::possibleVariants($possibility['variants']);
+                        // dd($possibilities);
+                        $possibilities = ProductVariantOption::find($key);
+                        $possibilities->price = $possibility['price'];
+                        $possibilities->quantity = $possibility['quantity'] ?? $possibility['qty'];
+
+                        $possibilities->save();
+                    }
+                }
+            } else {
+                $product['enable_product_variant'] = 'off';
+            }
+        }
+
+
         if (!empty($request->is_cover_image)) {
             $product['is_cover'] = $fileNameToStores;
         }
@@ -667,11 +706,10 @@ class ProductController extends Controller
                 [
                     'product_id' => $product->id,
                     'product_images' => $file,
-
                 ]
             );
         }
-// dd($product->toArray());
+
         $product->save();
 
         if ($product->enable_product_variant == 'on') {
@@ -687,16 +725,13 @@ class ProductController extends Controller
                             $newVal .= $v[0];
                         }
                     }
-
                     $VariantOption = ProductVariantOption::find($key);
                     $VariantOption->name = $newVal;
                     $VariantOption->price = $variant['price'];
-                    $VariantOption->quantity = $variant['quantity'];
+                    $VariantOption->quantity = $variant['quantity'] ?? $variant['qty'];
                     $VariantOption->save();
-
                 }
             }
-
         }
 
         if (!empty($product)) {
@@ -730,7 +765,7 @@ class ProductController extends Controller
         if (!empty($product->is_cover)) {
             unlink($dir . $product->is_cover);
         }
-        ProductVariantOption::where('product_id', $product->id)->delete();
+        ProductVariantOption::where('product_id', $product->id)->forceDelete();
         $product->delete();
 
         return redirect()->back()->with('success', __('Product successfully deleted.'));
@@ -783,71 +818,68 @@ class ProductController extends Controller
 
     public function productVariantsCreate(Request $request)
     {
-
         return view('product.variants.create')->render();
     }
 
     public function productVariantsEdit(Request $request, $product_id)
     {
-        // $product
-        // dd($product_id);
 
         $product = Product::getProductById($product_id);
         $productVariantOption = json_decode($product->variants_json, true);
-        if(empty($productVariantOption)) {
+        if (empty($productVariantOption)) {
             return view('product.variants.create')->render();
         } else {
-            return view('product.variants.edit', compact('product', 'productVariantOption','product_id'))->render();
+            return view('product.variants.edit', compact('product', 'productVariantOption', 'product_id'))->render();
         }
     }
 
-    public function getProductVariantsPossibilities(Request $request,$product_id = 0)
+    public function getProductVariantsPossibilities(Request $request, $product_id = 0)
     {
         $variant_edit = $request->variant_edit;
         if (!empty($variant_edit) && $variant_edit == 'edit') {
             $variant_option123 = json_decode($request->hiddenVariantOptions, true);
             foreach ($variant_option123 as $key => $value) {
                 $new_key = array_search($value['variant_name'], array_column($request->variant_edt, 'variant_name'));
-                if(!empty($request->variant_edt[$new_key]['variant_options'])) {
+                if (!empty($request->variant_edt[$new_key]['variant_options'])) {
                     $new_val = explode('|', $request->variant_edt[$new_key]['variant_options']);
                     $variant_option123[$key]['variant_options'] = array_merge($variant_option123[$key]['variant_options'], $new_val);
                 }
             }
-            $request->hiddenVariantOptions = json_encode($variant_option123);
+            $request['hiddenVariantOptions'] = json_encode($variant_option123);
         }
-
-
         $variant_name = $request->variant_name;
         $variant_options = $request->variant_options;
         $hiddenVariantOptions = $request->hiddenVariantOptions;
-
-
         $hiddenVariantOptions = json_decode($hiddenVariantOptions, true);
-
         $variants = [
             [
                 'variant_name' => $variant_name,
                 'variant_options' => explode('|', $variant_options),
             ],
         ];
-
         if (empty($variant_edit) && $variant_edit != 'edit') {
             $hiddenVariantOptions = array_merge($hiddenVariantOptions, $variants);
         }
         $hiddenVariantOptions = array_map("unserialize", array_unique(array_map("serialize", $hiddenVariantOptions)));
-
         $optionArray = $variantArray = [];
 
         foreach ($hiddenVariantOptions as $variant) {
             $variantArray[] = $variant['variant_name'];
             $optionArray[] = $variant['variant_options'];
         }
-
+        $deleted_variants = ProductVariantOption::onlyTrashed()->where('product_id', $product_id)->get();
         $possibilities = Product::possibleVariants($optionArray);
+        foreach ($deleted_variants as $key => $dv) {
+            $deleted_variant = $dv->name;
+            if (in_array($deleted_variant, $possibilities)) {
+                $indexKay = array_search($deleted_variant, $possibilities, true);
+                unset($possibilities[$indexKay]);
+            }
+        }
 
         $variantArray = array_unique($variantArray);
         if (!empty($variant_edit) && $variant_edit == 'edit') {
-            $varitantHTML = view('product.variants.edit_list', compact('possibilities', 'variantArray','product_id'))->render();
+            $varitantHTML = view('product.variants.edit_list', compact('possibilities', 'variantArray', 'product_id'))->render();
         } else {
             $varitantHTML = view('product.variants.list', compact('possibilities', 'variantArray'))->render();
         }
@@ -857,6 +889,7 @@ class ProductController extends Controller
             'hiddenVariantOptions' => json_encode($hiddenVariantOptions),
             'varitantHTML' => $varitantHTML,
         ];
+
         return response()->json($result);
     }
 
@@ -892,17 +925,33 @@ class ProductController extends Controller
         );
     }
 
-    public function VariantDelete(Request $request, $id,$product_id)
+    public function VariantDelete(Request $request, $id, $product_id)
     {
-
-        ProductVariantOption::find($id)->delete();
-
-        if (!ProductVariantOption::where('product_id',$product_id)->exists()) {
-            $projsn = Product::find($product_id);
-            $projsn->variants_json = '{}';
-            $projsn->save();
-
+        $product = Product::find($product_id);
+        if (!empty($product->variants_json) && ProductVariantOption::find($id)->exists()) {
+            $var_json = json_decode($product->variants_json, true);
+           
+            $i = 0;
+            foreach ($var_json[0] as $key => $value) {
+                $var_ops = explode(' : ', ProductVariantOption::find($id)->name);
+                $count = ProductVariantOption::where('product_id', $product->id)->where('name', 'LIKE', '%' . $var_ops[0] . '%')->count();
+                if ($count == 1 && $i == 0) {
+                    $unsetIndex = array_search($var_ops[0], $var_json[0]['variant_options'], true);
+                    unset($var_json[0]['variant_options'][$unsetIndex]);
+                }
+                $i++;
+            }
+            $variants = ProductVariantOption::where('product_id',$product->id)->count();
+            if($variants == 1){
+                $product->variants_json = '{}';
+                $product->update();
+            }else{
+                $product->variants_json = json_encode($var_json);
+                $product->update();
+            }
+            
         }
+        ProductVariantOption::find($id)->delete();
         return redirect()->back()->with('success', __('Variant successfully deleted.'));
     }
 
@@ -949,7 +998,6 @@ class ProductController extends Controller
                 $productData = $productBySku;
             } else {
                 $productData = new Product();
-
             }
 
             $productData->name = $product[0];
@@ -978,7 +1026,6 @@ class ProductController extends Controller
             foreach ($errorArray as $errorData) {
 
                 $errorRecord[] = implode(',', $errorData);
-
             }
 
             \Session::put('errorArray', $errorRecord);

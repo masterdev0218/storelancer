@@ -30,34 +30,17 @@
     $languages=\App\Models\Utility::languages();
 @endphp
 @section('content')
-<div class="py-6">
-    <div class="container ">
-        <div class="main-content position-relative bg-white">
-            <div class="container">
-                <div class="card-group mt-5">
-                    <div class="page-title">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-auto mb-md-0">
-                                <div class="d-inline-block">
-                                    <h5 class="h4 d-inline-block font-weight-bold mb-0 pt-4"> {{ ucfirst($pageoption->name) }}</h5>
-                                </div>
-                            </div>
-                            <div class="col">
-                            </div>
-                            <div class="col-auto">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="page-content">
-                        <div class="mt-4 pagedetails">
-                            {!! $pageoption->contents !!}
-                        </div>
-                    </div>
-                </div>
+<div class="wrapper">
+    <section class="contact-us-section padding-top padding-bottom">
+        <div class="container">
+            <div class="contact-content">
+                <h4>{{ ucfirst($pageoption->name) }}</h4>
+                <p>{!! $pageoption->contents !!}
+                </p>
             </div>
         </div>
-    </div>
-</div>
+    </section>    
+</div>    
 @endsection
 
 

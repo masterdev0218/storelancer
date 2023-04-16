@@ -17,11 +17,10 @@
 @endsection
 @section('action-btn')
 <div class="pr-2">
-    <a href="#" data-url="{{ route('create.language') }}" data-size="md" data-ajax-popup="true" data-title="{{__('Create New Language')}}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-        data-bs-placement="top" title="{{ __('Create New Language') }}"><i class="ti ti-plus"></i></a>
-
+    <a href="#" data-url="{{ route('create.language') }}" data-size="md" data-ajax-popup="true" data-title="{{__('Create New Language')}}" class="btn btn-sm btn-icon  btn-primary me-2 text-white" data-bs-toggle="tooltip"
+        data-bs-placement="top" title="{{ __('Create New Language') }}"><i  data-feather="plus"></i></a>
     @if($currantLang != (!empty(env('default_language')) ? env('default_language') : 'en'))
-        <a href="#!" class="bs-pass-para btn btn-sm btn-primary btn-icon m-1"
+        <a href="#!" class="bs-pass-para btn-sm bg-light-secondary btn-icon me-2"
             data-title="{{ __('Delete Lead') }}"
             data-confirm="{{ __('Are You Sure?') }}"
             data-text="{{ __('This action can not be undone. Do you want to continue?') }}"

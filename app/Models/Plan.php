@@ -19,6 +19,7 @@ class Plan extends Model
         'shipping_method',
         'image',
         'description',
+        'pwa_store',
     ];
 
     public static $arrDuration = [

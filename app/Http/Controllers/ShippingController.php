@@ -183,7 +183,6 @@ class ShippingController extends Controller
             $locationbyname = Location::where('name', $shipping[0])->first();
             $shippingbyname=Shipping::where('name',$shipping[1])->first();
 
-
             if(!empty($shippingbyname)&&!empty($locationbyname))
             {
                 $locationData = $locationbyname;

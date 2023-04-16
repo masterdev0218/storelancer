@@ -86,8 +86,16 @@
                 for="shipping_method">{{ __('Enable Shipping Method') }}</label>
         </div>
     </div>
-    <div class="col-12 mt-3">
-        <div class="form-group">
+     <div class="col-6">
+        <div class="custom-control form-switch pt-2">
+            <input type="checkbox" class="form-check-input" name="pwa_store" id="pwa_store" {{ $plan['pwa_store'] == 'on' ? 'checked=checked' : '' }}>
+            <label class="custom-control-label form-check-label"
+                for="pwa_store">{{ __('Progressive Web App (PWA)') }}</label>
+        </div>
+        </div>
+
+    <div class="col-12 pt-2">
+        <div class="custom-control">
             {{ Form::label('description', __('Description'), ['class' => 'col-form-label']) }}
             {!! Form::textarea('description', null, ['class' => 'form-control', 'id' => 'description', 'rows' => 2, 'placeholder' => __('Enter Description')]) !!}
         </div>

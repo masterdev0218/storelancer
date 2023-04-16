@@ -13,7 +13,7 @@
     <li class="breadcrumb-item active" aria-current="page">{{ __('Email Template') }}</li>
 @endsection
 @section('action-btn')
-<div class="d-flex justify-content-end drp-languages">
+<div class="d-flex flex-wrap justify-content-lg-end drp-languages">
     <ul class="list-unstyled mb-0 m-2">
         <li class="dropdown dash-h-item drp-language">
             <a class="dash-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown"

@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en" dir="{{ env('SITE_RTL') == 'on' ? 'rtl' : '' }}">
 @php
+$data = DB::table('settings');
+
+$data = $data
+    ->where('created_by', '>', 1)
+    ->where('store_id', $store->id)
+    ->where('name', 'SITE_RTL')
+    ->first();
+@endphp
+<!DOCTYPE html>
+<html lang="en" dir="{{ empty($data) ? '' : ($data->value == 'on' ? 'rtl' : '' )}}">
+@php
+
     $userstore = \App\Models\UserStore::where('store_id', $store->id)->first();
-    $setting = \DB::table('settings')
+    $setting = DB::table('settings')
         ->where('name', 'company_favicon')
-        ->where('created_by', $store->id)
+        ->where('store_id', $store->id)
         ->first();
     $settings = Utility::settings();
     $getStoreThemeSetting = Utility::getStoreThemeSetting($store->id, $store->theme_dir);
@@ -14,22 +24,13 @@
         $getStoreThemeSetting = json_decode($getStoreThemeSetting['dashboard'], true);
         $getStoreThemeSetting1 = Utility::getStoreThemeSetting($store->id, $store->theme_dir);
     }
-
+    $themeClass = $store->store_theme;
     if (empty($getStoreThemeSetting)) {
         $path = storage_path() . '/uploads/' . $store->theme_dir . '/' . $store->theme_dir . '.json';
         $getStoreThemeSetting = json_decode(file_get_contents($path), true);
     }
-
-    // store RTL
-
-    // store RTL
-    $SITE_RTL = Cookie::get('SITE_RTL');
-
-    if ($SITE_RTL == '') {
-        $SITE_RTL = 'off';
-    }
     $imgpath=\App\Models\Utility::get_file('uploads/');
-$s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
+    $s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
 @endphp
 
 <head>
@@ -45,24 +46,36 @@ $s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
     <link rel="icon"
         href="{{ asset(Storage::url('uploads/logo/') . (!empty($setting->value) ? $setting->value : 'favicon.png')) }}"
         type="image/png">
+    <link rel="stylesheet" href="{{ asset('assets/theme10/fonts/fontawesome-free/css/all.min.css') }}">
+     @if (isset($data->value) && $data->value == 'on')
+        <link rel="stylesheet" href="{{ asset('assets/theme10/css/main-style-rtl.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/theme10/css/responsive-rtl.css') }}">
+    @else
+        <link rel="stylesheet" href="{{ asset('assets/theme10/css/main-style.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/theme10/css/responsive.css') }}">
+    @endif
+                    {{-- pwa customer app --}}
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="mobile-wep-app-capable" content="yes">
+    <meta name="apple-mobile-wep-app-capable" content="yes">
+    <meta name="msapplication-starturl" content="/">
+    <link rel="apple-touch-icon" href="{{ asset(Storage::url('uploads/logo/') . (!empty($setting->value) ? $setting->value : 'favicon.png')) }}" />
 
-    <link rel="stylesheet" href="{{ asset('assets/theme10/css/swiper.min.css') }}" id="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/theme10/css/all.min.css') }}" id="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/theme10/css/storego.css') }}" id="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/theme10/css/purpose.css') }}" id="stylesheet">
-    {{-- <link rel="stylesheet" href="{{ asset('custom/css/custom.css') }}"> --}}
+    @if ($store->enable_pwa_store == 'on')
+    <link rel="manifest" href="{{asset('storage/uploads/customer_app/store_'.$store->id.'/manifest.json')}}" />
+    @endif
+    @if (!empty( $store->pwa_store($store->slug)->theme_color))
 
-    <link rel="stylesheet"
-        href="{{ asset('assets/theme10/css/' . (!empty($store->store_theme) ? $store->store_theme : 'light-blue-color.css')) }}">
-
-    @if ($SITE_RTL == 'on')
-        <link rel="stylesheet" href="{{ asset('css/bootstrap-rtl.css') }}">
+        <meta name="theme-color" content="{{ $store->pwa_store($store->slug)->theme_color}}" />
+    @endif
+    @if (!empty( $store->pwa_store($store->slug)->background_color))
+        <meta name="apple-mobile-web-app-status-bar" content="{{$store->pwa_store($store->slug)->background_color}}" />
     @endif
 
     @stack('css-page')
 </head>
 
-<body>
+<body class="{{ !empty($themeClass)? $themeClass : 'theme10-v1' }}">
     @php
         if (!empty(session()->get('lang'))) {
             $currantLang = session()->get('lang');
@@ -73,236 +86,265 @@ $s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
 
         $storethemesetting = \App\Models\Utility::demoStoreThemeSetting($store->id, $store->theme_dir);
     @endphp
-    <header class="header" id="header-main">
-
-        <!-- Topbar -->
-        <div id="navbar-top-main" class="navbar-top bg-primary">
-            <div class="row d-flex no-gutters">
-                <div class="col-10 col-md-9 h-100 left-0 mb-0 position-absolute top-0"></div>
-                <div class="col-2 col-md-3 h-100 right-0 mb-0 position-absolute top-0 bg-gray-100"></div>
-            </div>
-            <div class="container px-1 px-md-3 d-flex align-items-center justify-content-between">
-                <div class="position-relative col-md-10 px-0">
-                    <div class="d-block navbar-nav pr-5 pr-md-0">
-                        <span class="ls-3 mr-0 navbar-text text-white text-uppercase top-header-text">
-                            <b>{{ __('FREE SHIPPING world wide') }}</b> {{ __('for all orders over $199') }}
-                        </span>
+    <header class="site-header">
+        <div class="notification-bar">
+            <div class="offset-container offset-left">
+                <div class="row align-items-center ">
+                    <div class="col-md-8 col-12">
+                        @if ($storethemesetting['enable_top_bar'] == 'on')
+                            <p><b>{{ !empty($storethemesetting['top_bar_title']) ? $storethemesetting['top_bar_title'] : '' }}</b></p>
+                        @endif
                     </div>
-                    {{-- <a href="#" class="position-absolute right-0 top-0 mr-3 mr-md-4">
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M2.05806 2.94194C1.81398 2.69786 1.81398 2.30214 2.05806 2.05806C2.30214 1.81398 2.69786 1.81398 2.94194 2.05806L7.5 6.61612L12.0581 2.05806C12.3021 1.81398 12.6979 1.81398 12.9419 2.05806C13.186 2.30214 13.186 2.69786 12.9419 2.94194L8.38388 7.5L12.9419 12.0581C13.186 12.3021 13.186 12.6979 12.9419 12.9419C12.6979 13.186 12.3021 13.186 12.0581 12.9419L7.5 8.38388L2.94194 12.9419C2.69786 13.186 2.30214 13.186 2.05806 12.9419C1.81398 12.6979 1.81398 12.3021 2.05806 12.0581L6.61612 7.5L2.05806 2.94194Z"
-                                fill="white" />
-                        </svg>
-                    </a> --}}
+                    <div class="col-md-4 col-12">
+                        <div class="language-menu">
+                            <div class="has-item">
+                                <a href="javascript:void(0)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
+                                        <path
+                                            d="M251.823 446.874h15.852v-.39c99.829-6.058 179.202-89.161 179.202-190.481 0-101.327-79.373-184.43-179.202-190.481-2.478-.151-4.97-.233-7.473-.283-1.396-.038-2.793-.113-4.202-.113s-2.806.075-4.202.113c-2.503.05-4.995.132-7.473.283-99.829 6.051-179.202 89.154-179.202 190.481 0 101.32 79.373 184.423 179.202 190.481v.39h7.498zm38.649-26.936c27.93-27.389 48.229-55.966 60.741-85.55h52.775c-22.972 43.204-64.3 75.222-113.516 85.55zm133.056-163.935c0 19.281-3.314 37.787-9.336 55.042h-54.777c4.719-16.776 7.084-33.83 6.945-51.16-.164-20.859-3.85-40.592-9.713-58.929h57.545a166.774 166.774 0 0 1 9.336 55.047zm-19.539-78.391h-56.273c-16.406-37-40.436-66.691-58.715-85.852 49.87 10.001 91.788 42.215 114.988 85.852zm-136.314-74.077c15.626 15.89 37.78 41.737 54.022 74.076h-54.022v-74.076zm0 97.421h64.138c6.719 18.361 11.047 38.265 11.197 59.249.125 17.186-2.598 34.139-8.027 50.84h-67.308V200.956zm0 133.432h57.847c-12.568 25.778-31.842 50.877-57.847 75.127v-75.127zm-23.35-23.343h-67.308c-5.429-16.701-8.152-33.654-8.027-50.84.151-20.984 4.479-40.888 11.197-59.249h64.137v110.089zm0-133.433h-54.022c16.242-32.339 38.396-58.193 54.022-74.083v74.083zM223.001 91.76c-18.28 19.161-42.31 48.852-58.715 85.852h-56.274c23.198-43.637 65.118-75.851 114.989-85.852zM88.473 256.003c0-19.28 3.315-37.787 9.335-55.047h57.545c-5.862 18.336-9.542 38.069-9.712 58.929-.138 17.33 2.227 34.384 6.945 51.16H97.808a166.739 166.739 0 0 1-9.335-55.042zm19.538 78.385h52.777c12.518 29.584 32.811 58.161 60.747 85.55-49.223-10.328-90.551-42.346-113.524-85.55zm78.467 0h57.847v75.127c-26.004-24.25-45.278-49.348-57.847-75.127z"
+                                            fill="#ffffff" class="fill-000000"></path>
+                                    </svg>
+                                    <span class="lbl-text">{{ Str::upper($currantLang) }}</span>
+                                </a>
+                                <div class="menu-dropdown">
+                                    <ul>
+                                        @foreach ($languages as $language)
+                                            <li><a href="{{ route('change.languagestore', [$store->slug, $language]) }}" class="@if ($language == $currantLang) active-language text-primary @endif">{{ Str::upper($language) }}</a></li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <li class="nav-item dropdown">
-                    <a class="align-items-center d-flex font-size-12 pr-0" href="#" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        <svg class="mr-2" width="14" height="14" viewBox="0 0 14 14" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M0 7C0 10.866 3.13401 14 7 14C10.866 14 14 10.866 14 7C14 3.13401 10.866 0 7 0C3.13401 0 0 3.13401 0 7ZM6.60902 1.41344C6.73819 1.40453 6.86857 1.4 7 1.4C7.13143 1.4 7.26181 1.40453 7.39098 1.41344C7.41491 1.44376 7.44071 1.4772 7.46812 1.51375C7.64271 1.74653 7.88223 2.1047 8.1239 2.58805C8.54741 3.43506 8.97994 4.67091 9.07896 6.3L4.92104 6.3C5.02006 4.67091 5.45259 3.43506 5.8761 2.58805C6.11777 2.1047 6.35729 1.74653 6.53188 1.51375C6.55929 1.4772 6.58509 1.44376 6.60902 1.41344ZM3.51874 7.7C3.62013 9.57742 4.11736 11.025 4.6239 12.038L4.64649 12.0829C2.93128 11.2874 1.68639 9.64926 1.44333 7.7H3.51874ZM3.51874 6.3H1.44333C1.68639 4.35074 2.93128 2.7126 4.64648 1.91709L4.6239 1.96195C4.11736 2.97503 3.62013 4.42259 3.51874 6.3ZM4.92104 7.7L9.07896 7.7C8.97994 9.32909 8.54741 10.5649 8.1239 11.412C7.88223 11.8953 7.64271 12.2535 7.46812 12.4862C7.44071 12.5228 7.41491 12.5562 7.39098 12.5866C7.26181 12.5955 7.13143 12.6 7 12.6C6.86857 12.6 6.73819 12.5955 6.60902 12.5866C6.58509 12.5562 6.55929 12.5228 6.53188 12.4862C6.35729 12.2535 6.11777 11.8953 5.8761 11.412C5.45259 10.5649 5.02006 9.32909 4.92104 7.7ZM10.4813 7.7C10.3799 9.57741 9.88264 11.025 9.3761 12.038L9.35351 12.0829C11.0687 11.2874 12.3136 9.64926 12.5567 7.7H10.4813ZM12.5567 6.3C12.3136 4.35074 11.0687 2.7126 9.35352 1.91709L9.3761 1.96195C9.88264 2.97503 10.3799 4.42258 10.4813 6.3H12.5567Z"
-                                fill="black" />
-                        </svg>
-                        {{ Str::upper($currantLang) }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                        {{-- <a class="dropdown-item font-size-12 text-capitalize" href="#">english</a> --}}
-                        @foreach ($languages as $language)
-                        <a href="{{ route('change.languagestore', [$store->slug, $language]) }}"
-                            class="dropdown-item font-size-12 text-capitalize @if ($language == $currantLang) active-language text-primary @endif">
-                            <span> {{ Str::upper($language) }}</span>
-                        </a>
-                    @endforeach
-                    </div>
-
-
-                </li>
             </div>
         </div>
-
-        <!-- Main navbar -->
-        <nav class="navbar navbar-main navbar-expand-lg navbar-transparent py-3" id="navbar-main">
-            <div class="container px-lg-0">
-
-                <!-- Logo -->
-
-
-                <a class="navbar-brand mr-0" href="{{ route('store.slug', $store->slug) }}">
-                    @if (!empty($store->logo))
-                        <img alt="Image placeholder"
-                            src="{{ $s_logo . $store->logo }}">
-                    @else
-                        <img alt="Image placeholder" src="{{ asset(Storage::url('uploads/store_logo/logo7.png')) }}">
-                    @endif
-                </a>
-
-                <!-- Navbar collapse trigger -->
-                <button class="navbar-toggler pr-0" type="button" data-toggle="collapse"
-                    data-target="#navbar-main-collapse" aria-controls="navbar-main-collapse" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_9_493)">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M3 24C1.34314 24 -5.87108e-08 22.6569 -1.31134e-07 21L-1.74846e-07 20C-2.47269e-07 18.3431 1.34315 17 3 17L21 17C22.6569 17 24 18.3431 24 20L24 21C24 22.6569 22.6569 24 21 24L3 24ZM2 21C2 21.5523 2.44771 22 3 22L21 22C21.5523 22 22 21.5523 22 21L22 20C22 19.4477 21.5523 19 21 19L3 19C2.44772 19 2 19.4477 2 20L2 21ZM3 7C1.34314 7 -8.01804e-07 5.65685 -8.74228e-07 4L-9.17939e-07 3C-9.90363e-07 1.34315 1.34314 -5.87108e-08 3 -1.31134e-07L21 -9.17939e-07C22.6569 -9.90363e-07 24 1.34315 24 3L24 4C24 5.65685 22.6569 7 21 7L3 7ZM2 4C2 4.55228 2.44771 5 3 5L21 5C21.5523 5 22 4.55228 22 4L22 3C22 2.44771 21.5523 2 21 2L3 2C2.44771 2 2 2.44772 2 3L2 4ZM-5.02681e-07 12.5C-4.30258e-07 14.1569 1.34314 15.5 3 15.5L21 15.5C22.6569 15.5 24 14.1569 24 12.5L24 11.5C24 9.84315 22.6569 8.5 21 8.5L3 8.5C1.34315 8.5 -6.18816e-07 9.84315 -5.46392e-07 11.5L-5.02681e-07 12.5ZM3 13.5C2.44771 13.5 2 13.0523 2 12.5L2 11.5C2 10.9477 2.44771 10.5 3 10.5L21 10.5C21.5523 10.5 22 10.9477 22 11.5L22 12.5C22 13.0523 21.5523 13.5 21 13.5L3 13.5Z"
-                                fill="black" />
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_9_493">
-                                <rect width="24" height="24" fill="white" />
-                            </clipPath>
-                        </defs>
-                    </svg>
-                </button>
-                <!-- Navbar nav -->
-                <div class="collapse navbar-collapse align-items-start" id="navbar-main-collapse">
-                    <ul class="navbar-nav align-items-lg-center ml-lg-4 ml-xl-6">
-                        <!-- Home - Overview  -->
-                        <li class="nav-item  mr-4 mr-xl-5 text-center">
-                            <a class="align-items-center d-flex nav-link text-nowrap pb-0 text-uppercase font-weight-500 text-white bg-primary py-2 "
-                                href="{{ route('store.slug', $store->slug) }}">
-                                {{ ucfirst($store->name) }}
-                            </a>
-
-                        </li>
-
-
-                        @if (!empty($page_slug_urls))
-                            @foreach ($page_slug_urls as $k => $page_slug_url)
-                                @if ($page_slug_url->enable_page_header == 'on')
-                                    <li class="nav-item mr-4 mr-xl-5">
-                                        <a class="nav-link pb-0 px-0 text-nowrap"
-                                            href="{{ env('APP_URL') . '/page/' . $page_slug_url->slug }}">{{ ucfirst($page_slug_url->name) }}</a>
-                                    </li>
-                                @endif
-                            @endforeach
-                        @endif
-
-                        @if ($store['blog_enable'] == 'on' && !empty($blog))
-                            <li class="nav-item mr-4 mr-xl-5 ">
-                                <a class="nav-link pb-0 px-0"
-                                    href="{{ route('store.blog', $store->slug) }}">{{ __('Blog') }}</a>
+        <div class="container">
+            <div class="mainnavigation-bar">
+                <div class="logo-col">
+                    <a href="{{ route('store.slug', $store->slug) }}">
+                        <img src="{{ $s_logo . (!empty($store->logo) ? $store->logo : 'logo.png') }}" alt="">
+                    </a>
+                </div>
+                <div class="main-menu">
+                    <div class="main-menu-col">
+                        <ul>
+                            <li class="menu-link active">
+                                <a href="{{ route('store.slug', $store->slug) }}"> {{ ucfirst($store->name) }}</a>
                             </li>
-                        @endif
-                    </ul>
-
-                    <ul class="navbar-nav align-items-lg-center ml-lg-auto nav-my-store">
-                        <li class="nav-item align-items-center d-flex nav-item mr-3">
-                            {{-- wishlist --}}
-                            @if (Utility::CustomerAuthCheck($store->slug) == true)
-                                <a href="{{ route('store.wishlist', $store->slug) }}"
-                                    class="nav-heart btn  ml-2 icon-font bg-gray-100">
-                                    <svg width="14" height="11" viewBox="0 0 14 11" fill="none"
+                            @if (!empty($page_slug_urls))
+                                @foreach ($page_slug_urls as $k => $page_slug_url)
+                                    @if ($page_slug_url->enable_page_header == 'on')
+                                        <li class="menu-link">
+                                            <a href="{{ env('APP_URL') . 'page/' . $page_slug_url->slug }}">{{ ucfirst($page_slug_url->name) }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            @endif
+                             @if ($store['blog_enable'] == 'on' && !empty($blog))
+                                <li class="menu-link">
+                                    <a href="{{ route('store.blog', $store->slug) }}">{{ __('Blog') }}</a>
+                                </li>
+                             @endif
+                        </ul>
+                    </div>
+                    <div class="right-menu">
+                        <ul>
+                            <li>
+                                @if (Utility::CustomerAuthCheck($store->slug) == true)
+                                    <a href="{{ route('store.wishlist', $store->slug) }}">
+                                        <svg width="14" height="11" viewBox="0 0 14 11" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M6.28104 10.816L7.00066 9.70588L7.73831 10.8059C7.29288 11.061 6.73058 11.0649 6.28104 10.816ZM5.94502 1.94599C5.40383 1.60628 4.69678 1.29412 3.92584 1.29412C2.15782 1.29412 1.12007 2.4958 1.46598 4.14522C2.05823 6.9692 7.00066 9.70588 7.00066 9.70588C6.28104 10.816 6.28131 10.8162 6.28104 10.816L6.27824 10.8145L6.27363 10.8119L6.25911 10.8038C6.2471 10.797 6.23049 10.7876 6.20954 10.7757C6.16767 10.7518 6.10844 10.7176 6.03417 10.6739C5.88575 10.5864 5.67656 10.46 5.42518 10.3001C4.92434 9.98146 4.24646 9.52329 3.54432 8.96724C2.84615 8.41431 2.09728 7.74366 1.47274 6.99682C0.856963 6.26045 0.297325 5.37361 0.091352 4.39147C-0.143665 3.27085 0.0676085 2.1527 0.80853 1.29418C1.55422 0.430121 2.68948 0 3.92584 0C5.2026 0 6.26391 0.555807 6.92232 0.999458C6.94884 1.01733 6.97495 1.03518 7.00066 1.053C7.02636 1.03518 7.05248 1.01733 7.079 0.999458C7.73741 0.555807 8.79871 0 10.0755 0C12.8375 0 14.4309 2.36483 13.8978 4.44365C13.6534 5.39682 13.0871 6.26486 12.4702 6.99358C11.8447 7.73242 11.1053 8.39982 10.4174 8.95274C9.72601 9.50845 9.06246 9.96769 8.57284 10.2877C8.32717 10.4482 8.12312 10.5751 7.97846 10.6631C7.90609 10.7071 7.84843 10.7414 7.8077 10.7654C7.79739 10.7715 7.78816 10.7769 7.78004 10.7816C7.77213 10.7863 7.76528 10.7903 7.75953 10.7936L7.74545 10.8018L7.741 10.8043L7.73831 10.8059C7.73804 10.806 7.73831 10.8059 7.00066 9.70588C7.00066 9.70588 11.8169 6.94702 12.5353 4.14522C12.8812 2.79622 11.8435 1.29412 10.0755 1.29412C9.30453 1.29412 8.59749 1.60628 8.0563 1.94599C7.41033 2.35148 7.00066 2.79622 7.00066 2.79622C7.00066 2.79622 6.59098 2.35148 5.94502 1.94599Z"
+                                                fill="white"></path>
+                                        </svg>
+                                        <span class="count wishlist_count">
+                                            @if (!empty($wishlist))
+                                                {{ count($wishlist) }}
+                                            @elseif (!empty($cart['wishlist']))
+                                                {{ count($cart['wishlist']) }}
+                                            @else
+                                                0
+                                            @endif
+                                        </span>
+                                    </a>
+                                @endif
+                            </li>
+                            <li>
+                                <a href="{{ route('store.cart', $store->slug) }}">
+                                    <svg width="15" height="13" viewBox="0 0 15 13" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M6.28104 10.816L7.00066 9.70588L7.73831 10.8059C7.29288 11.061 6.73058 11.0649 6.28104 10.816ZM5.94502 1.94599C5.40383 1.60628 4.69678 1.29412 3.92584 1.29412C2.15782 1.29412 1.12007 2.4958 1.46598 4.14522C2.05823 6.9692 7.00066 9.70588 7.00066 9.70588C6.28104 10.816 6.28131 10.8162 6.28104 10.816L6.27824 10.8145L6.27363 10.8119L6.25911 10.8038C6.2471 10.797 6.23049 10.7876 6.20954 10.7757C6.16767 10.7518 6.10844 10.7176 6.03417 10.6739C5.88575 10.5864 5.67656 10.46 5.42518 10.3001C4.92434 9.98146 4.24646 9.52329 3.54432 8.96724C2.84615 8.41431 2.09728 7.74366 1.47274 6.99682C0.856963 6.26045 0.297325 5.37361 0.091352 4.39147C-0.143665 3.27085 0.0676085 2.1527 0.80853 1.29418C1.55422 0.430121 2.68948 0 3.92584 0C5.2026 0 6.26391 0.555807 6.92232 0.999458C6.94884 1.01733 6.97495 1.03518 7.00066 1.053C7.02636 1.03518 7.05248 1.01733 7.079 0.999458C7.73741 0.555807 8.79871 0 10.0755 0C12.8375 0 14.4309 2.36483 13.8978 4.44365C13.6534 5.39682 13.0871 6.26486 12.4702 6.99358C11.8447 7.73242 11.1053 8.39982 10.4174 8.95274C9.72601 9.50845 9.06246 9.96769 8.57284 10.2877C8.32717 10.4482 8.12312 10.5751 7.97846 10.6631C7.90609 10.7071 7.84843 10.7414 7.8077 10.7654C7.79739 10.7715 7.78816 10.7769 7.78004 10.7816C7.77213 10.7863 7.76528 10.7903 7.75953 10.7936L7.74545 10.8018L7.741 10.8043L7.73831 10.8059C7.73804 10.806 7.73831 10.8059 7.00066 9.70588C7.00066 9.70588 11.8169 6.94702 12.5353 4.14522C12.8812 2.79622 11.8435 1.29412 10.0755 1.29412C9.30453 1.29412 8.59749 1.60628 8.0563 1.94599C7.41033 2.35148 7.00066 2.79622 7.00066 2.79622C7.00066 2.79622 6.59098 2.35148 5.94502 1.94599Z"
-                                            fill="black" />
+                                            d="M12.2919 8.13529H5.50403C4.5856 8.13555 3.79748 7.48102 3.6291 6.57815L2.74566 1.79231C2.68975 1.48654 2.42089 1.26607 2.11009 1.27114H0.63557C0.284554 1.27114 0 0.986585 0 0.63557C0 0.284554 0.284554 7.71206e-08 0.63557 7.71206e-08H2.1228C3.04124 -0.000259399 3.82935 0.654274 3.99773 1.55715L4.88118 6.34299C4.93709 6.64876 5.20595 6.86922 5.51675 6.86415H12.2983C12.6091 6.86922 12.8779 6.64876 12.9338 6.34299L13.7347 2.02111C13.769 1.83381 13.7175 1.64099 13.5944 1.49571C13.4713 1.35044 13.2895 1.26802 13.0991 1.27114H5.72013C5.36911 1.27114 5.08456 0.986585 5.08456 0.63557C5.08456 0.284554 5.36911 7.71206e-08 5.72013 7.71206e-08H13.0927C13.6597 -0.000160116 14.1974 0.252022 14.5597 0.688097C14.9221 1.12417 15.0716 1.6989 14.9677 2.25627L14.1669 6.57815C13.9985 7.48102 13.2104 8.13555 12.2919 8.13529ZM8.26264 10.6782C8.26264 9.62515 7.40897 8.77148 6.35593 8.77148C6.00491 8.77148 5.72036 9.05604 5.72036 9.40705C5.72036 9.75807 6.00491 10.0426 6.35593 10.0426C6.70694 10.0426 6.9915 10.3272 6.9915 10.6782C6.9915 11.0292 6.70694 11.3138 6.35593 11.3138C6.00491 11.3138 5.72036 11.0292 5.72036 10.6782C5.72036 10.3272 5.4358 10.0426 5.08479 10.0426C4.73377 10.0426 4.44922 10.3272 4.44922 10.6782C4.44922 11.7312 5.30288 12.5849 6.35593 12.5849C7.40897 12.5849 8.26264 11.7312 8.26264 10.6782ZM12.076 11.9493C12.076 11.5983 11.7914 11.3138 11.4404 11.3138C11.0894 11.3138 10.8048 11.0292 10.8048 10.6782C10.8048 10.3272 11.0894 10.0426 11.4404 10.0426C11.7914 10.0426 12.076 10.3272 12.076 10.6782C12.076 11.0292 12.3605 11.3138 12.7115 11.3138C13.0626 11.3138 13.3471 11.0292 13.3471 10.6782C13.3471 9.62515 12.4934 8.77148 11.4404 8.77148C10.3874 8.77148 9.53369 9.62515 9.53369 10.6782C9.53369 11.7312 10.3874 12.5849 11.4404 12.5849C11.7914 12.5849 12.076 12.3003 12.076 11.9493Z"
+                                            fill="white"></path>
                                     </svg>
-                                    <span class="badge badge-floating badge-pill badge-wishlist border-dark wishlist_count">
-                                        @if (!empty($wishlist))
-                                            {{ count($wishlist) }}
-                                        @elseif (!empty($cart['wishlist']))
-                                            {{ count($cart['wishlist']) }}
-                                        @else
-                                            0
-                                        @endif
-                                    </span>
+                                    <span class="count"  id="shoping_counts"> {{ !empty($total_item) ? $total_item : '0' }}</span>
                                 </a>
-                            @endif
-
-                            {{-- profile --}}
-                            @if (Utility::CustomerAuthCheck($store->slug) == true)
-                                <div class="drop-down mr-2">
-                                    <div id="dropDown" class="drop-down__button ">
-
-                                        <a href="javascript:;" class=" font-weight-bold  text-primary">
-                                            {{ ucFirst(Auth::guard('customers')->user()->name) }}
-                                        </a>
-                                    </div>
-                                    <div class="drop-down__menu-box">
-                                        <ul class="drop-down__menu ">
-                                            <li data-name="profile" class="drop-down__item text-primary">
-                                                <a href="{{ route('store.slug', $store->slug) }}" class="nav-link text-primary">
-                                                    {{ __('My Dashboard') }}
-                                                </a>
-                                            </li>
-                                            <li data-name="activity" class="drop-down__item">
-                                                <a href="" data-size="lg"
-                                                    data-url="{{ route('customer.profile', [$store->slug, \Illuminate\Support\Facades\Crypt::encrypt(Auth::guard('customers')->user()->id)]) }}"
-                                                    data-ajax-popup="true" data-title="{{ __('Edit Profile') }}"
-                                                    data-toggle="modal" class="nav-link text-primary">
-                                                    {{ __('My Profile') }}
-                                                </a>
-                                            </li>
-                                            <li data-name="activity" class="drop-down__item">
-                                                <a href="{{ route('customer.home', $store->slug) }}"
-                                                    class="nav-link text-primary">
-                                                    {{ __('My Orders') }}
-                                                </a>
-                                            </li>
-                                            <li class="drop-down__item">
-                                                @if (Utility::CustomerAuthCheck($store->slug) == false)
-                                                    <a href="{{ route('customer.login', $store->slug) }}"
-                                                        class="nav-link text-primary">
-                                                        {{ __('Sign in') }}
+                            </li>
+                            <li class="profile-header has-item">
+                                @if (Utility::CustomerAuthCheck($store->slug) == true)
+                                    <a href="javascript:void(0)">
+                                        <svg width="11" height="15" viewBox="0 0 11 15" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M9.16667 14.6676H3.05556C2.71805 14.6676 2.44444 14.394 2.44444 14.0565C2.44444 13.719 2.71805 13.4454 3.05556 13.4454H9.16667C9.50417 13.4454 9.77778 13.1717 9.77778 12.8342V10.2981C9.74701 9.95521 9.54135 9.6525 9.23389 9.49757C6.83856 8.53046 4.16144 8.53046 1.76611 9.49757C1.45865 9.6525 1.25299 9.95521 1.22222 10.2981V14.0565C1.22222 14.394 0.948618 14.6676 0.611111 14.6676C0.273604 14.6676 0 14.394 0 14.0565V10.2981C0.0270247 9.4546 0.535525 8.70135 1.30778 8.36091C3.99696 7.27423 7.00304 7.27423 9.69222 8.36091C10.4645 8.70135 10.973 9.4546 11 10.2981V12.8342C11 13.8468 10.1792 14.6676 9.16667 14.6676ZM8.55545 3.05556C8.55545 1.36802 7.18743 0 5.49989 0C3.81235 0 2.44434 1.36802 2.44434 3.05556C2.44434 4.74309 3.81235 6.11111 5.49989 6.11111C7.18743 6.11111 8.55545 4.74309 8.55545 3.05556ZM7.33317 3.05599C7.33317 4.06851 6.51236 4.88932 5.49984 4.88932C4.48732 4.88932 3.6665 4.06851 3.6665 3.05599C3.6665 2.04347 4.48732 1.22266 5.49984 1.22266C6.51236 1.22266 7.33317 2.04347 7.33317 3.05599Z"
+                                                fill="black"></path>
+                                        </svg>
+                                        <span class="login-text m-lbl" style="display: block;"> {{ ucFirst(Auth::guard('customers')->user()->name) }}</span>
+                                        <div class="menu-dropdown">
+                                            <ul>
+                                                <li>
+                                                    <a href="#"> {{ ucFirst(Auth::guard('customers')->user()->name) }}</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#" data-size="lg" data-url="{{ route('customer.profile', [$store->slug, \Illuminate\Support\Facades\Crypt::encrypt(Auth::guard('customers')->user()->id)]) }}" data-ajax-popup="true" data-title="{{ __('Edit Profile') }}" data-toggle="modal">
+                                                        {{ __('My Profile') }}
                                                     </a>
-                                                @else
-                                                    <a href="#"
-                                                        onclick="event.preventDefault(); document.getElementById('customer-frm-logout').submit();"
-                                                        class="nav-link text-primary">
-                                                        {{ __('Logout') }}
-                                                    </a>
-                                                    <form id="customer-frm-logout"
-                                                        action="{{ route('customer.logout', $store->slug) }}"
-                                                        method="POST" class="d-none">
-                                                        {{ csrf_field() }}
-                                                    </form>
-                                                @endif
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            @else
-                                <a href="{{ route('customer.login', $store->slug) }}"
-                                    class="nav-heart btn icon-font bg-gray-100">
-                                    <svg width="11" height="15" viewBox="0 0 11 15" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M9.16667 14.6676H3.05556C2.71805 14.6676 2.44444 14.394 2.44444 14.0565C2.44444 13.719 2.71805 13.4454 3.05556 13.4454H9.16667C9.50417 13.4454 9.77778 13.1717 9.77778 12.8342V10.2981C9.74701 9.95521 9.54135 9.6525 9.23389 9.49757C6.83856 8.53046 4.16144 8.53046 1.76611 9.49757C1.45865 9.6525 1.25299 9.95521 1.22222 10.2981V14.0565C1.22222 14.394 0.948618 14.6676 0.611111 14.6676C0.273604 14.6676 0 14.394 0 14.0565V10.2981C0.0270247 9.4546 0.535525 8.70135 1.30778 8.36091C3.99696 7.27423 7.00304 7.27423 9.69222 8.36091C10.4645 8.70135 10.973 9.4546 11 10.2981V12.8342C11 13.8468 10.1792 14.6676 9.16667 14.6676ZM8.55545 3.05556C8.55545 1.36802 7.18743 0 5.49989 0C3.81235 0 2.44434 1.36802 2.44434 3.05556C2.44434 4.74309 3.81235 6.11111 5.49989 6.11111C7.18743 6.11111 8.55545 4.74309 8.55545 3.05556ZM7.33317 3.05599C7.33317 4.06851 6.51236 4.88932 5.49984 4.88932C4.48732 4.88932 3.6665 4.06851 3.6665 3.05599C3.6665 2.04347 4.48732 1.22266 5.49984 1.22266C6.51236 1.22266 7.33317 2.04347 7.33317 3.05599Z"
-                                            fill="black" />
-                                    </svg>
-                                </a>
-                            @endif
-
-                            {{-- cart --}}
-                            <a href="{{ route('store.cart', $store->slug) }}"
-                                class="nav-cart btn icon-font bg-gray-100">
-                                <svg width="15" height="13" viewBox="0 0 15 13" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                        d="M12.2919 8.13529H5.50403C4.5856 8.13555 3.79748 7.48102 3.6291 6.57815L2.74566 1.79231C2.68975 1.48654 2.42089 1.26607 2.11009 1.27114H0.63557C0.284554 1.27114 0 0.986585 0 0.63557C0 0.284554 0.284554 7.71206e-08 0.63557 7.71206e-08H2.1228C3.04124 -0.000259399 3.82935 0.654274 3.99773 1.55715L4.88118 6.34299C4.93709 6.64876 5.20595 6.86922 5.51675 6.86415H12.2983C12.6091 6.86922 12.8779 6.64876 12.9338 6.34299L13.7347 2.02111C13.769 1.83381 13.7175 1.64099 13.5944 1.49571C13.4713 1.35044 13.2895 1.26802 13.0991 1.27114H5.72013C5.36911 1.27114 5.08456 0.986585 5.08456 0.63557C5.08456 0.284554 5.36911 7.71206e-08 5.72013 7.71206e-08H13.0927C13.6597 -0.000160116 14.1974 0.252022 14.5597 0.688097C14.9221 1.12417 15.0716 1.6989 14.9677 2.25627L14.1669 6.57815C13.9985 7.48102 13.2104 8.13555 12.2919 8.13529ZM8.26264 10.6782C8.26264 9.62515 7.40897 8.77148 6.35593 8.77148C6.00491 8.77148 5.72036 9.05604 5.72036 9.40705C5.72036 9.75807 6.00491 10.0426 6.35593 10.0426C6.70694 10.0426 6.9915 10.3272 6.9915 10.6782C6.9915 11.0292 6.70694 11.3138 6.35593 11.3138C6.00491 11.3138 5.72036 11.0292 5.72036 10.6782C5.72036 10.3272 5.4358 10.0426 5.08479 10.0426C4.73377 10.0426 4.44922 10.3272 4.44922 10.6782C4.44922 11.7312 5.30288 12.5849 6.35593 12.5849C7.40897 12.5849 8.26264 11.7312 8.26264 10.6782ZM12.076 11.9493C12.076 11.5983 11.7914 11.3138 11.4404 11.3138C11.0894 11.3138 10.8048 11.0292 10.8048 10.6782C10.8048 10.3272 11.0894 10.0426 11.4404 10.0426C11.7914 10.0426 12.076 10.3272 12.076 10.6782C12.076 11.0292 12.3605 11.3138 12.7115 11.3138C13.0626 11.3138 13.3471 11.0292 13.3471 10.6782C13.3471 9.62515 12.4934 8.77148 11.4404 8.77148C10.3874 8.77148 9.53369 9.62515 9.53369 10.6782C9.53369 11.7312 10.3874 12.5849 11.4404 12.5849C11.7914 12.5849 12.076 12.3003 12.076 11.9493Z"
-                                        fill="black" />
-                                </svg>
-                                <span class="badge badge-floating badge-pill badge-primary rounded-0"
-                                    id="shoping_counts">
-                                    {{ !empty($total_item) ? $total_item : '0' }}</span>
-                            </a>
-
-                        </li>
-                        <li class="nav-item nav-item p-0">
-                            <a href="{{ route('store.categorie.product', [$store->slug, 'Start shopping']) }}" class="btn btn-primary py-2 text-nowrap">{{__('GO TO SHOP')}}</a>
-                        </li>
-                    </ul>
-
+                                                </li>
+                                                <li>
+                                                    <a href="{{ route('customer.home', $store->slug) }}">{{ __('My Orders') }}</a>
+                                                </li>
+                                                <li>
+                                                    @if (Utility::CustomerAuthCheck($store->slug) == false)
+                                                        <a href="{{ route('customer.login', $store->slug) }}"> {{ __('Sign in') }}</a>
+                                                    @else
+                                                        <a href="#" onclick="event.preventDefault(); document.getElementById('customer-frm-logout').submit();">
+                                                            {{ __('Logout') }}
+                                                        </a>
+                                                        <form id="customer-frm-logout" action="{{ route('customer.logout', $store->slug) }}" method="POST" class="d-none">
+                                                            {{ csrf_field() }}
+                                                        </form>
+                                                    @endif
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                @else
+                                    <a href="{{ route('customer.login', $store->slug) }}"
+                                        class="nav-heart btn icon-font bg-gray-100">
+                                        <svg width="11" height="15" viewBox="0 0 11 15" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M9.16667 14.6676H3.05556C2.71805 14.6676 2.44444 14.394 2.44444 14.0565C2.44444 13.719 2.71805 13.4454 3.05556 13.4454H9.16667C9.50417 13.4454 9.77778 13.1717 9.77778 12.8342V10.2981C9.74701 9.95521 9.54135 9.6525 9.23389 9.49757C6.83856 8.53046 4.16144 8.53046 1.76611 9.49757C1.45865 9.6525 1.25299 9.95521 1.22222 10.2981V14.0565C1.22222 14.394 0.948618 14.6676 0.611111 14.6676C0.273604 14.6676 0 14.394 0 14.0565V10.2981C0.0270247 9.4546 0.535525 8.70135 1.30778 8.36091C3.99696 7.27423 7.00304 7.27423 9.69222 8.36091C10.4645 8.70135 10.973 9.4546 11 10.2981V12.8342C11 13.8468 10.1792 14.6676 9.16667 14.6676ZM8.55545 3.05556C8.55545 1.36802 7.18743 0 5.49989 0C3.81235 0 2.44434 1.36802 2.44434 3.05556C2.44434 4.74309 3.81235 6.11111 5.49989 6.11111C7.18743 6.11111 8.55545 4.74309 8.55545 3.05556ZM7.33317 3.05599C7.33317 4.06851 6.51236 4.88932 5.49984 4.88932C4.48732 4.88932 3.6665 4.06851 3.6665 3.05599C3.6665 2.04347 4.48732 1.22266 5.49984 1.22266C6.51236 1.22266 7.33317 2.04347 7.33317 3.05599Z"
+                                                fill="black" />
+                                        </svg>
+                                    </a>
+                                @endif
+                            </li>
+                        </ul>
+                        <div class="mobile-menu mobile-only">
+                            <button class="mobile-menu-button" id="menu">
+                                <div class="one"></div>
+                                <div class="two"></div>
+                                <div class="three"></div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-        </nav>
+        </div>
 
+        <div class="mobile-menu-bottom">
+            <ul>
+                @if (Utility::CustomerAuthCheck($store->slug) == true)
+                    <li class="set has-children">
+                        <a href="javascript:;" class="acnav-label">
+                            <svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.16667 14.6676H3.05556C2.71805 14.6676 2.44444 14.394 2.44444 14.0565C2.44444 13.719 2.71805 13.4454 3.05556 13.4454H9.16667C9.50417 13.4454 9.77778 13.1717 9.77778 12.8342V10.2981C9.74701 9.95521 9.54135 9.6525 9.23389 9.49757C6.83856 8.53046 4.16144 8.53046 1.76611 9.49757C1.45865 9.6525 1.25299 9.95521 1.22222 10.2981V14.0565C1.22222 14.394 0.948618 14.6676 0.611111 14.6676C0.273604 14.6676 0 14.394 0 14.0565V10.2981C0.0270247 9.4546 0.535525 8.70135 1.30778 8.36091C3.99696 7.27423 7.00304 7.27423 9.69222 8.36091C10.4645 8.70135 10.973 9.4546 11 10.2981V12.8342C11 13.8468 10.1792 14.6676 9.16667 14.6676ZM8.55545 3.05556C8.55545 1.36802 7.18743 0 5.49989 0C3.81235 0 2.44434 1.36802 2.44434 3.05556C2.44434 4.74309 3.81235 6.11111 5.49989 6.11111C7.18743 6.11111 8.55545 4.74309 8.55545 3.05556ZM7.33317 3.05599C7.33317 4.06851 6.51236 4.88932 5.49984 4.88932C4.48732 4.88932 3.6665 4.06851 3.6665 3.05599C3.6665 2.04347 4.48732 1.22266 5.49984 1.22266C6.51236 1.22266 7.33317 2.04347 7.33317 3.05599Z" fill="black"></path>
+                            </svg>
+                            <span> {{ ucFirst(Auth::guard('customers')->user()->name) }}</span>
+                        </a>
+                        <div class="acnav-list">
+                            <ul>
+                                <li>
+                                    <a href="{{ route('store.slug', $store->slug) }}">{{ __('My Dashboard') }}</a>
+                                </li>
+                                <li>
+                                   <a href="#" data-size="lg" data-url="{{ route('customer.profile', [$store->slug, \Illuminate\Support\Facades\Crypt::encrypt(Auth::guard('customers')->user()->id)]) }}" data-ajax-popup="true" data-title="{{ __('Edit Profile') }}" data-toggle="modal">
+                                        {{ __('My Profile') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('customer.home', $store->slug) }}">{{ __('My Orders') }}</a>
+                                </li>
+                                <li>
+                                    @if (Utility::CustomerAuthCheck($store->slug) == false)
+                                        <a href="{{ route('customer.login', $store->slug) }}">  {{ __('Sign in') }}</a>
+                                    @else
+                                        <a href="#" onclick="event.preventDefault(); document.getElementById('customer-frm-logout').submit();">
+                                            {{ __('Logout') }}
+                                        </a>
+                                        <form id="customer-frm-logout" action="{{ route('customer.logout', $store->slug) }}" method="POST" class="d-none">
+                                            {{ csrf_field() }}
+                                        </form>
+                                    @endif
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                @else
+                <li class="set has-children">
+                    <a href="{{ route('customer.login', $store->slug) }}" class="acnav-label">
+                        <svg width="11" height="15" viewBox="0 0 11 15" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M9.16667 14.6676H3.05556C2.71805 14.6676 2.44444 14.394 2.44444 14.0565C2.44444 13.719 2.71805 13.4454 3.05556 13.4454H9.16667C9.50417 13.4454 9.77778 13.1717 9.77778 12.8342V10.2981C9.74701 9.95521 9.54135 9.6525 9.23389 9.49757C6.83856 8.53046 4.16144 8.53046 1.76611 9.49757C1.45865 9.6525 1.25299 9.95521 1.22222 10.2981V14.0565C1.22222 14.394 0.948618 14.6676 0.611111 14.6676C0.273604 14.6676 0 14.394 0 14.0565V10.2981C0.0270247 9.4546 0.535525 8.70135 1.30778 8.36091C3.99696 7.27423 7.00304 7.27423 9.69222 8.36091C10.4645 8.70135 10.973 9.4546 11 10.2981V12.8342C11 13.8468 10.1792 14.6676 9.16667 14.6676ZM8.55545 3.05556C8.55545 1.36802 7.18743 0 5.49989 0C3.81235 0 2.44434 1.36802 2.44434 3.05556C2.44434 4.74309 3.81235 6.11111 5.49989 6.11111C7.18743 6.11111 8.55545 4.74309 8.55545 3.05556ZM7.33317 3.05599C7.33317 4.06851 6.51236 4.88932 5.49984 4.88932C4.48732 4.88932 3.6665 4.06851 3.6665 3.05599C3.6665 2.04347 4.48732 1.22266 5.49984 1.22266C6.51236 1.22266 7.33317 2.04347 7.33317 3.05599Z"
+                                fill="black" />
+                                <span>{{ __('Login') }}</span>
+                        </svg>
+                    </a>
+                </li>
+                @endif
+                <li class="set has-children language-header-2">
+                    <a href="javascript:;" class="acnav-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
+                            <path d="M251.823 446.874h15.852v-.39c99.829-6.058 179.202-89.161 179.202-190.481 0-101.327-79.373-184.43-179.202-190.481-2.478-.151-4.97-.233-7.473-.283-1.396-.038-2.793-.113-4.202-.113s-2.806.075-4.202.113c-2.503.05-4.995.132-7.473.283-99.829 6.051-179.202 89.154-179.202 190.481 0 101.32 79.373 184.423 179.202 190.481v.39h7.498zm38.649-26.936c27.93-27.389 48.229-55.966 60.741-85.55h52.775c-22.972 43.204-64.3 75.222-113.516 85.55zm133.056-163.935c0 19.281-3.314 37.787-9.336 55.042h-54.777c4.719-16.776 7.084-33.83 6.945-51.16-.164-20.859-3.85-40.592-9.713-58.929h57.545a166.774 166.774 0 0 1 9.336 55.047zm-19.539-78.391h-56.273c-16.406-37-40.436-66.691-58.715-85.852 49.87 10.001 91.788 42.215 114.988 85.852zm-136.314-74.077c15.626 15.89 37.78 41.737 54.022 74.076h-54.022v-74.076zm0 97.421h64.138c6.719 18.361 11.047 38.265 11.197 59.249.125 17.186-2.598 34.139-8.027 50.84h-67.308V200.956zm0 133.432h57.847c-12.568 25.778-31.842 50.877-57.847 75.127v-75.127zm-23.35-23.343h-67.308c-5.429-16.701-8.152-33.654-8.027-50.84.151-20.984 4.479-40.888 11.197-59.249h64.137v110.089zm0-133.433h-54.022c16.242-32.339 38.396-58.193 54.022-74.083v74.083zM223.001 91.76c-18.28 19.161-42.31 48.852-58.715 85.852h-56.274c23.198-43.637 65.118-75.851 114.989-85.852zM88.473 256.003c0-19.28 3.315-37.787 9.335-55.047h57.545c-5.862 18.336-9.542 38.069-9.712 58.929-.138 17.33 2.227 34.384 6.945 51.16H97.808a166.739 166.739 0 0 1-9.335-55.042zm19.538 78.385h52.777c12.518 29.584 32.811 58.161 60.747 85.55-49.223-10.328-90.551-42.346-113.524-85.55zm78.467 0h57.847v75.127c-26.004-24.25-45.278-49.348-57.847-75.127z" fill="#ffffff" class="fill-000000"></path>
+                        </svg>
+                        <span>{{ Str::upper($currantLang) }}</span>
+                    </a>
+                    <div class="acnav-list">
+                        <ul>
+                            @foreach ($languages as $language)
+                                <li><a href="{{ route('change.languagestore', [$store->slug, $language]) }}">{{ Str::upper($language) }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="mobile-menu-wrapper">
+            <div class="menu-close-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18">
+                    <path fill="#24272a"
+                        d="M19.95 16.75l-.05-.4-1.2-1-5.2-4.2c-.1-.05-.3-.2-.6-.5l-.7-.55c-.15-.1-.5-.45-1-1.1l-.1-.1c.2-.15.4-.35.6-.55l1.95-1.85 1.1-1c1-1 1.7-1.65 2.1-1.9l.5-.35c.4-.25.65-.45.75-.45.2-.15.45-.35.65-.6s.3-.5.3-.7l-.3-.65c-.55.2-1.2.65-2.05 1.35-.85.75-1.65 1.55-2.5 2.5-.8.9-1.6 1.65-2.4 2.3-.8.65-1.4.95-1.9 1-.15 0-1.5-1.05-4.1-3.2C3.1 2.6 1.45 1.2.7.55L.45.1c-.1.05-.2.15-.3.3C.05.55 0 .7 0 .85l.05.35.05.4 1.2 1 5.2 4.15c.1.05.3.2.6.5l.7.6c.15.1.5.45 1 1.1l.1.1c-.2.15-.4.35-.6.55l-1.95 1.85-1.1 1c-1 1-1.7 1.65-2.1 1.9l-.5.35c-.4.25-.65.45-.75.45-.25.15-.45.35-.65.6-.15.3-.25.55-.25.75l.3.65c.55-.2 1.2-.65 2.05-1.35.85-.75 1.65-1.55 2.5-2.5.8-.9 1.6-1.65 2.4-2.3.8-.65 1.4-.95 1.9-1 .15 0 1.5 1.05 4.1 3.2 2.6 2.15 4.3 3.55 5.05 4.2l.2.45c.1-.05.2-.15.3-.3.1-.15.15-.3.15-.45z">
+                    </path>
+                </svg>
+            </div>
+            <div class="mobile-menu-bar">
+                <ul>
+                    <li class="menu-lnk">
+                        <a href="{{ route('store.slug', $store->slug) }}">{{ ucfirst($store->name) }}</a>
+                    </li>
+
+                    @if (!empty($page_slug_urls))
+                         @foreach ($page_slug_urls as $k => $page_slug_url)
+                             @if ($page_slug_url->enable_page_header == 'on')
+                                 <li class="menu-lnk">
+                                     <a href="{{ env('APP_URL') . 'page/' . $page_slug_url->slug }}">{{ ucfirst($page_slug_url->name) }}</a>
+                                 </li>
+                             @endif
+                         @endforeach
+                    @endif
+                    @if ($store['blog_enable'] == 'on' && !empty($blog))
+                     <li class="menu-lnk">
+                         <a href="{{ route('store.blog', $store->slug) }}">{{ __('Blog') }}</a>
+                     </li>
+                    @endif
+                </ul>
+            </div>
+        </div>
     </header>
     @php
         if (!empty(session()->get('lang'))) {
@@ -315,205 +357,148 @@ $s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
         $storethemesetting = \App\Models\Utility::demoStoreThemeSetting($store->id, $store->theme_dir);
     @endphp
 
+     @yield('content')
 
-
-
-    @yield('content')
-
-    <footer id="footer-main">
+    <footer class="site-footer">
         <div class="container">
-
-
             @if ($getStoreThemeSetting[9]['section_enable'] == 'on')
-                <div class="row pb-4">
-
-                    <div class="col-md-4">
-                        <p class="font-size-12 mt-2">
-                            {{ $getStoreThemeSetting[9]['inner-list'][1]['field_default_text'] }}
-                        </p>
+                <div class="footer-row">
+                    <div class="footer-col footer-info-col footer-link-2">
+                        <div class="footer-widget">
+                            <div class="footer-logo">
+                                <a href="#">
+                                    <img src="{{ $imgpath . $getStoreThemeSetting[9]['inner-list'][0]['field_default_text'] }}" alt="">
+                                </a>
+                            </div>
+                            <p>{{ $getStoreThemeSetting[9]['inner-list'][1]['field_default_text'] }}</p>
+                        </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="row">
-
-                            @foreach ($getStoreThemeSetting as $key => $storethemesetting)
-                                @foreach ($storethemesetting['inner-list'] as $keyy => $theme)
-                                    @if ($theme['field_name'] == 'Enable Quick Link 1')
-                                        @if ($getStoreThemeSetting[10]['inner-list'][0]['field_default_text'] == 'on')
-                                            @if (!empty($getStoreThemeSetting[10]))
-                                                @if ((isset($getStoreThemeSetting[10]['section_enable']) &&
-                                                    $getStoreThemeSetting[10]['section_enable'] == 'on') ||
-                                                    $getStoreThemeSetting[10]['inner-list'][1]['field_default_text'])
-                                                    <div class="col-4">
-
-                                                        @if ($getStoreThemeSetting[10]['inner-list'][0]['field_default_text'] == 'on')
-                                                            <h6
-                                                                class="font-size-12 heading ls-2 mb-3 text-uppercase font-weight-300">
-                                                                {{ __($getStoreThemeSetting[10]['inner-list'][1]['field_default_text']) }}
-                                                            </h6>
-
-                                                            <ul class="list-unstyled">
-                                                                @if (isset(
-                                                                    $getStoreThemeSetting[11]['homepage-header-quick-link-name-1'],
-                                                                    $getStoreThemeSetting[11]['homepage-header-quick-link-1']))
-                                                                    @foreach ($getStoreThemeSetting[11]['homepage-header-quick-link-name-1'] as $name_key => $storethemesettingname)
-                                                                        @foreach ($getStoreThemeSetting[11]['homepage-header-quick-link-1'] as $link_key => $storethemesettinglink)
-                                                                            @if ($name_key == $link_key)
-                                                                                <li>
-                                                                                    <a class="font-size-12"
-                                                                                        href="{{ $storethemesettinglink }}">
-                                                                                        {{ $storethemesettingname }}
-                                                                                    </a>
-                                                                                </li>
-                                                                            @endif
-                                                                        @endforeach
+                    @foreach ($getStoreThemeSetting as $key => $storethemesetting)
+                        @foreach ($storethemesetting['inner-list'] as $keyy => $theme)
+                            @if ($theme['field_name'] == 'Enable Quick Link 1')
+                                @if ($getStoreThemeSetting[10]['inner-list'][0]['field_default_text'] == 'on')
+                                    @if (!empty($getStoreThemeSetting[10]))
+                                        @if ((isset($getStoreThemeSetting[10]['section_enable']) && $getStoreThemeSetting[10]['section_enable'] == 'on') || $getStoreThemeSetting[10]['inner-list'][1]['field_default_text'])
+                                            <div class="footer-col footer-link footer-link-2">
+                                                <div class="footer-widget">
+                                                    @if ($getStoreThemeSetting[10]['inner-list'][0]['field_default_text'] == 'on')
+                                                        <h6> {{ __($getStoreThemeSetting[10]['inner-list'][1]['field_default_text']) }}</h6>
+                                                        <ul>
+                                                            @if (isset( $getStoreThemeSetting[11]['homepage-header-quick-link-name-1'], $getStoreThemeSetting[11]['homepage-header-quick-link-1']))
+                                                                @foreach ($getStoreThemeSetting[11]['homepage-header-quick-link-name-1'] as $name_key => $storethemesettingname)
+                                                                    @foreach ($getStoreThemeSetting[11]['homepage-header-quick-link-1'] as $link_key => $storethemesettinglink)
+                                                                        @if ($name_key == $link_key)
+                                                                            <li>
+                                                                                <a href="{{ $storethemesettinglink }}">{{ $storethemesettingname }}</a>
+                                                                            </li>
+                                                                        @endif
                                                                     @endforeach
-                                                                @else
-                                                                    @for ($i = 0; $i < $getStoreThemeSetting[11]['loop_number']; $i++)
-                                                                        <li><a class="font-size-12 "
-                                                                                href="{{ $getStoreThemeSetting[11]['inner-list'][1]['field_default_text'] }}">
-                                                                                {{ $getStoreThemeSetting[11]['inner-list'][0]['field_default_text'] }}</a>
-                                                                        </li>
-                                                                    @endfor
-                                                                @endif
-
-                                                            </ul>
-                                                        @endif
-
-                                                    </div>
-                                                @endif
-                                            @endif
-                                        @endif
-                                    @endif
-                                @endforeach
-                            @endforeach
-
-                            @foreach ($getStoreThemeSetting as $key => $storethemesetting)
-                                @foreach ($storethemesetting['inner-list'] as $keyy => $theme)
-                                    @if ($theme['field_name'] == 'Enable Quick Link 1')
-                                        @if ($getStoreThemeSetting[12]['inner-list'][0]['field_default_text'] == 'on')
-                                            @if (!empty($getStoreThemeSetting[12]))
-                                                @if ((isset($getStoreThemeSetting[12]['section_enable']) &&
-                                                    $getStoreThemeSetting[12]['section_enable'] == 'on') ||
-                                                    $getStoreThemeSetting[12]['inner-list'][1]['field_default_text'])
-                                                    <div class="col-4">
-
-                                                        @if ($getStoreThemeSetting[12]['inner-list'][0]['field_default_text'] == 'on')
-                                                            <h6
-                                                                class="font-size-12 heading ls-2 mb-3 text-uppercase font-weight-300">
-                                                                {{ __($getStoreThemeSetting[12]['inner-list'][1]['field_default_text']) }}
-                                                            </h6>
-
-                                                            <ul class="list-unstyled">
-                                                                @if (isset(
-                                                                    $getStoreThemeSetting[13]['homepage-header-quick-link-name-2'],
-                                                                    $getStoreThemeSetting[13]['homepage-header-quick-link-2']))
-                                                                    @foreach ($getStoreThemeSetting[13]['homepage-header-quick-link-name-2'] as $name_key => $storethemesettingname)
-                                                                        @foreach ($getStoreThemeSetting[13]['homepage-header-quick-link-2'] as $link_key => $storethemesettinglink)
-                                                                            @if ($name_key == $link_key)
-                                                                                <li>
-                                                                                    <a class="font-size-12"
-                                                                                        href="{{ $storethemesettinglink }}">
-                                                                                        {{ $storethemesettingname }}
-                                                                                    </a>
-                                                                                </li>
-                                                                            @endif
-                                                                        @endforeach
-                                                                    @endforeach
-                                                                @else
-                                                                    @for ($i = 0; $i < $getStoreThemeSetting[13]['loop_number']; $i++)
-                                                                        <li><a class="font-size-12 "
-                                                                                href="{{ $getStoreThemeSetting[13]['inner-list'][1]['field_default_text'] }}">
-                                                                                {{ $getStoreThemeSetting[13]['inner-list'][0]['field_default_text'] }}</a>
-                                                                        </li>
-                                                                    @endfor
-                                                                @endif
-
-                                                            </ul>
-                                                        @endif
-
-                                                    </div>
-                                                @endif
-                                            @endif
-                                        @endif
-                                    @endif
-                                @endforeach
-                            @endforeach
-
-                            @if ($getStoreThemeSetting[14]['inner-list'][1]['field_default_text'] == 'on')
-                                @if ((isset($getStoreThemeSetting[14]['section_enable']) &&
-                                    $getStoreThemeSetting[14]['section_enable'] == 'on') ||
-                                    $getStoreThemeSetting[14]['inner-list'][1]['field_default_text'])
-                                    <div class="col-4">
-
-                                        @if ($getStoreThemeSetting[14]['inner-list'][1]['field_default_text'] == 'on')
-                                            <h6 class="font-size-14 heading ls-2 mb-3 text-uppercase font-weight-300">
-                                                {{ __($getStoreThemeSetting[14]['inner-list'][0]['field_default_text']) }}
-                                            </h6>
-
-                                            <ul class="list-unstyled">
-                                                @if (isset(
-                                                    $getStoreThemeSetting[15]['homepage-header-quick-link-name-3'],
-                                                    $getStoreThemeSetting[15]['homepage-header-quick-link-3']))
-                                                    @foreach ($getStoreThemeSetting[15]['homepage-header-quick-link-name-3'] as $name_key => $storethemesettingname)
-                                                        @foreach ($getStoreThemeSetting[15]['homepage-header-quick-link-3'] as $link_key => $storethemesettinglink)
-                                                            @if ($name_key == $link_key)
-                                                                <li>
-                                                                    <a class="font-size-12"
-                                                                        href="{{ $storethemesettinglink }}">
-                                                                        {{ $storethemesettingname }}
-                                                                    </a>
-                                                                </li>
+                                                                @endforeach
+                                                            @else
+                                                                @for ($i = 0; $i < $getStoreThemeSetting[11]['loop_number']; $i++)
+                                                                    <li>
+                                                                        <a href="{{ $getStoreThemeSetting[11]['inner-list'][1]['field_default_text'] }}"> {{ $getStoreThemeSetting[11]['inner-list'][0]['field_default_text'] }}</a>
+                                                                    </li>
+                                                                @endfor
                                                             @endif
-                                                        @endforeach
-                                                    @endforeach
-                                                @else
-                                                    @for ($i = 0; $i < $getStoreThemeSetting[15]['loop_number']; $i++)
-                                                        <li><a class="font-size-12 "
-                                                                href="{{ $getStoreThemeSetting[15]['inner-list'][1]['field_default_text'] }}">
-                                                                {{ $getStoreThemeSetting[15]['inner-list'][0]['field_default_text'] }}</a>
-                                                        </li>
-                                                    @endfor
-                                                @endif
-                                            </ul>
+                                                        </ul>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         @endif
-
-                                    </div>
+                                    @endif
                                 @endif
                             @endif
+                        @endforeach
+                    @endforeach
 
-                        </div>
-                    </div>
-                    <div class="col-md-2 mt-5">
-                        <a class="navbar-brand mr-0 col-md-2 col-6 px-0" href="#">
-                            <img alt="Image placeholder"
-                                src="{{ $imgpath . $getStoreThemeSetting[9]['inner-list'][0]['field_default_text'] }}">
-                        </a>
-                    </div>
+                    @foreach ($getStoreThemeSetting as $key => $storethemesetting)
+                        @foreach ($storethemesetting['inner-list'] as $keyy => $theme)
+                            @if ($theme['field_name'] == 'Enable Quick Link 1')
+                                @if ($getStoreThemeSetting[12]['inner-list'][0]['field_default_text'] == 'on')
+                                    @if (!empty($getStoreThemeSetting[12]))
+                                        @if ((isset($getStoreThemeSetting[12]['section_enable']) && $getStoreThemeSetting[12]['section_enable'] == 'on') || $getStoreThemeSetting[12]['inner-list'][1]['field_default_text'])
+                                            <div class="footer-col footer-link footer-link-4">
+                                                <div class="footer-widget">
+                                                    @if ($getStoreThemeSetting[12]['inner-list'][0]['field_default_text'] == 'on')
+                                                        <h6>{{ __($getStoreThemeSetting[12]['inner-list'][1]['field_default_text']) }}</h6>
+                                                        <ul>
+                                                            @if (isset($getStoreThemeSetting[13]['homepage-header-quick-link-name-2'], $getStoreThemeSetting[13]['homepage-header-quick-link-2']))
+                                                                @foreach ($getStoreThemeSetting[13]['homepage-header-quick-link-name-2'] as $name_key => $storethemesettingname)
+                                                                    @foreach ($getStoreThemeSetting[13]['homepage-header-quick-link-2'] as $link_key => $storethemesettinglink)
+                                                                        @if ($name_key == $link_key)
+                                                                            <li>
+                                                                                <a href="{{ $storethemesettinglink }}">{{ $storethemesettingname }}</a>
+                                                                            </li>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endforeach
+                                                            @else
+                                                                @for ($i = 0; $i < $getStoreThemeSetting[13]['loop_number']; $i++)
+                                                                    <li>
+                                                                        <a href="{{ $getStoreThemeSetting[13]['inner-list'][1]['field_default_text'] }}"> {{ $getStoreThemeSetting[13]['inner-list'][0]['field_default_text'] }}</a>
+                                                                    </li>
+                                                                @endfor
+                                                            @endif
+                                                        </ul>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endif
+                                @endif
+                            @endif
+                        @endforeach
+                    @endforeach
+
+                    @if ($getStoreThemeSetting[14]['inner-list'][1]['field_default_text'] == 'on')
+                        @if ((isset($getStoreThemeSetting[14]['section_enable']) && $getStoreThemeSetting[14]['section_enable'] == 'on') || $getStoreThemeSetting[14]['inner-list'][1]['field_default_text'])
+                            <div class="footer-col footer-link footer-link-3">
+                                <div class="footer-widget">
+                                        @if ($getStoreThemeSetting[14]['inner-list'][1]['field_default_text'] == 'on')
+                                        <h6> {{ __($getStoreThemeSetting[14]['inner-list'][0]['field_default_text']) }}</h6>
+                                        <ul>
+                                                @if (isset($getStoreThemeSetting[15]['homepage-header-quick-link-name-3'], $getStoreThemeSetting[15]['homepage-header-quick-link-3']))
+                                                @foreach ($getStoreThemeSetting[15]['homepage-header-quick-link-name-3'] as $name_key => $storethemesettingname)
+                                                    @foreach ($getStoreThemeSetting[15]['homepage-header-quick-link-3'] as $link_key => $storethemesettinglink)
+                                                        @if ($name_key == $link_key)
+                                                            <li>
+                                                                <a href="{{ $storethemesettinglink }}"> {{ $storethemesettingname }}</a>
+                                                            </li>
+                                                            @endif
+                                                    @endforeach
+                                                @endforeach
+                                            @else
+                                                @for ($i = 0; $i < $getStoreThemeSetting[15]['loop_number']; $i++)
+                                                    <li>
+                                                        <a href="{{ $getStoreThemeSetting[15]['inner-list'][1]['field_default_text'] }}"> {{ $getStoreThemeSetting[15]['inner-list'][0]['field_default_text'] }}</a>
+                                                    </li>
+                                                @endfor
+                                            @endif
+                                        </ul>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+                    @endif
                 </div>
-            @endif
-
-            @if ($getStoreThemeSetting[16]['section_enable'] == 'on')
-                <div class=" row">
-                    <div class="d-sm-flex col-12 text-center text-md-left justify-content-between">
-                        <div class="copyright font-size-12 text-md-left">
+                <div class="footer-bottom">
+                    <div class="row align-items-center ">
+                        <div class="col-lg-6 col-md-6 col-12">
                             @if ($getStoreThemeSetting[16]['section_enable'] == 'on')
-                                {{ $getStoreThemeSetting[16]['inner-list'][0]['field_default_text'] }}
+                                <p>{{ $getStoreThemeSetting[16]['inner-list'][0]['field_default_text'] }}</p>
                             @endif
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-lg-6 col-md-6 col-12">
                             @if ($getStoreThemeSetting[16]['section_enable'] == 'on')
-
-                                <ul class="list-unstyled d-flex">
-                                    @if (isset($getStoreThemeSetting[17]['homepage-footer-2-social-icon']) ||
-                                        isset($getStoreThemeSetting[17]['homepage-footer-2-social-link']))
-                                        @if (isset($getStoreThemeSetting[17]['inner-list'][1]['field_default_text']) &&
-                                            isset($getStoreThemeSetting[17]['inner-list'][0]['field_default_text']))
+                                <ul class="footer-social">
+                                    @if (isset($getStoreThemeSetting[17]['homepage-footer-2-social-icon']) || isset($getStoreThemeSetting[17]['homepage-footer-2-social-link']))
+                                        @if (isset($getStoreThemeSetting[17]['inner-list'][1]['field_default_text']) && isset($getStoreThemeSetting[17]['inner-list'][0]['field_default_text']))
                                             @foreach ($getStoreThemeSetting[17]['homepage-footer-2-social-icon'] as $icon_key => $storethemesettingicon)
                                                 @foreach ($getStoreThemeSetting[17]['homepage-footer-2-social-link'] as $link_key => $storethemesettinglink)
                                                     @if ($icon_key == $link_key)
-                                                        <li class="mr-4">
-                                                            <a href="{{ $storethemesettinglink }}">
+                                                        <li>
+                                                            <a href="{{ $storethemesettinglink }}" target="_blank">
                                                                 {!! $storethemesettingicon !!}
                                                             </a>
                                                         </li>
@@ -523,54 +508,99 @@ $s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
                                         @endif
                                     @else
                                         @for ($i = 0; $i < $getStoreThemeSetting[17]['loop_number']; $i++)
-                                            @if (isset($getStoreThemeSetting[17]['inner-list'][1]['field_default_text']) &&
-                                                isset($getStoreThemeSetting[17]['inner-list'][0]['field_default_text']))
-                                                <li class="mr-4">
-                                                    <a href="{{ $getStoreThemeSetting[17]['inner-list'][1]['field_default_text'] }}"
-                                                        target="_blank">
-                                                        {!! $getStoreThemeSetting[17]['inner-list'][0]['field_default_text'] !!}
+                                            @if (isset($getStoreThemeSetting[17]['inner-list'][1]['field_default_text']) && isset($getStoreThemeSetting[17]['inner-list'][0]['field_default_text']))
+                                                <li>
+                                                    <a href="{{ $getStoreThemeSetting[17]['inner-list'][1]['field_default_text'] }}" target="_blank">
+                                                         {!! $getStoreThemeSetting[17]['inner-list'][0]['field_default_text'] !!}
                                                     </a>
                                                 </li>
                                             @endif
                                         @endfor
                                     @endif
                                 </ul>
-
                             @endif
-
                         </div>
                     </div>
                 </div>
             @endif
         </div>
     </footer>
-
-    <div class="modal fade" id="commonModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    @if ($getStoreThemeSetting[16]['section_enable'] == 'on')
+        <script>
+            {!! $getStoreThemeSetting[18]['inner-list'][0]['field_default_text'] !!}
+        </script>
+    @endif
+    <div class="modal fade modal-popup" id="commonModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-inner md-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header align-items-center">
-                    <div class="modal-title">
-                        <h6 class="mb-0" id="modelCommanModelLabel"></h6>
+                <div class="popup-content">
+                    <div class="modal-header  popup-header align-items-center">
+                        <div class="modal-title">
+                            <h6 class="mb-0" id="modelCommanModelLabel"></h6>
+                        </div>
+                        <button type="button" class="close close-button" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <div class="modal-body">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {{-- checkout modal --}}
+    <div class="modal-popup top-center" id="Checkout">
+        <div class="modal-dialog-inner modal-md">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h4>{{ __('Checkout As Guest Or Login') }}</h4>
+                    <div class="close-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
+                            <path d="M27.7618 25.0008L49.4275 3.33503C50.1903 2.57224 50.1903 1.33552 49.4275 0.572826C48.6647 -0.189868 47.428 -0.189965 46.6653 0.572826L24.9995 22.2386L3.33381 0.572826C2.57102 -0.189965 1.3343 -0.189965 0.571605 0.572826C-0.191089 1.33562 -0.191186 2.57233 0.571605 3.33503L22.2373 25.0007L0.571605 46.6665C-0.191186 47.4293 -0.191186 48.666 0.571605 49.4287C0.952952 49.81 1.45285 50.0007 1.95275 50.0007C2.45266 50.0007 2.95246 49.81 3.3339 49.4287L24.9995 27.763L46.6652 49.4287C47.0465 49.81 47.5464 50.0007 48.0463 50.0007C48.5462 50.0007 49.046 49.81 49.4275 49.4287C50.1903 48.6659 50.1903 47.4292 49.4275 46.6665L27.7618 25.0008Z" fill="white"></path>
+                        </svg>
+                    </div>
                 </div>
                 <div class="modal-body">
+                    <div class="btn-group">
+                        <a href="{{ route('customer.login', $store->slug) }}" class="btn-secondary">{{ __('Countinue to sign in') }}</a>
+                        <a href="{{ route('user-address.useraddress', $store->slug) }}" class="btn">{{ __('Countinue as guest') }}</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    {{-- <script src="{{asset('assets/theme3/js/all.min.js')}}"></script> --}}
-
-    <script src="{{ asset('assets/theme10/js/purpose.core.js') }}"></script>
+    <script src="{{asset('custom/js/jquery.min.js')}}"></script>
+    <script src="{{asset('assets/js/plugins/bootstrap.min.js')}}"></script>
     <script src="{{ asset('custom/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/theme10/js/swiper.min.js') }}"></script>
-    <script href="{{ asset('assets/theme10/js/storego.js') }}"></script>
-    <script href="{{ asset('assets/theme10/js/regular.js') }}"></script>
+    <script src="{{ asset('assets/theme10/js/slick.min.js') }}" defer="defer"></script>
     <script src="{{ asset('custom/libs/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
-    <script src="{{ asset('assets/theme10/js/purpose.js') }}"></script>
+                    {{-- pwa customer app --}}
+    @if ($store->enable_pwa_store == 'on')
+        <script type="text/javascript">
+
+        const container = document.querySelector("body")
+
+        const coffees = [];
+
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener("load", function() {
+                navigator.serviceWorker
+                    .register( "{{asset("serviceWorker.js")}}" )
+                    .then(res => console.log(""))
+                    .catch(err => console.log("service worker not registered", err))
+
+            })
+        }
+
+        </script>
+    @endif
+    @if (isset($data->value) && $data->value == 'on')
+        <script src="{{ asset('assets/theme10/js/custom-rtl.js') }}" defer="defer"></script>
+    @else
+        <script src="{{ asset('assets/theme10/js/custom.js') }}" defer="defer"></script>
+    @endif
     <script>
         var dataTabelLang = {
             paginate: {
@@ -808,3 +838,4 @@ $s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
             src="https://www.facebook.com/tr?id=0000&ev=PageView&noscript={{ $store_settings->fbpixel_code }}" /></noscript>
 
 </body>
+</html>

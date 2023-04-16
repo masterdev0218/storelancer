@@ -41,25 +41,41 @@ class DashboardController extends Controller
         if (!file_exists(storage_path() . "/installed")) {
             header('location:install');
             die;
-        } else {
+        }
+        $uri = url()->full();
+        $segments = explode('/', str_replace(''.url('').'', '', $uri));
+        $segments = $segments[1] ?? null;
+        
+        if($segments == null) {
             $local = parse_url(config('app.url'))['host'];
-
             // Get the request host
             $remote = request()->getHost();
             // Get the remote domain
-
+            
             // remove WWW
             $remote = str_replace('www.', '', $remote);
+         
 
             $store = Store::where('domains', '=', $remote)->where('enable_domain', 'on')->first();
             // If the domain exists
-            if ($store && $store->enable_domain == 'on') {
+            // if ($store && $store->enable_domain == 'on') {
+            //     return app('App\Http\Controllers\StoreController')->storeSlug($store->slug);
+            // }
+            // $sub_store = Store::where('subdomain', '=', $remote)->where('enable_subdomain', 'on')->first();
+            // if ($sub_store && $sub_store->enable_subdomain == 'on') {
+            //     return app('App\Http\Controllers\StoreController')->storeSlug($sub_store->slug);
+            // }
+
+            if($store && $store->enable_domain == 'on') {
                 return app('App\Http\Controllers\StoreController')->storeSlug($store->slug);
             }
+            
             $sub_store = Store::where('subdomain', '=', $remote)->where('enable_subdomain', 'on')->first();
             if ($sub_store && $sub_store->enable_subdomain == 'on') {
+            
                 return app('App\Http\Controllers\StoreController')->storeSlug($sub_store->slug);
             }
+
         }
 
         if (\Auth::check()) {
@@ -69,15 +85,15 @@ class DashboardController extends Controller
                 $products = Product::where('store_id', $store->current_store)->limit(5)->get();
                 $new_orders = Order::where('user_id', $store->current_store)->limit(8)->orderBy('id', 'DESC')->get();
                 $chartData = $this->getOrderChart(['duration' => 'week']);
+                $saleData = $this->getSaleChart(['duration' => 'week']);
                 $store_id = Store::where('id', $store->current_store)->first();
                 if ($store_id) {
                     $app_url = trim(env('APP_URL'), '/');
                     $store_id['store_url'] = $app_url . '/store/' . $store_id['slug'];
                 }
-
                 $totle_sale = 0;
                 $totle_order = 0;
-                $orders = Order::where('user_id', $store->current_store)->where('status', 'delivered')->get();
+                $orders = Order::where('user_id', $store->current_store)->get();
                 if (!empty($orders)) {
                     $pro_qty = 0;
                     $item_id = [];
@@ -98,12 +114,13 @@ class DashboardController extends Controller
                         $totle_order++;
                     }
                 }
-                return view('home', compact('products', 'store_id', 'totle_sale', 'store', 'orders', 'totle_order', 'newproduct', 'item_id', 'totle_qty', 'chartData', 'new_orders'));
+                // dd($chartData);
+                return view('home', compact('products','saleData', 'store_id', 'totle_sale', 'store', 'orders', 'totle_order', 'newproduct', 'item_id', 'totle_qty', 'chartData', 'new_orders'));
             } else {
                 $user = \Auth::user();
                 $user['total_user'] = $user->countCompany();
                 $user['total_paid_user'] = $user->countPaidCompany();
-                $user['total_orders'] = Order::total_orders();
+                $user['total_orders'] = PlanOrder::total_orders();
                 $user['total_orders_price'] = Order::total_orders_price();
                 $user['total_plan_price'] = PlanOrder::total_plan_price();
                 $user['total_plan'] = Plan::total_plan();
@@ -135,7 +152,37 @@ class DashboardController extends Controller
         $arrDuration = [];
         if ($arrParam['duration']) {
             if ($arrParam['duration'] == 'week') {
-                $previous_week = strtotime("-2 week +1 day");
+                $previous_week = strtotime("-1 week +1 day");
+                for ($i = 0; $i < 7; $i++) {
+                    $arrDuration[date('Y-m-d', $previous_week)] = date('d-M', $previous_week);
+                    $previous_week = strtotime(date('Y-m-d', $previous_week) . " +1 day");
+                }
+            }
+        }
+        $arrTask = [];
+        $arrTask['label'] = [];
+        $arrTask['data'] = [];
+        foreach ($arrDuration as $date => $label) {
+        
+            if (Auth::user()->type == 'Owner') {
+                $data = Order::select(\DB::raw('count(*) as total'))->where('user_id', $userstore->store_id)->whereDate('created_at', '=', $date)->first();
+            } else {
+                $data = PlanOrder::select(\DB::raw('count(*) as total'))->whereDate('created_at', '=', $date)->first();
+            }
+
+            $arrTask['label'][] = $label;
+            $arrTask['data'][] = $data->total;
+        }
+        return $arrTask;
+    }
+    public function getSaleChart($arrParam)
+    {
+        $user = Auth::user();
+        $userstore = UserStore::where('store_id', $user->current_store)->first();
+        $arrDuration = [];
+        if ($arrParam['duration']) {
+            if ($arrParam['duration'] == 'week') {
+                $previous_week = strtotime("-1 week +1 day");
                 for ($i = 0; $i < 7; $i++) {
                     $arrDuration[date('Y-m-d', $previous_week)] = date('d-M', $previous_week);
                     $previous_week = strtotime(date('Y-m-d', $previous_week) . " +1 day");
@@ -147,12 +194,11 @@ class DashboardController extends Controller
         $arrTask['data'] = [];
         foreach ($arrDuration as $date => $label) {
             if (Auth::user()->type == 'Owner') {
-                $data = Order::select(\DB::raw('count(*) as total'))->where('user_id', $userstore->store_id)->whereDate('created_at', '=', $date)->first();
+                $data = Order::select(\DB::raw('sum(price) as total',))->where('user_id', $userstore->store_id)->whereDate('created_at', '=', $date)->first();
 
             } else {
-                $data = Order::select(\DB::raw('count(*) as total'))->whereDate('created_at', '=', $date)->first();
+                $data = Order::select(\DB::raw('sum(price) as total'))->whereDate('created_at', '=', $date)->first();
             }
-
             $arrTask['label'][] = $label;
             $arrTask['data'][] = $data->total;
         }

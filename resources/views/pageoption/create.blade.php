@@ -14,7 +14,7 @@
     </div>
     <div class="form-group col-md-12">
         {{Form::label('contents',__('Content'),array('class'=>'col-form-label')) }}
-        {{Form::textarea('contents',null,array('class'=>'form-control summernote-simple','rows'=>3,'placehold   er'=>__('Content')))}}
+        {{Form::textarea('contents',null,array('class'=>'form-control summernote-simple','rows'=>3,'placeholder'=>__('Content')))}}
     </div>
     <div class="form-group col-12 d-flex justify-content-end col-form-label">
         <input type="button" value="{{__('Cancel')}}" class="btn btn-secondary btn-light" data-bs-dismiss="modal">

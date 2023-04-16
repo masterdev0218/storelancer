@@ -9,183 +9,119 @@
 
 @endphp
 @section('content')
-    {{-- @DD($products['Start shopping']) --}}
-
-    <section class="my-cart-section pt-5 mb-5">
-        @if ($products['Start shopping']->count() > 0)
-            <div class="container">
-                <!-- Shopping cart table -->
-                <div class="row align-items-center">
-                    <div class="col-md-12 col-lg-2">
-                        <h3 class="font-weight-400 m-md-0 text-secondary">
-                            {{ __('Product') }}
-                        </h3>
-                    </div>
-                    <div class="col-md-12 col-lg-10">
-                        <div class="nav nav-tabs nav-fill border-0 justify-content-end" id="nav-tab" role="tablist">
-                            <div class="product-tab d-flex border border-secondary no-gutters">
-                                <ul class="tabs bg-primary" role="tablist" id="myTab">
-
-                                    {{-- @foreach ($categories as $key => $category)
-                                        <li class="{{ $category == $categorie_name ? 'active' : '' }} product-tab-main">
-                                            <a href="#{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $category) !!}" data-id="{{ $key }}"
-                                                class="  tab-a border-0 btn btn-block text-secondary m-0 rounded-0 productTab"
-                                                id="electronic-tab" data-toggle="tab" role="tab" aria-controls="home"
-                                                aria-selected="false">
-                                                {{ __($category) }}
-                                            </a>
-                                        </li>
-                                    @endforeach --}}
-                                    @foreach ($categories as $key => $category)
-                                        <li class="{{ $category == $categorie_name ? 'active' : '' }} bg-primary">
-                                            <a href="#{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $category) !!}" data-id="{{ $key }}"
-                                                class="{{ $key == 0 ? 'active' : '' }} productTab bg-primary"
-                                                id="electronic-tab" data-toggle="tab" role="tab" aria-controls="home"
-                                                aria-selected="false">
-                                                {{ __($category) }}
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+<div class="wrapper">
+    <section class="porduct-listing-page padding-top padding-bottom">
+        <div class="container">
+            <div class="tabs-wrapper">
+                <div class="tab-nav">
+                    <h2>{{ __('Product') }}</h2>
+                    <ul class="d-flex tabs">
+                        @foreach($categories as $key=>$category)
+                            <li class="tab-link {{($category==$categorie_name)?'active':''}}" data-tab="tab-{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $category)!!}">
+                                <a href="#{!!preg_replace('/[^A-Za-z0-9\-]/','_',$category)!!}" id="electronic-tab" data-id="{{$key}}">{{$category}}</a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
-
-                <div class="bestsellers-tabs" id="nav-tabContent">
-
-                    @foreach ($products as $key => $items)
-                        <div class="tab-content row {{($key==$categorie_name)?'active show':''}} "
-                            id="{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $key) !!}" role="tabpanel" aria-labelledby="shopping-tab">
-
-                            @foreach ($items as $key => $product)
-                                <div class="col-lg-3 col-md-4 col-sm-6 mb-5 mb-md-0 product-box mt-3">
-                                    <div class="border-0 card-product rounded-0">
-                                        <h6 class="text-uppercase border-bottom border-primary pb-2 d-inline-block">
-                                            <a
-                                                href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}">
-                                                {{ $product->name }}
-                                            </a>
-                                        </h6>
-                                        <p class="mb-0 font-size-12 ">
-                                            {{ $product->product_category() }}
-                                        </p>
-                                        <div class="card-image col-5 col-md-9 mx-auto pb-2 pt-3">
-                                            <a
-                                                href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}">
-                                                @if (!empty($product->is_cover) )
-                                                    <img alt="Image placeholder"
-                                                        src="{{ $imgpath. $product->is_cover }}"
-                                                        class="img-center img-fluid">
-                                                @else
-                                                    <img alt="Image placeholder"
-                                                        src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}"
-                                                        class="img-center img-fluid">
-                                                @endif
-                                            </a>
-                                        </div>
-                                        <div class="card-body">
-                                            @if ($product->enable_product_variant == 'on')
-                                                <input type="hidden" id="product_id" value="{{ $product->id }}">
-                                                <input type="hidden" id="variant_id" value="">
-                                                <input type="hidden" id="variant_qty" value="">
-
-
-                                                @php $json_variant = json_decode($product->variants_json); @endphp
-                                                @foreach ($json_variant as $key => $json)
-                                                    @php $variant_name = $json->variant_name; @endphp
-                                                @endforeach
-
-                                                <span class="d-block font-size-12 mb-1 ">
-                                                    {{ $variant_name }} :
-                                                </span>
-
-
-                                                @foreach ($json_variant as $key => $variant)
-                                                    <div class="dropdown w-100 mb-3">
-                                                        <select name="product[{{ $key }}]" id="pro_variants_name"
-                                                            class="btn btn-outline-primary d-flex font-size-12 font-weight-400 justify-content-between px-3 rounded-pill w-100 variant-selection  pro_variants_name{{ $key }}">
-                                                            <option value=""> {{ __('Select') }}</option>
-                                                            @foreach ($variant->variant_options as $key => $values)
-                                                                <option value="{{ $values }}">{{ $values }}
-                                                                </option>
+                <div class="tabs-container">
+                    @foreach($products as $key => $items)
+                        <div class="tab-content {{ $key == $categorie_name ? 'active' : '' }}" id="tab-{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $key)!!}">
+                            <div class="row product-row">
+                                @if($items->count() > 0)
+                                    @foreach($items as $product)
+                                        <div class="col-lg-3 col-md-4 col-12 col-sm-6 product-card">
+                                            <div class="product-card-inner">
+                                                <div class="product-content-top">
+                                                    <h6>
+                                                        <a href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}"> {{ $product->name }}</a>
+                                                    </h6>
+                                                    <p>{{ $product->product_category() }}</p>
+                                                </div>
+                                                <div class="product-img">
+                                                    <a href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}">
+                                                        @if (!empty($product->is_cover) )
+                                                            <img src="{{ $imgpath. $product->is_cover }}" alt="">
+                                                        @else
+                                                            <img src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}" alt="">
+                                                        @endif
+                                                    </a>
+                                                </div>
+                                                <div class="product-content">
+                                                    <div class="card-body">
+                                                        @if ($product->enable_product_variant == 'on')
+                                                            <input type="hidden" id="product_id" value="{{ $product->id }}" class="product_id">
+                                                            <input type="hidden" id="variant_id" value="">
+                                                            <input type="hidden" id="variant_qty" value="">
+            
+            
+                                                            @php $json_variant = json_decode($product->variants_json); @endphp
+                                                            @foreach ($json_variant as $key => $json)
+                                                                @php $variant_name = $json->variant_name; @endphp
                                                             @endforeach
-                                                        </select>
+        
+                                                            @foreach ($json_variant as $key => $variant)                                             
+                                                                <span class="d-block font-size-12 mb-1 variant_name">
+                                                                    {{ $variant->variant_name }} :
+                                                                </span>
+                                                                <div class="dropdown w-100 ">            
+                                                                    <select name="product[{{ $key }}]"
+                                                                        id="pro_variants_name{{ $key }}"
+                                                                        class="btn btn-outline-white d-flex font-size-12 font-weight-400 justify-content-between px-3 rounded-pill w-100 variant-selection  pro_variants_name{{ $key }} pro_variants_name variant_loop variant_val">
+                                                                        @foreach ($variant->variant_options as $key => $values)
+                                                                            <option value="{{ $values }}"
+                                                                                id="{{ $values }}_varient_option">
+                                                                                {{ $values }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            @endforeach
+                                                        @endif
                                                     </div>
-                                                @endforeach
-                                            @endif
-
-                                        <div class="d-flex justify-content-between">
-                                            <span
-                                                class="card-price mb-3  font-weight-500 {{ $product->enable_product_variant == 'on' ? 'variation_price' : '' }} ">
-                                                @if ($product->enable_product_variant == 'on')
-                                                    {{ __('In variant') }}
-                                                @else
-                                                    {{ \App\Models\Utility::priceFormat($product->price) }}
-                                                @endif
-                                            </span>
-
-                                            @if (Auth::guard('customers')->check())
-                                                @if (!empty($wishlist) && isset($wishlist[$product->id]['product_id']))
-                                                    @if ($wishlist[$product->id]['product_id'] != $product->id)
-                                                        <button data-toggle="tooltip" data-original-title="Wishlist"
-                                                            type="button"
-                                                            class="mr-4 bg-transparent border-0 p-0  add_to_wishlist wishlist_{{ $product->id }}"
-                                                            data-id="{{ $product->id }}">
-                                                            <i class="far fa-heart "></i>
-                                                        </button>
+                                                    <div class="wish-price">
+                                                        <div class="price {{ $product->enable_product_variant == 'on' ? 'variation_price' . $product->id : '' }}">
+                                                            <ins>
+                                                                @if ($product->enable_product_variant == 'on')
+                                                                    {{ __('In variant') }}
+                                                                @else
+                                                                    {{ \App\Models\Utility::priceFormat($product->price) }}
+                                                                @endif
+                                                            </ins>
+                                                        </div>
+                                                        @if (Auth::guard('customers')->check())
+                                                            @if (!empty($wishlist) && isset($wishlist[$product->id]['product_id']))
+                                                                @if ($wishlist[$product->id]['product_id'] != $product->id)
+                                                                    <a href="#" class="wishlist-btn add_to_wishlist wishlist_{{ $product->id }}" data-id="{{ $product->id }}"><i class="far fa-heart"></i></a>
+                                                                @else
+                                                                    <a href="#" class="wishlist-btn" data-id="{{ $product->id }}"><i class="fas fa-heart"></i></a>
+                                                                @endif
+                                                            @else
+                                                                <a href="#" class="wishlist-btn add_to_wishlist wishlist_{{ $product->id }}" data-id="{{ $product->id }}"><i class="far fa-heart"></i></a>
+                                                            @endif
+                                                        @else
+                                                            <a href="#" class="wishlist-btn add_to_wishlist wishlist_{{ $product->id }}" data-id="{{ $product->id }}"><i class="far fa-heart"></i></a>
+                                                        @endif
+                                                        
+                                                    </div>
+                                                    <span class=" mb-0 text-danger product-price-error"></span>
+                                                    @if ($product->enable_product_variant == 'on')
+                                                        <a href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}" class="cart-btn btn add_to_cart" data-id="{{ $product->id }}">  {{ __('ADD TO CART') }}</a>
                                                     @else
-                                                        <button data-toggle="tooltip" data-original-title="Wishlist"
-                                                            type="button" class="mr-4 bg-transparent border-0 p-0 "
-                                                            data-id="{{ $product->id }}" disabled>
-                                                            <i class="fas fa-heart "></i>
-                                                        </button>
+                                                        <a href="#" class="cart-btn btn add_to_cart" data-id="{{ $product->id }}">  {{ __('ADD TO CART') }}</a>
                                                     @endif
-                                                @else
-                                                    <button data-toggle="tooltip" data-original-title="Wishlist"
-                                                        type="button"
-                                                        class="mr-4 bg-transparent border-0 p-0  add_to_wishlist wishlist_{{ $product->id }}"
-                                                        data-id="{{ $product->id }}">
-                                                        <i class="far fa-heart "></i>
-                                                    </button>
-                                                @endif
-                                            @else
-                                                <button data-toggle="tooltip" data-original-title="Wishlist" type="button"
-                                                    class="mr-4 bg-transparent border-0 p-0  add_to_wishlist wishlist_{{ $product->id }}"
-                                                    data-id="{{ $product->id }}">
-                                                    <i class="far fa-heart "></i>
-                                                </button>
-                                            @endif
+                                                </div>
+                                            </div>
                                         </div>
-                                        @if ($product->enable_product_variant == 'on')
-                                            {{-- <a href="#" type="button"
-                                                class="btn btn-primary btn-block rounded-pill add_to_cart" data-flag="1"
-                                                data-id="{{ $product->id }}">
-                                                {{ __('ADD TO CART') }}
-                                            </a> --}}
-                                            <a href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}" type="button"
-                                                class="btn btn-primary btn-block rounded-pill add_to_cart" data-flag="1" data-id="{{ $product->id }}">
-                                                {{ __('ADD TO CART') }}
-                                            </a>
-                                        @else
-                                            <a href="javascript:void(0)" type="button" data-flag="0"
-                                                class="btn btn-primary btn-block rounded-pill add_to_cart"
-                                                data-id="{{ $product->id }}" data-flag="0">
-                                                {{ __('ADD TO CART') }}
-                                            </a>
-                                        @endif
-                                    </div>
-                                    </div>
-                                </div>
-                            @endforeach
+                                    @endforeach
+                                @endif 
+                            </div>
                         </div>
                     @endforeach
                 </div>
-
             </div>
-            </div>
-        @endif
+        </div>
     </section>
+</div>
 @endsection
 @push('script-page')
     <script>
@@ -234,31 +170,58 @@
 
         $(document).on('change', '.variant-selection', function() {
             var variants = [];
-
             let selected1 = $(this).parent().parent().find('.variant-selection');
+            // let test = $(this).closest(".card-body").find('.variant-selection').val();
+
             $(selected1).each(function(index, element) {
+
                 variants.push(element.value);
             });
-            let product_id = $(this).closest(".card-body").find('#product_id').val();
-            let variation_price = $(this).closest(".card-product").find('.variation_price');
 
+            let product_id = $(this).closest(".card-body").find('.product_id').val();
+            let variation_price = $(this).closest(".product-content").find('.variation_price');
+            let product_price_error = $(this).closest(".product-content").find('.product-price-error');
+            let product_price = $(this).closest(".product-content").find('.product-price');
+            let add_to_cart = $(this).closest(".product-content").find('.add_to_cart');
             if (variants.length > 0) {
 
                 $.ajax({
                     url: '{{ route('get.products.variant.quantity') }}',
+                    context: this,
                     data: {
                         "_token": $('meta[name="csrf-token"]').attr('content'),
                         variants: variants.join(' : '),
-                        product_id:product_id
-
+                        product_id: product_id
                     },
-
-
                     success: function(data) {
+                        product_price_error.hide();
+                        product_price.show();
 
-                        variation_price.html(data.price);
+                        $('.variation_price' + product_id).html(data.price);
                         $('#variant_id').val(data.variant_id);
                         $('#variant_qty').val(data.quantity);
+                        
+                        var variant_message_array = [];
+                        $(this).parents('.card-body').find('.variant_loop').each(function(index) {
+                            var variant_name = $(this).prev().text();
+                            var variant_val = $(this).val();
+                            // console.log(variant_val + " ," + variant_name);
+                            variant_message_array.push(variant_val + " " + variant_name);
+                        });
+                        var variant_message = variant_message_array.join(" and ");
+
+                        if (data.variant_id == 0) {
+                            add_to_cart.hide();
+                            variation_price.html('');
+                            product_price.hide();
+                            product_price_error.show();
+                            var message =
+                                '<span class=" mb-0 text-danger">This product is not available with ' +
+                                variant_message + '.</span>';
+                            product_price_error.html(message);
+                        }else{
+                            add_to_cart.show()
+                        }
                     }
                 });
             }

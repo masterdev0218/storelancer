@@ -9,27 +9,27 @@
 
     @endphp
 @section('content')
-    <div class="top-product mb-0">
-        <div class="container py-6">
-            <div class="row top-product">
+<div class="wrapper">
+    <section class="wishlist-section padding-top padding-bottom">
+        <div class="container">
+            <div class="row product-row">
                 @foreach($products as $k => $product)
-                    <div class="col-xl-3 col-lg-4 col-sm-6 product-box wishlist_{{$product['product_id']}}">
-                        <div class="card card-product">
-                            <div class="card-image bg-white">
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12 wishlist_{{$product['product_id']}}">
+                        <div class="product-card">
+                            <div class="card-img">
                                 <a href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}">
                                     @if(!empty($product['image']))
-                                        <img alt="Image placeholder" src="{{$imgpath.$product['image']}}" class="img-center img-fluid">
+                                        <img src="{{$imgpath.$product['image'] }}">
                                     @else
-                                        <img src="{{asset(Storage::url('uploads/is_cover_image/default.jpg'))}}" class="img-center img-fluid">
+                                    <img src="{{asset(Storage::url('uploads/is_cover_image/default.jpg'))}}">
                                     @endif
                                 </a>
                             </div>
-                            <div class="card-body pt-0">
-                                <h6><a class="t-black13" href="#">{{$product['product_name']}}</a></h6>
-                                <p class="text-sm">
-                                    <span class="td-gray">{{__('Category')}}:</span> {{\App\Models\Product::getCategoryById($product['product_id'])}}
-                                </p>
-                                <span class="static-rating static-rating-sm">
+                            <div class="card-content">
+                                <h6>
+                                    <a href="#">{{$product['product_name']}}</a>
+                                </h6>
+                                <div class="rating">
                                     @if($store['enable_rating'] == 'on')
                                         @for($i =1;$i<=5;$i++)
                                             @php
@@ -48,36 +48,31 @@
                                             <i class="star fas {{$icon .' '. $color}}"></i>
                                         @endfor
                                     @endif
-                                </span>
-                                @if($product['enable_product_variant'] == 'on')
-                                    <div class="product-price mt-3">
-                                        <span class="card-price t-black15">{{__('In variant')}}</span>
-                                    </div>
-                                    <a href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}" type="button" class="action-item pcart-icon bg-primary">
-                                        {{__('Add To Cart')}}
-                                        <i class="ml-2 fas fa-shopping-basket"></i>
-                                    </a>
-                                @else
-                                    <div class="product-price mt-3">
-                                        <span class="card-price t-black15">{{\App\Models\Utility::priceFormat($product['price'])}}</span>
-                                    </div>
-                                    <a type="button" class="action-item pcart-icon bg-primary add_to_cart" data-id="{{$product['product_id']}}">
-                                        {{__('Add To Cart')}}
-                                        <i class="ml-2 fas fa-shopping-basket"></i>
-                                    </a>
-                                @endif
-                            </div>
-                            <div class="actions card-product-actions">
-                                <button type="button" class="action-item wishlist-icon bg-light-gray delete_wishlist_item" id="delete_wishlist_item1" data-id="{{$product['product_id']}}">
-                                    <i class="fas fa-heart"></i>
-                                </button>
+                                </div>
+                                <div class="price">
+                                    @if($product['enable_product_variant'] == 'on')
+                                        <ins>{{__('In variant')}}</ins>
+                                    @else
+                                        <ins>{{\App\Models\Utility::priceFormat($product['price'])}}</ins>
+                                    @endif
+                                </div>
+                                <p>{{__('Category')}}: {{\App\Models\Product::getCategoryById($product['product_id'])}}</p>
+                                <div class="last-btn">
+                                    @if($product['enable_product_variant'] == 'on')
+                                        <a href="{{route('store.product.product_view',[$store->slug,$product['product_id']])}}" class="cart-btn add_to_cart" data-id="{{$product['product_id']}}">{{__('In variant')}}<i class="fas fa-shopping-basket"></i></a>
+                                    @else
+                                        <a href="#" class="cart-btn add_to_cart" data-id="{{$product['product_id']}}">{{__('Add to cart')}} <i class="fas fa-shopping-basket"></i></a>
+                                    @endif
+                                    <a href="#" class="heart-btn delete_wishlist_item" id="delete_wishlist_item1" data-id="{{$product['product_id']}}"><i class="fas fa-heart"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
-    </div>
+    </section>    
+</div>    
 @endsection
 @push('script-page')
     <script>

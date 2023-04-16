@@ -29,7 +29,7 @@
           "field_type": "text"
         },
         {
-          "field_name": "Bckground Image",
+          "field_name": "Background Image",
           "field_slug": "homepage-header-bg-image",
           "field_help_text": "",
           "field_default_text": "theme1/header/header_img_1.png",

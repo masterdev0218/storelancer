@@ -429,7 +429,7 @@ class PaymentController extends Controller
                 $order->payment_status  = 'success';
                 $order->receipt         = '';
                 $order->user_id         = $store['id'];
-                $order->customer_id     = $customer;
+                $order->customer_id     = isset($customer->id) ? $customer->id : '';
                 $order->save();
 
                 if ((!empty(Auth::guard('customers')->user()) && $store->is_checkout_login_required == 'on') ){
@@ -1008,7 +1008,7 @@ class PaymentController extends Controller
                         $order->card_number     = '';
                         $order->card_exp_month  = '';
                         $order->card_exp_year   = '';
-                        $order->status          = 'success';
+                        $order->status          = 'pending';
                         $order->user_address_id = $cust_details['id'];
                         $order->shipping_data   = $shipping_data;
                         $order->product_id      = implode(',', $product_id);
@@ -1236,7 +1236,6 @@ class PaymentController extends Controller
     //Paytm Prepare payment
     public function paytmCallback(Request $request)
     {
-        // dd($request);
         $slug     = $request->store;
         $store    = Store::where('slug', $slug)->first();
         $products = '';
@@ -1350,8 +1349,6 @@ class PaymentController extends Controller
         {
             $shipping_data = '';
         }
-
-
         if($products)
         {
             config(
@@ -1366,9 +1363,7 @@ class PaymentController extends Controller
             );
 
             $transaction = PaytmWallet::with('receive');
-
             $response = $transaction->response();
-
             if($transaction->isSuccessful())
             {
                 if (Utility::CustomerAuthCheck($store->slug)) {
@@ -1564,11 +1559,12 @@ class PaymentController extends Controller
             $mollie->setApiKey($store_payment_setting['mollie_api_key']);
             //var_dump(intval($request['amount']));
 // dd(number_format($price, 2));
+//  str_replace(",","",number_format($price, 2));
             $payment = $mollie->payments->create(
                 [
                     "amount" => [
                         "currency" => "$store->currency_code",
-                        "value" => number_format($price, 2),
+                        "value"=> str_replace(",","",number_format($price, 2)),
                     ],
                     "description" => "payment for product",
                     "redirectUrl" => route(
@@ -1816,6 +1812,7 @@ class PaymentController extends Controller
     //skrillPayment Prepare payment
     public function skrillPayment($slug, Request $request)
     {
+       
         $cart     = session()->get($slug);
         $products = $cart['products'];
 
@@ -2185,8 +2182,10 @@ class PaymentController extends Controller
     //Coingate Pago Prepare Payment
     public function coingatePayment($slug, Request $request)
     {
+        
         $cart     = session()->get($slug);
         $store    = Store::where('slug', $slug)->first();
+        $pay_id = $request->transaction_id;
         $products = '';
         if(\Auth::check())
         {
@@ -2196,7 +2195,251 @@ class PaymentController extends Controller
         {
             $store_payment_setting = Utility::getPaymentSetting($store->id);
         }
+        // $cust_details = $cart['customer'];
+        if(!empty($cart))
+        {
+            $products = $cart['products'];
+        }
+        else
+        {
+            return redirect()->back()->with('error', __('Please add to product into cart'));
+        }
+        if(isset($cart['coupon']['data_id']))
+        {
+            $coupon = ProductCoupon::where('id', $cart['coupon']['data_id'])->first();
+        }
+        else
+        {
+            $coupon = '';
+        }
+        $product_name    = [];
+        $product_id      = [];
+        $tax_name        = [];
+        $totalprice      = 0;
+        $preference_data = [];
+        foreach($products as $key => $product)
+        {
+            if($product['variant_id'] == 0)
+            {
+                // $new_qty                = $product['originalquantity'] - $product['quantity'];
+                $product_edit           = Product::find($product['product_id']);
+                // $product_edit->quantity = $new_qty;
+                // $product_edit->save();
+                // $tax_price = 0;
+                // if(!empty($product['tax']))
+                // {
+                //     foreach($product['tax'] as $key => $taxs)
+                //     {
+                //         $tax_price += $product['price'] * $product['quantity'] * $taxs['tax'] / 100;
+                //     }
+                // }
+                $totalprice     += $product['price'] * $product['quantity'] ;
+                // $product_name[] = $product['product_name'];
+                // $product_id[]   = $product['id'];
+            }
+            elseif($product['variant_id'] != 0)
+            {
+                // $new_qty                   = $product['originalvariantquantity'] - $product['quantity'];
+                // $product_variant           = ProductVariantOption::find($product['variant_id']);
+                // $product_variant->quantity = $new_qty;
+                // $product_variant->save();
+                // $tax_price = 0;
+                // if(!empty($product['tax']))
+                // {
+                //     foreach($product['tax'] as $key => $taxs)
+                //     {
+                //         $tax_price += $product['variant_price'] * $product['quantity'] * $taxs['tax'] / 100;
+                //     }
+                // }
+                $totalprice     += $product['variant_price'] * $product['quantity'] ;
+                // $product_name[] = $product['product_name'];
+                // $product_id[]   = $product['id'];
+            }
+        }
+        // $price=$totalprice+$tax_price;
+        // if(isset($cart['coupon']))
+        // {
+        //     if($cart['coupon']['coupon']['enable_flat'] == 'off')
+        //     {
+        //         $discount_value = ($price / 100) * $cart['coupon']['coupon']['discount'];
+        //         $price          = $price - $discount_value;
+        //     }
+        //     else
+        //     {
+        //         $discount_value = $cart['coupon']['coupon']['flat_discount'];
+        //         $price          = $price - $discount_value;
+        //     }
+        // }
+        // if(isset($cart['shipping']) && isset($cart['shipping']['shipping_id']) && !empty($cart['shipping']))
+        // {
+        //     $shipping       = Shipping::find($cart['shipping']['shipping_id']);
+        //     $totalprice     = $price + $shipping->price;
+        //     $shipping_name  = $shipping->name;
+        //     $shipping_price = $shipping->price;
+        //     $shipping_data  = json_encode(
+        //         [
+        //             'shipping_name' => $shipping_name,
+        //             'shipping_price' => $shipping_price,
+        //             'location_id' => $cart['shipping']['location_id'],
+        //         ]
+        //     );
+        // }
+        // else
+        // {
+        //     $shipping_data = '';
+        // }
+        
+        //  $order_id = $request->order_id;
+        if($products)
+        {
+            // if (Utility::CustomerAuthCheck($store->slug)) {
+            //     $customer = Auth::guard('customers')->user()->id;
+            // }else{
+            //     $customer = 0;
+            // }
+            
+            // $customer               = Auth::guard('customers')->user();
+            // $order                  = new Order();
+            // $order->order_id        = time();
+            // $order->name            = $cust_details['name'];
+            // $order->email           = $cust_details['email'];
+            // $order->card_number     = '';
+            // $order->card_exp_month  = '';
+            // $order->card_exp_year   = '';
+            // $order->status          = 'pending';
+            // $order->user_address_id = $cust_details['id'];
+            // $order->shipping_data   = $shipping_data;
+            // $order->product_id      = implode(',', $product_id);
+            // $order->price           = $price;
+            // $order->coupon          = isset($cart['coupon']['data_id']) ? $cart['coupon']['data_id'] : '';
+            // $order->coupon_json     = json_encode($coupon);
+            // $order->discount_price  = isset($cart['coupon']['discount_price']) ? $cart['coupon']['discount_price'] : '';
+            // $order->product         = json_encode($products);
+            // $order->price_currency  = $store->currency_code;
+            // $order->txn_id          = isset($pay_id) ? $pay_id : '';
+            // $order->payment_type    = 'coingate';
+            // $order->payment_status  = 'pendding';
+            // $order->receipt         = '';
+            // $order->user_id         = $store['id'];
+            // $order->customer_id     = isset($customer->id) ? $customer->id : '';
+            // $order->save();
 
+            // if ((!empty(Auth::guard('customers')->user()) && $store->is_checkout_login_required == 'on') ){
+
+            //     foreach($products as $product_id)
+            //     {
+            //         $purchased_products = new PurchasedProducts();
+            //         $purchased_products->product_id  = $product_id['product_id'];
+            //         $purchased_products->customer_id = $customer->id;
+            //         $purchased_products->order_id   = $order->id;
+            //         $purchased_products->save();
+            //     }
+            // }
+            try
+            {
+                CoinGate::config(
+                    array(
+                        'environment' => $store_payment_setting['coingate_mode'],
+                        // sandbox OR live
+                        'auth_token' => $store_payment_setting['coingate_auth_token'],
+                        'curlopt_ssl_verifypeer' => FALSE
+                        // default is false
+                    )
+                );
+
+                $post_params = array(
+                    // 'order_id' => $order->id,
+                    'order_id'=> time(),
+                    'price_amount' => $totalprice,
+                    'price_currency' => $store['currency_code'],
+                    'receive_currency' => $store['currency_code'],
+                    // 'callback_url' => url('coingate/callback') . '?slug=' . $store->slug . '&order_id=' . $order->id,
+                    'callback_url' => url('coingate/callback') . '?slug=' . $store->slug . '&product_id=' . $product['id']. '&pay_id='.$pay_id,
+                    'cancel_url' => route('store.slug',[$store->slug]),
+                    // 'success_url' => route(
+                    //     'store-complete.complete', [
+                    //                                  $store->slug,
+                    //                                 //  Crypt::encrypt($order->id),
+                    //                                 Crypt::encrypt($order_id),
+                    //                              ]
+                    // ),
+                    'success_url' => url('coingate/callback') . '?slug=' . $store->slug . '&product_id=' . $product['id'] . '&pay_id='.$pay_id,
+                    'title' => 'Order #' . time(),
+                );
+                // $order_email=$order->email;
+                // $order_name=$order->name;
+
+                $order       = \CoinGate\Merchant\Order::create($post_params);
+                if($order)
+                {
+
+                //     session()->forget($slug);
+
+
+                //     $owner=User::find($store->created_by);
+
+                //     $owner_email=$owner->email;
+                //     $order_id    = Crypt::encrypt($order->id);
+
+                //     if(isset($store->mail_driver) && !empty($store->mail_driver))
+                //     {
+                //         $dArr = [
+                //             'order_name' => $order_name,
+                //         ];
+                //         $resp = Utility::sendEmailTemplate('Order Created', $order_email, $dArr, $store, $order_id);
+
+                //         $resp1=Utility::sendEmailTemplate('Order Created For Owner', $owner_email, $dArr, $store, $order_id);
+
+
+                //     }
+                //     if(isset($store->is_twilio_enabled) && $store->is_twilio_enabled=="on")
+                //     {
+                //          Utility::order_create_owner($order,$owner,$store);
+                //          Utility::order_create_customer($order,$customer,$store);
+                    // }
+                    return redirect($order->payment_url);
+                }
+                else
+                {
+
+                    return redirect()->back()->with('error', __('opps something went wrong.'));
+                }
+
+
+            }
+            catch(Exception $e)
+            {
+
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+            // $msg = redirect()->route(
+            //     'store-complete.complete', [
+            //                                  $store->slug,
+            //                                  Crypt::encrypt($order->id),
+            //                              ]
+            // )->with('success', __('Transaction has been success'));
+
+            // session()->forget($slug);
+
+
+
+            // return $msg;
+        }
+        else
+        {
+            return redirect()->back()->with('error', __('Transaction Unsuccesfull'));
+        }
+    }
+
+    //Coingate Pago
+    public function coingateCallback(Request $request)
+    {
+        $pay_id = $request->pay_id;
+        $slug = $request->slug;
+        $cart     = session()->get($slug);
+        $store        = Store::where('slug', $slug)->first();
+        // $product_id = $request->product_id;
+        // $product = Product::find($product_id);
         $cust_details = $cart['customer'];
         if(!empty($cart))
         {
@@ -2290,160 +2533,125 @@ class PaymentController extends Controller
         {
             $shipping_data = '';
         }
-        $order_id = $request->order_id;
-
-        if($products)
-        {
-            if (Utility::CustomerAuthCheck($store->slug)) {
-                $customer = Auth::guard('customers')->user()->id;
-            }else{
-                $customer = 0;
-            }
-
-            $customer               = Auth::guard('customers')->user();
-            $order                  = new Order();
-            $order->order_id        = time();
-            $order->name            = $cust_details['name'];
-            $order->email           = $cust_details['email'];
-            $order->card_number     = '';
-            $order->card_exp_month  = '';
-            $order->card_exp_year   = '';
-            $order->status          = 'pending';
-            $order->user_address_id = $cust_details['id'];
-            $order->shipping_data   = $shipping_data;
-            $order->product_id      = implode(',', $product_id);
-            $order->price           = $price;
-            $order->coupon          = isset($cart['coupon']['data_id']) ? $cart['coupon']['data_id'] : '';
-            $order->coupon_json     = json_encode($coupon);
-            $order->discount_price  = isset($cart['coupon']['discount_price']) ? $cart['coupon']['discount_price'] : '';
-            $order->product         = json_encode($products);
-            $order->price_currency  = $store->currency_code;
-            $order->txn_id          = isset($pay_id) ? $pay_id : '';
-            $order->payment_type    = 'coingate';
-            $order->payment_status  = 'pendding';
-            $order->receipt         = '';
-            $order->user_id         = $store['id'];
-            $order->customer_id     = isset($customer->id) ? $customer->id : '';
-            $order->save();
-
-            if ((!empty(Auth::guard('customers')->user()) && $store->is_checkout_login_required == 'on') ){
-
-                foreach($products as $product_id)
-                {
-                    $purchased_products = new PurchasedProducts();
-                    $purchased_products->product_id  = $product_id['product_id'];
-                    $purchased_products->customer_id = $customer->id;
-                    $purchased_products->order_id   = $order->id;
-                    $purchased_products->save();
+       
+        if($products){
+            try{
+                if (Utility::CustomerAuthCheck($store->slug)) {
+                    $customer = Auth::guard('customers')->user()->id;
+                }else{
+                    $customer = 0;
                 }
-            }
-            try
-            {
-
-                CoinGate::config(
-                    array(
-                        'environment' => $store_payment_setting['coingate_mode'],
-                        // sandbox OR live
-                        'auth_token' => $store_payment_setting['coingate_auth_token'],
-                        'curlopt_ssl_verifypeer' => FALSE
-                        // default is false
-                    )
-                );
-
-                $post_params = array(
-                    'order_id' => $order->id,
-                    'price_amount' => $totalprice,
-                    'price_currency' => $store['currency_code'],
-                    'receive_currency' => $store['currency_code'],
-                    'callback_url' => url('coingate/callback') . '?slug=' . $store->slug . '&order_id=' . $order->id,
-                    'cancel_url' => url('/'),
-                    'success_url' => route(
-                        'store-complete.complete', [
-                                                     $store->slug,
-                                                     Crypt::encrypt($order->id),
-                                                 ]
-                    ),
-                    'title' => 'Order #' . time(),
-                );
-                $order_email=$order->email;
-                $order_name=$order->name;
-
-                $order       = \CoinGate\Merchant\Order::create($post_params);
-
-                if($order)
-                {
-
-                    session()->forget($slug);
-
-
-                    $owner=User::find($store->created_by);
-
-                    $owner_email=$owner->email;
-                    $order_id    = Crypt::encrypt($order->id);
-
-                    if(isset($store->mail_driver) && !empty($store->mail_driver))
+                
+                $customer               = Auth::guard('customers')->user();
+                $order                  = new Order();
+                $order->order_id        = time();
+                $order->name            = isset($cust_details['name']) ? $cust_details['name'] : '' ;
+                $order->email           = isset($cust_details['email']) ? $cust_details['email'] : '';
+                $order->card_number     = '';
+                $order->card_exp_month  = '';
+                $order->card_exp_year   = '';
+                $order->status          = 'pending';
+                $order->user_address_id = isset($cust_details['id']) ? $cust_details['id'] : '';
+                $order->shipping_data   = $shipping_data;
+                $order->product_id      = implode(',', $product_id);
+                $order->price           = $price;
+                $order->coupon          = isset($cart['coupon']['data_id']) ? $cart['coupon']['data_id'] : '';
+                $order->coupon_json     = json_encode($coupon);
+                $order->discount_price  = isset($cart['coupon']['discount_price']) ? $cart['coupon']['discount_price'] : '';
+                $order->product         = json_encode($products);
+                $order->price_currency  = $store->currency_code;
+                $order->txn_id          = isset($pay_id) ? $pay_id : '';
+                $order->payment_type    = 'coingate';
+                $order->payment_status  = 'approved';
+                $order->receipt         = '';
+                $order->user_id         = $store['id'];
+                $order->customer_id     = isset($customer->id) ? $customer->id : '';
+                $order->save();
+    
+                if ((!empty(Auth::guard('customers')->user()) && $store->is_checkout_login_required == 'on') ){
+    
+                    foreach($products as $product_id)
                     {
-                        $dArr = [
-                            'order_name' => $order_name,
-                        ];
-                        $resp = Utility::sendEmailTemplate('Order Created', $order_email, $dArr, $store, $order_id);
-
-                        $resp1=Utility::sendEmailTemplate('Order Created For Owner', $owner_email, $dArr, $store, $order_id);
-
-
+                        $purchased_products = new PurchasedProducts();
+                        $purchased_products->product_id  = $product_id['product_id'];
+                        $purchased_products->customer_id = $customer->id;
+                        $purchased_products->order_id   = $order->id;
+                        $purchased_products->save();
                     }
-                    if(isset($store->is_twilio_enabled) && $store->is_twilio_enabled=="on")
-                    {
-                         Utility::order_create_owner($order,$owner,$store);
-                         Utility::order_create_customer($order,$customer,$store);
-                    }
-                    return redirect($order->payment_url);
                 }
-                else
+                $order_email = $order->email;
+                $owner=User::find($store->created_by);
+                $owner_email=$owner->email;
+                $order_id = Crypt::encrypt($order->id);
+                if(isset($store->mail_driver) && !empty($store->mail_driver))
                 {
-
-                    return redirect()->back()->with('error', __('opps something wren wrong.'));
+                    $dArr = [
+                        'order_name' => $order->name,
+                    ];
+                    $resp = Utility::sendEmailTemplate('Order Created', $order_email, $dArr, $store, $order_id);
+                    $resp1=Utility::sendEmailTemplate('Order Created For Owner', $owner_email, $dArr, $store, $order_id);
                 }
-
-
-            }
-            catch(Exception $e)
-            {
-
+                if(isset($store->is_twilio_enabled) && $store->is_twilio_enabled=="on")
+                {
+                     Utility::order_create_owner($order,$owner,$store);
+                     Utility::order_create_customer($order,$customer,$store);
+                }
+                $msg = redirect()->route(
+                    'store-complete.complete', [
+                                                 $store->slug,
+                                                 Crypt::encrypt($order->id),
+                                             ]
+                )->with('success', __('Transaction has been success'));
+    
+                session()->forget($slug);
+    
+                return $msg;
+            }catch(\Exception $e){
                 return redirect()->back()->with('error', $e->getMessage());
             }
-            $msg = redirect()->route(
-                'store-complete.complete', [
-                                             $store->slug,
-                                             Crypt::encrypt($order->id),
-                                         ]
-            )->with('success', __('Transaction has been success'));
-
-            session()->forget($slug);
-
-
-
-            return $msg;
         }
-        else
-        {
+        else{
             return redirect()->back()->with('error', __('Transaction Unsuccesfull'));
         }
+         
+        // if($request->has('order_id'))
+        // {
+        //     $order = Order::where('id', $request->order_id)->first();
+        //     if($order)
+        //     {
+        //         $order->payment_status = 'approved';
+        //         $order->save();
+        //         $order_email = $order->email;
+        //         $owner=User::find($store->created_by);
+        //         $owner_email=$owner->email;
+        //         $order_id = Crypt::encrypt($order->id);
+        //         if(isset($store->mail_driver) && !empty($store->mail_driver))
+        //         {
+        //             $dArr = [
+        //                 'order_name' => $order->name,
+        //             ];
+        //             $resp = Utility::sendEmailTemplate('Order Created', $order_email, $dArr, $store, $order_id);
+        //             $resp1=Utility::sendEmailTemplate('Order Created For Owner', $owner_email, $dArr, $store, $order_id);
+        //         }
+        //         if(isset($store->is_twilio_enabled) && $store->is_twilio_enabled=="on")
+        //         {
+        //              Utility::order_create_owner($order,$owner,$store);
+        //              Utility::order_create_customer($order,$customer,$store);
+        //         }
+        //         $msg = redirect()->route(
+        //             'store-complete.complete', [
+        //                                          $slug,
+        //                                          Crypt::encrypt($order->id),
+        //                                      ]
+        //         )->with('success', __('Transaction has been success'));
 
-    }
+        //         session()->forget($slug);
 
-    //Coingate Pago
-    public function coingateCallback(Request $request)
-    {
-        if($request->has('order_id'))
-        {
-            $order = Order::where('id', $request->order_id)->first();
-            if($order)
-            {
-                $order->payment_status = 'succuss';
-                $order->save();
-            }
-        }
+
+
+        //         return $msg;
+        //     }
+        // }
     }
 
 
@@ -3242,7 +3450,6 @@ class PaymentController extends Controller
     public function skrillPaymentPrepare(Request $request)
     {
         // return redirect()->route('plans.index')->with('success', __('Payment Successful.'));
-
         $validator = \Validator::make(
             $request->all(), [
                                'plan_id' => 'required',
@@ -3284,7 +3491,7 @@ class PaymentController extends Controller
             $this->skrilRequest->logo_url = $logo; // optional
 
             $this->skrilRequest->transaction_id  = MD5($request['transaction_id']); // generate transaction id
-            $this->skrilRequest->amount          = '100';
+            $this->skrilRequest->amount          = $price;
             $this->skrilRequest->currency        = env('CURRENCY');
             $this->skrilRequest->language        = 'EN';
             $this->skrilRequest->prepare_only    = '1';

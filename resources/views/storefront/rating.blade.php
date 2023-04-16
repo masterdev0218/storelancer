@@ -17,15 +17,15 @@
         <div id="rating_div">
             <div class="rate pl-0">
                 <input type="radio" class="rating" id="star5" name="rate" value="5"/>
-                <label for="star5" title="5">5</label>
+                <label for="star5" title="5"></label>
                 <input type="radio" class="rating" id="star4" name="rate" value="4"/>
-                <label for="star4" title="4">4</label>
+                <label for="star4" title="4"></label>
                 <input type="radio" class="rating" id="star3" name="rate" value="3"/>
-                <label for="star3" title="3">3</label>
+                <label for="star3" title="3"></label>
                 <input type="radio" class="rating" id="star2" name="rate" value="2"/>
-                <label for="star2" title="2">2</label>
+                <label for="star2" title="2"></label>
                 <input type="radio" class="rating" id="star1" name="rate" value="1"/>
-                <label for="star1" title="1">1</label>
+                <label for="star1" title="1"></label>
             </div>
         </div>
     </div>
@@ -35,9 +35,16 @@
             {{Form::textarea('description',null,array('class'=>'form-control','rows'=>3,'placeholder'=>__('Enter Description')))}}
         </div>
     </div>
-    <div class="form-group col-12 d-flex justify-content-end col-form-label">
-        <input type="button" value="{{__('Cancel')}}" class="btn btn-secondary btn-light" data-bs-dismiss="modal">
-        <input type="submit" value="{{__('Save')}}"  id="saverating" class="btn btn-primary ms-2">
+    <div class="form-group form-footer col-12 d-flex justify-content-end col-form-label">
+        <button type="button" class="btn-secondary btn btn-light" id="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden ="true">{{__('Cancel')}}</span></button>
+        <button type="submit" class="btn btn-primary ms-2">{{__('Save')}}</button>
     </div>
 </div>
 {{Form::close()}}
+<script>
+    $(document).on('click','#close',function(){
+        $(".fade").removeClass("show"); 
+        $('body').removeClass('modal-open');
+        
+    });
+</script>

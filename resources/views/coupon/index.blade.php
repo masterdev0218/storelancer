@@ -13,11 +13,9 @@
 @endsection
 
 @section('action-btn')
-    <div class="pr-2">
-        <a href="#" data-size="md" data-url="{{route('coupons.create')}}"  data-ajax-popup="true"
-        data-title="{{__('Add Coupon')}}"  class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="{{ __('Add Coupon') }}"><i class="ti ti-plus"></i></i></a>
-    </div>
+    <a class="btn btn-sm btn-icon  btn-primary me-2 text-white" data-url="{{ route('coupons.create') }}" data-title="{{ __('Add Coupon') }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Create') }}">
+        <i  data-feather="plus"></i>
+    </a>
 @endsection
 
 @push('script-page')
@@ -62,39 +60,25 @@
                                 <td>{{ $coupon->limit }}</td>
                                 <td>{{ $coupon->used_coupon() }}</td>
                                 <td class="Action">
-                                    <span>
-                                        <div class="action-btn bg-warning ms-2">
-                                            <a href="{{ route('coupons.show',$coupon->id) }}"
-                                                class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                title="{{ __('View') }}"><i
-                                                    class="ti ti-eye text-white"></i></a>
-                                        </div>
-
-                                        <div class="action-btn  bg-info ms-2">
-                                            <a href="#" data-size="md"
-                                                class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                data-bs-toggle="tooltip" data-ajax-popup="true"
-                                                data-url="{{route('coupons.edit',[$coupon->id])}}"
-                                                data-title="{{ __('Edit Coupon') }}" data-bs-placement="top"
-                                                title="{{ __('Edit') }}"><i
-                                                    class="ti ti-pencil text-white"></i></a>
-                                        </div>
-
-                                        <div class="action-btn bg-danger ms-2">
-                                            <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
-                                                href="#" data-title="{{ __('Delete Lead') }}"
-                                                data-confirm="{{ __('Are You Sure?') }}"
-                                                data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                data-confirm-yes="delete-form-{{ $coupon->id }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                title="{{ __('Delete') }}">
-                                                <i class="ti ti-trash"></i>
-                                            </a>
-                                            {!! Form::open(['method' => 'DELETE', 'route' => ['coupons.destroy', $coupon->id], 'id' => 'delete-form-' . $coupon->id]) !!}
-                                            {!! Form::close() !!}
-                                        </div>
-                                    </span>
+                                    <div class="d-flex">
+                                        <a href="{{ route('coupons.show', $coupon->id) }}" class="btn btn-sm btn-icon  bg-light-secondary me-2" data-tooltip="Edit" data-original-title="{{ __('View') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('View Coupon') }}" data-tooltip="View">
+                                            <i  class="ti ti-eye f-20"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-url="{{ route('coupons.edit', $coupon->id) }}"  data-title="{{ __('Edit Coupon') }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit') }}">
+                                            <i  class="ti ti-edit f-20"></i>
+                                        </a>
+                                        <a class="bs-pass-para btn btn-sm btn-icon bg-light-secondary" href="#"
+                                            data-title="{{ __('Delete Lead') }}"
+                                            data-confirm="{{ __('Are You Sure?') }}"
+                                            data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                            data-confirm-yes="delete-form-{{ $coupon->id }}"
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="{{ __('Delete') }}">
+                                            <i class="ti ti-trash f-20"></i>
+                                        </a>
+                                        {!! Form::open(['method' => 'DELETE', 'route' => ['coupons.destroy', $coupon->id], 'id' => 'delete-form-' . $coupon->id]) !!}
+                                        {!! Form::close() !!}
+                                    </div>
                                 </td>
 
 

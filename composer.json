@@ -12,8 +12,7 @@
         "coingate/coingate-php": "^4.1",
         "doctrine/dbal": "^3.5",
         "guzzlehttp/guzzle": "^7.2",
-        "kkomelin/laravel-translatable-string-exporter": "^1.17",
-        "konekt/concord": "^1.12",
+        "kkomelin/laravel-translatable-string-exporter": "^1.19",
         "laravel/framework": "^9.11",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
@@ -47,7 +46,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/helper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

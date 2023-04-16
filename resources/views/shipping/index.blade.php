@@ -19,14 +19,13 @@
     <li class="breadcrumb-item active" aria-current="page">{{ __('Shipping') }}</li>
 @endsection
 @section('action-btn')
-    <div class="pr-2">
-        <a href="#" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip" data-bs-placement="top"
-            title="{{ __('Import') }}" data-ajax-popup="true" data-size="md"
-            data-title="{{ __('Import Shipping CSV File') }}" data-url="{{ route('shipping.file.import') }}"><i   class="ti ti-file-import"></i></a>
-
-        <a href="{{ route('shipping.export') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="{{ __('Export') }}"><i class="ti ti-file-export"></i></a>
-    </div>
+   
+    <a class="btn btn-sm btn-icon  bg-light-secondary me-2" href="{{ route('shipping.export') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Export') }}"> 
+        <i  data-feather="download"></i>
+    </a>
+    <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Import') }}" data-ajax-popup="true" data-size="lg" data-title="{{ __('Import Product-coupan CSV File') }}" data-url="{{ route('shipping.file.import') }}">
+        <i  data-feather="upload"></i>
+    </a>
 @endsection
 @section('content')
     <!-- [ sample-page ] start -->
@@ -54,13 +53,9 @@
                         aria-labelledby="pills-user-tab-1">
                         <div class="d-flex justify-content-between">
                             <h3 class="mb-0">{{ __('Location') }}</h3>
-                            <div class="pr-2">
-                                <a href="#" data-size="md" data-url="{{ route('location.create') }}"
-                                    data-ajax-popup="true" data-title="{{ __('Create New Location') }}"
-                                    class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-                                    data-bs-placement="left" title="{{ __('Create New Location') }}"><i
-                                        class="ti ti-plus"></i></a>
-                            </div>
+                            <a class="btn btn-sm btn-icon  btn-primary me-2 text-white" data-url="{{ route('location.create') }}" data-title="{{ __('Create New Location') }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Create New Location') }}">
+                                <i  data-feather="plus"></i>
+                            </a>
                         </div>
                         <div class="row mt-3">
                                 <div class="card-body table-border-style">
@@ -79,33 +74,23 @@
                                                     <td>{{ $location->name }}</td>
                                                     <td>{{ \App\Models\Utility::dateFormat($location->created_at) }}</td>
                                                     <td class="Action">
-                                                        <span>
-                                                            <div class="action-btn  bg-info ms-2">
-                                                                <a href="#"
-                                                                    data-url="{{ route('location.edit', $location->id) }}"
-                                                                    data-size="md"
-                                                                    class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                    data-ajax-popup="true"
-                                                                    data-title="{{ __('Edit Shipping') }}"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                    title="{{ __('Edit') }}" data-tooltip="{{__('Edit')}}"><i
-                                                                        class="ti ti-pencil text-white"></i></a>
-                                                            </div>
-
-                                                            <div class="action-btn bg-danger ms-2">
-                                                                <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
-                                                                    href="#" data-title="{{ __('Delete Lead') }}"
-                                                                    data-confirm="{{ __('Are You Sure?') }}"
-                                                                    data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                                    data-confirm-yes="delete-form-{{ $location->id }}"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                    title="{{ __('Delete') }}">
-                                                                    <i class="ti ti-trash"></i>
-                                                                </a>
-                                                                {!! Form::open(['method' => 'DELETE', 'route' => ['location.destroy', $location->id], 'id' => 'delete-form-' . $location->id]) !!}
-                                                                {!! Form::close() !!}
-                                                            </div>
-                                                        </span>
+                                                        <div class="d-flex">
+                                                            
+                                                            <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-title="{{ __('Edit Location') }}" data-url="{{ route('location.edit', $location->id) }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit') }}">
+                                                                <i  class="ti ti-edit f-20"></i>
+                                                            </a>
+                                                            <a class="bs-pass-para btn btn-sm btn-icon bg-light-secondary" href="#"
+                                                                data-title="{{ __('Delete Lead') }}"
+                                                                data-confirm="{{ __('Are You Sure?') }}"
+                                                                data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                                data-confirm-yes="delete-form-{{ $location->id }}"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="{{ __('Delete') }}">
+                                                                <i class="ti ti-trash f-20"></i>
+                                                            </a>
+                                                            {!! Form::open(['method' => 'DELETE', 'route' => ['location.destroy', $location->id], 'id' => 'delete-form-' . $location->id]) !!}
+                                                            {!! Form::close() !!}
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -118,13 +103,9 @@
                     <div class="tab-pane fade" id="pills-user-2" role="tabpanel" aria-labelledby="pills-user-tab-2">
                         <div class="d-flex justify-content-between">
                             <h3 class="mb-0"> {{ __('Shipping') }}</h3>
-                            <div class="pr-2">
-                                <a href="#" data-size="md" data-url="{{ route('shipping.create') }}"
-                                    data-ajax-popup="true" data-title="{{ __('Create New Shipping') }}"
-                                    class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-                                    data-bs-placement="left" title="{{ __('Create New Shipping') }}"><i
-                                        class="ti ti-plus"></i></a>
-                            </div>
+                            <a class="btn btn-sm btn-icon  btn-primary me-2 text-white" data-url="{{ route('shipping.create') }}" data-title="{{ __('Create New Shipping') }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Create New Shipping') }}">
+                                <i  data-feather="plus"></i>
+                            </a>
                         </div>
 
                         <div class="row mt-3">
@@ -149,33 +130,22 @@
                                                     </td>
                                                     <td>{{ \App\Models\Utility::dateFormat($shipping->created_at) }}</td>
                                                     <td class="Action">
-                                                        <span>
-                                                            <div class="action-btn  bg-info ms-2">
-                                                                <a href="#"
-                                                                data-url="{{ route('shipping.edit',$shipping->id) }}"
-                                                                    data-size="md"
-                                                                    class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                    data-ajax-popup="true"
-                                                                    data-title="{{ __('Edit Shipping') }}"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                    title="{{ __('Edit') }}"><i
-                                                                        class="ti ti-pencil text-white"></i></a>
-                                                            </div>
-
-                                                            <div class="action-btn bg-danger ms-2">
-                                                                <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
-                                                                    href="#" data-title="{{ __('Delete Lead') }}"
-                                                                    data-confirm="{{ __('Are You Sure?') }}"
-                                                                    data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                                    data-confirm-yes="delete-form-{{ $shipping->id }}"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                    title="{{ __('Delete') }}">
-                                                                    <i class="ti ti-trash"></i>
-                                                                </a>
-                                                                {!! Form::open(['method' => 'DELETE', 'route' => ['shipping.destroy', $shipping->id], 'id' => 'delete-form-' . $shipping->id]) !!}
-                                                                {!! Form::close() !!}
-                                                            </div>
-                                                        </span>
+                                                        <div class="d-flex">
+                                                            <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-title="{{ __('Edit Shipping') }}" data-url="{{ route('shipping.edit', $shipping->id) }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit') }}">
+                                                                <i  class="ti ti-edit f-20"></i>
+                                                            </a>
+                                                            <a class="bs-pass-para btn-sm bg-light-secondary" href="#"
+                                                                data-title="{{ __('Delete Lead') }}"
+                                                                data-confirm="{{ __('Are You Sure?') }}"
+                                                                data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                                data-confirm-yes="delete-form-{{ $shipping->id }}"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="{{ __('Delete') }}">
+                                                                <i class="ti ti-trash f-20"></i>
+                                                            </a>
+                                                            {!! Form::open(['method' => 'DELETE', 'route' => ['shipping.destroy', $shipping->id], 'id' => 'delete-form-' . $shipping->id]) !!}
+                                                            {!! Form::close() !!}
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach

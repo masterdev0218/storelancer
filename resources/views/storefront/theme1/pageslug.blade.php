@@ -30,7 +30,7 @@
     $languages=\App\Models\Utility::languages();
 @endphp
 @section('content')
-<div class="main-content position-relative bg-white">
+{{--  <div class="main-content position-relative bg-white">
     <div class="container">
         <div class="row">
             <div class="card-group mt-9">
@@ -55,7 +55,18 @@
             </div>
         </div>
     </div>
-</div>
+</div>  --}}
+
+<div class="wrapper">
+    <section class="contact-us-section padding-top">
+        <div class="container">
+            <div class="contact-content">
+                <h4> {{ ucfirst($pageoption->name) }}</h4>
+                <p>{!! $pageoption->contents !!}</p>
+            </div>
+        </div>
+    </section>    
+</div>   
 @endsection
 
 

@@ -1,24 +1,18 @@
 <footer class="dash-footer">
     <div class="footer-wrapper">
         <div class="py-1">
-            <span class="text-muted">{{__('Copyright')}} &copy; {{ (App\Models\Utility::getValByName('footer_text')) ? App\Models\Utility::getValByName('footer_text') :config('app.name', 'WorkGo') }} {{date('Y')}}</span>
+            <span class="text-muted">{{__('Copyright')}} &copy; {{ (App\Models\Utility::getValByName('footer_text')) ? App\Models\Utility::getValByName('footer_text') :config('app.name', 'Storego') }} {{date('Y')}}</span>
         </div>
     </div>
 </footer>
-
-<script src="{{asset('custom/js/jquery.min.js')}}"></script>
-
-<script src="{{asset('assets/js/plugins/popper.min.js')}}"></script>
-<script src="{{asset('assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
-<script src="{{asset('assets/js/plugins/bootstrap.min.js')}}"></script>
-<script src="{{asset('assets/js/plugins/feather.min.js')}}"></script>
-<script src="{{asset('assets/js/dash.js')}}"></script>
-
-<!-- Page JS -->
-<script src="{{ asset('custom/libs/dropzone/dist/min/dropzone.min.js')}}"></script>
-<script src="{{ asset('custom/libs/progressbar.js/dist/progressbar.min.js')}}"></script>
-
-<script src="{{ asset('assets/js/plugins/apexcharts.min.js')}}"></script>
+<!-- Required Js -->
+<script src="{{ asset('custom/js/jquery.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugins/popper.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
+<script src="{{ asset('assets/js/dash.js') }}"></script>
+<script src="{{ asset('assets/js/plugins/sweetalert2.all.min.js') }}"></script>
 
 <script src="{{ asset('custom/libs/bootstrap-notify/bootstrap-notify.min.js')}}"></script>
 <script src="{{ asset('custom/libs/select2/dist/js/select2.min.js')}}"></script>
@@ -29,19 +23,18 @@
 <script src="{{ asset('custom/libs/quill/dist/quill.min.js')}}"></script>
 <script src="{{ asset('custom/libs/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js')}}"></script>
 <script src="{{ asset('custom/libs/autosize/dist/autosize.min.js')}}"></script>
-
-<!-- Site JS -->
-<script src="{{asset('assets/js/plugins/choices.min.js')}}"></script>
-<!-- datatable -->
-<script src="{{ asset('assets/js/plugins/simple-datatables.js')}}"></script>
-<!-- sweet alert Js -->
-<script src="{{ asset('assets/js/plugins/sweetalert2.all.min.js') }}"></script>
-
-<script src="{{asset('assets/js/plugins/bootstrap-switch-button.min.js')}}"></script>
-
+<script src="{{ asset('custom/js/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('custom/js/repeater.js') }}"></script>
 <script src="{{ asset('custom/js/letter.avatar.js')}}"></script>
-
+<script src="{{asset('assets/js/plugins/choices.min.js')}}"></script>
+<script src="{{ asset('assets/js/plugins/simple-datatables.js')}}"></script>
+<script src="{{asset('assets/js/plugins/bootstrap-switch-button.min.js')}}"></script>
+<script src="{{ asset('custom/libs/dropzone/dist/min/dropzone.min.js')}}"></script>
+<script src="{{ asset('custom/libs/progressbar.js/dist/progressbar.min.js')}}"></script>
+<script src="{{ asset('custom/libs/summernote/summernote-bs4.js') }}"></script>
 <script type="text/javascript" src="{{ asset('custom/js/custom.js') }}"></script>
+<!-- Apex Chart -->
+<script src="{{ asset('assets/js/plugins/apexcharts.min.js') }}"></script>
 @if(Session::has('success'))
     <script>
         show_toastr('{{__('Success')}}', '{!! session('success') !!}', 'success');
@@ -86,6 +79,6 @@
         };
     </script>
     <script src="{{ asset('custom/js/cookie.notice.js') }}"></script>
+    
 @endif
-
 @stack('script-page')

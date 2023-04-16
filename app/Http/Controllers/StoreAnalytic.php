@@ -21,7 +21,6 @@ class StoreAnalytic extends Controller
         $user_device   = \DB::table('visitor')->selectRaw("count('*') as total, device")->where('slug', $slug)->groupBy('device')->orderBy('device', 'DESC')->get();
         $user_browser  = \DB::table('visitor')->selectRaw("count('*') as total, browser")->where('slug', $slug)->groupBy('browser')->orderBy('browser', 'DESC')->get();
         $user_platform = \DB::table('visitor')->selectRaw("count('*') as total, platform")->where('slug', $slug)->groupBy('platform')->orderBy('platform', 'DESC')->get();
-
         $devicearray          = [];
         $devicearray['label'] = [];
         $devicearray['data']  = [];
@@ -71,7 +70,7 @@ class StoreAnalytic extends Controller
         {
             if($arrParam['duration'] == 'month')
             {
-                $previous_month = strtotime("-1 month +2 day");
+                $previous_month = strtotime("-2 week +1 day");
                 for($i = 0; $i < 15; $i++)
                 {
                     $arrDuration[date('Y-m-d', $previous_month)] = date('d-M', $previous_month);
@@ -95,6 +94,5 @@ class StoreAnalytic extends Controller
         }
 
         return $arrTask;
-
     }
 }

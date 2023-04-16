@@ -9,14 +9,12 @@
     @endsection
     @section('breadcrumb')
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
-        {{-- <li class="breadcrumb-item"><a href="{{ route('customer.index') }}">{{ __('Store Customers') }}</a></li> --}}
         <li class="breadcrumb-item active" aria-current="page">{{ __('Orders') }}</li>
     @endsection
     @section('action-btn')
-        <div class="pr-2">
-            <a href="{{ route('order.export') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-                data-bs-placement="top" title="{{ __('Export') }}"><i class="ti ti-file-export"></i></a>
-        </div>
+        <a class="btn btn-sm btn-icon  bg-light-secondary me-2" href="{{ route('order.export') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Export') }}"> 
+            <i  data-feather="download"></i>
+        </a>
     @endsection
     @section('filter')
     @endsection
@@ -121,31 +119,22 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                <div class="col-auto">
-                                                    <span class="">
-                                                        <div class="action-btn bg-warning ms-2">
-                                                            <a href="{{ route('orders.show', \Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}"
-                                                                class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="{{ __('View') }}"><i
-                                                                    class="ti ti-eye text-white"></i></a>
-                                                        </div>
-                                                        <div class="action-btn bg-danger ms-2">
-                                                            <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
-                                                                href="#" data-title="{{ __('Delete Lead') }}"
-                                                                data-confirm="{{ __('Are You Sure?') }}"
-                                                                data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                                data-confirm-yes="delete-form-{{ $order->id }}"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="{{ __('Delete ') }}">
-
-                                                                <i class="ti ti-trash"></i>
-
-                                                            </a>
-                                                            {!! Form::open(['method' => 'DELETE', 'route' => ['orders.destroy', $order->id], 'id' => 'delete-form-' . $order->id]) !!}
-                                                            {!! Form::close() !!}
-                                                        </div>
-                                                    </span>
+                                                <div class="d-flex">
+                                                    <a href="{{ route('orders.show', \Illuminate\Support\Facades\Crypt::encrypt($order->id)) }}" class="btn btn-sm btn-icon  bg-light-secondary me-2" data-toggle="tooltip" data-original-title="{{ __('View') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('View') }}" data-tooltip="View">
+                                                        <i  class="ti ti-eye f-20"></i>
+                                                    </a>
+                                                   
+                                                    <a class="bs-pass-para btn btn-sm btn-icon bg-light-secondary" href="#"
+                                                        data-title="{{ __('Delete Lead') }}"
+                                                        data-confirm="{{ __('Are You Sure?') }}"
+                                                        data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                        data-confirm-yes="delete-form-{{ $order->id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="{{ __('Delete') }}">
+                                                        <i class="ti ti-trash f-20"></i>
+                                                    </a>
+                                                    {!! Form::open(['method' => 'DELETE', 'route' => ['orders.destroy', $order->id], 'id' => 'delete-form-' . $order->id]) !!}
+                                                    {!! Form::close() !!}
                                                 </div>
                                             </td>
                                         </tr>

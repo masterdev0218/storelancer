@@ -171,3 +171,26 @@
 	content: " ";
 	display: table;
 }
+.select2{
+	width: 100% !important;
+}
+.form-control{
+	padding: 0.575rem 0.5rem !important;
+}
+.switch.btn.btn-primary{
+	height: 41px !important;
+	width: 86px !important;
+}
+.switch.btn.btn-light.off{
+	height: 41px !important;
+	width: 86px !important;
+}
+@media only screen and (max-width: 500px){
+.dataTable-top > nav:last-child,
+.dataTable-top > div:last-child,
+.dataTable-bottom > nav:last-child,
+.dataTable-bottom > div:last-child {
+	float: left;
+	padding-top: 15px;
+}
+}

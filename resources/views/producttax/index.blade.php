@@ -12,11 +12,9 @@
     <li class="breadcrumb-item active" aria-current="page">{{ __('Product Tax') }}</li>
 @endsection
 @section('action-btn')
-    <div class="pr-2">
-        <a href="#" data-size="md" data-url="{{ route('product_tax.create') }}" data-ajax-popup="true"
-            data-title="{{ __('Create New Product Tax') }}" class="btn btn-sm btn-primary btn-icon m-1"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Create ') }}"><i class="ti ti-plus"></i></a>
-    </div>
+    <a class="btn btn-sm btn-icon  btn-primary me-2 text-white" data-url="{{ route('product_tax.create') }}" data-title="{{ __('Create New Product Tax') }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Create') }}">
+        <i  data-feather="plus"></i>
+    </a>
 @endsection
 @section('filter')
 @endsection
@@ -40,32 +38,23 @@
                                 <tr data-name="{{ $product_tax->name }}">
                                     <td >{{ $product_tax->name }}</td>
                                     <td >{{ $product_tax->rate }}</td>
-                                    <td class="Action">
-                                        <span>
-                                            <div class="action-btn  bg-info ms-2">
-                                                <a href="#" data-size="md"
-                                                    data-url="{{ route('product_tax.edit', $product_tax->id) }}"
-                                                    data-ajax-popup="true" data-title="{{ __('Edit Tax') }}"
-                                                    class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="{{ __('Edit') }}" data-tooltip="Edit"><i
-                                                        class="ti ti-pencil text-white"></i></a>
-                                            </div>
-
-                                            <div class="action-btn bg-danger ms-2">
-                                                <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
-                                                    href="#" data-title="{{ __('Delete Lead') }}"
-                                                    data-confirm="{{ __('Are You Sure?') }}"
-                                                    data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                    data-confirm-yes="delete-form-{{ $product_tax->id }}"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="{{ __('Delete') }}">
-                                                    <i class="ti ti-trash"></i>
-                                                </a>
-                                                {!! Form::open(['method' => 'DELETE', 'route' => ['product_tax.destroy', $product_tax->id], 'id' => 'delete-form-' . $product_tax->id]) !!}
-                                                {!! Form::close() !!}
-                                            </div>
-                                        </span>
+                                    <td class="Action">                                          
+                                        <div class="d-flex">
+                                            <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-url="{{ route('product_tax.edit', $product_tax->id) }}" data-tooltip="Edit" data-ajax-popup="true" data-title="{{ __('Edit Tax') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit') }}">
+                                                <i  class="ti ti-edit f-20"></i>
+                                            </a>
+                                            <a class="bs-pass-para btn btn-sm btn-icon bg-light-secondary" href="#"
+                                                data-title="{{ __('Delete Tax') }}"
+                                                data-confirm="{{ __('Are You Sure?') }}"
+                                                data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                data-confirm-yes="delete-form-{{ $product_tax->id }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="{{ __('Delete') }}">
+                                                <i class="ti ti-trash f-20"></i>
+                                            </a>
+                                            {!! Form::open(['method' => 'DELETE', 'route' => ['product.destroy', $product_tax->id], 'id' => 'delete-form-' . $product_tax->id]) !!}
+                                            {!! Form::close() !!}
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

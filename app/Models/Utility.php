@@ -131,6 +131,7 @@ class Utility extends Model
             "gdpr_cookie" => "",
             "cookie_text" => "",
             "signup_button" => "on",
+            "email_verification" => "on",
             "cust_theme_bg" => "on",
             "cust_darklayout" => "off",
             "color" => "theme-3",
@@ -225,19 +226,20 @@ class Utility extends Model
             }
 
         }
-
+        
         if (\Auth::check()) {
             $data = $data->where('store_id', '=', $store_id)->where('theme_name', $theme_name);
         } else {
             $data = $data->where('store_id', '=', $store_id)->where('theme_name', $theme_name);
         }
         $data = $data->get();
+ 
         if ($data->count() > 0) {
             foreach ($data as $row) {
                 $settings[$row->name] = $row->value;
             }
         }
-
+      
         return $settings;
     }
 
@@ -601,138 +603,138 @@ class Utility extends Model
 
         $arr = [
             'theme1' => [
-                'green-color.css' => [
+                'theme1-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme1/Home.png')),
                     'color' => '92bd88',
                 ],
-                'geen-blue-color.css' => [
+                'theme1-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme1/Home-1.png')),
                     'color' => '276968',
                 ],
-                'geen-brown-color.css' => [
+                'theme1-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme1/Home-2.png')),
                     'color' => 'af8637',
                 ],
-                'geen-white-color.css' => [
+                'theme1-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme1/Home-3.png')),
                     'color' => 'e7d7bd',
                 ],
-                'green-Pink-color.css' => [
+                'theme1-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme1/Home-4.png')),
                     'color' => 'b7786f',
                 ],
             ],
 
             'theme2' => [
-                'blue-yellow-color.css' => [
+                'theme2-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme2/Home.png')),
                     'color' => 'f5ba20',
                 ],
-                'blue-pink-color.css' => [
+                'theme2-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme2/Home-1.png')),
                     'color' => 'fa747d',
                 ],
-                'blue-cream-color.css' => [
+                'theme2-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme2/Home-2.png')),
                     'color' => 'c8ae9d',
                 ],
-                'blue-white-color.css' => [
+                'theme2-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme2/Home-3.png')),
                     'color' => 'd7e2dc',
                 ],
-                'blue-sky-color.css' => [
+                'theme2-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme2/Home-4.png')),
                     'color' => '5ea5ab',
                 ],
             ],
 
             'theme3' => [
-                'white-yellow-color.css' => [
+                'theme3-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme3/Home.png')),
                     'color' => 'f6e32f',
                 ],
-                'white-geen-color.css' => [
+                'theme3-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme3/Home-1.png')),
                     'color' => '7db802',
                 ],
-                'white-blue-color.css' => [
+                'theme3-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme3/Home-2.png')),
                     'color' => '3e77ea',
                 ],
-                'white-black-color.css' => [
+                'theme3-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme3/Home-3.png')),
                     'color' => '2b2d2d',
                 ],
-                'white-pink-color.css' => [
+                'theme3-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme3/Home-4.png')),
                     'color' => 'ffccb4',
                 ],
             ],
 
             'theme4' => [
-                'light-blue-color.css' => [
+                'theme4-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme4/Home.png')),
                     'color' => '5e7698',
                 ],
-                'light-green-color.css' => [
+                'theme4-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme4/Home-1.png')),
                     'color' => '88d297',
                 ],
-                'light-cream-color.css' => [
+                'theme4-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme4/Home-2.png')),
                     'color' => 'c9aea7',
                 ],
-                'light-black-color.css' => [
+                'theme4-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme4/Home-3.png')),
                     'color' => '2f343a',
                 ],
-                'light-orange-color.css' => [
+                'theme4-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme4/Home-4.png')),
                     'color' => 'f3ba51',
                 ],
             ],
 
             'theme5' => [
-                'dark-sky-blue-color.css' => [
+                'theme5-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme5/Home.png')),
                     'color' => '007aff',
                 ],
-                'dark-yellow-color.css' => [
+                'theme5-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme5/Home-1.png')),
                     'color' => 'febd00',
                 ],
-                'dark-green-color.css' => [
+                'theme5-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme5/Home-2.png')),
                     'color' => '05d79f',
                 ],
-                'dark-pink-color.css' => [
+                'theme5-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme5/Home-3.png')),
                     'color' => 'e91e63',
                 ],
-                'dark-blue-color.css' => [
+                'theme5-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme5/Home-4.png')),
                     'color' => '2b2d42',
                 ],
             ],
 
             'theme6' => [
-                'green-color.css' => [
+                'theme6-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme6/Home.png')),
                     'color' => '94ce79',
                 ],
-                'dark-green-color.css' => [
+                'theme6-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme6/Home-1.png')),
                     'color' => '79ceb4',
                 ],
-                'dark-yellow-color.css' => [
+                'theme6-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme6/Home-2.png')),
                     'color' => 'f4b41a',
                 ],
-                'dark-sky-blue-color.css' => [
+                'theme6-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme6/Home-3.png')),
                     'color' => '1877f2',
                 ],
-                'dark-pink-color.css' => [
+                'theme6-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme6/Home-4.png')),
                     'color' => 'e6007e',
 
@@ -740,23 +742,23 @@ class Utility extends Model
             ],
 
             'theme7' => [
-                'black-color.css' => [
+                'theme7-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme7/Home.png')),
                     'color' => '2b2d42',
                 ],
-                'neon-color.css' => [
+                'theme7-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme7/Home-1.png')),
                     'color' => '54a089',
                 ],
-                'brown-color.css' => [
+                'theme7-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme7/Home-2.png')),
                     'color' => '615144',
                 ],
-                'blue-color.css' => [
+                'theme7-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme7/Home-3.png')),
                     'color' => '1877f2',
                 ],
-                'green.css' => [
+                'theme7-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme7/Home-4.png')),
                     'color' => '92be35',
 
@@ -764,23 +766,23 @@ class Utility extends Model
             ],
 
             'theme8' => [
-                'dark-brown-color.css' => [
+                'theme8-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme8/Home.png')),
                     'color' => '3E3E37',
                 ],
-                'brown-color.css' => [
+                'theme8-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme8/Home-1.png')),
                     'color' => '615144',
                 ],
-                'neon-light-color.css' => [
+                'theme8-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme8/Home-2.png')),
                     'color' => '54a085',
                 ],
-                'dark-blue-color.css' => [
+                'theme8-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme8/Home-3.png')),
                     'color' => '6e00ff',
                 ],
-                'light-brown.css' => [
+                'theme8-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme8/Home-4.png')),
                     'color' => '7e7d7c',
 
@@ -788,23 +790,23 @@ class Utility extends Model
             ],
 
             'theme9' => [
-                'black-color.css' => [
+                'theme9-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme9/Home.png')),
                     'color' => '000000',
                 ],
-                'dark-red-color.css' => [
+                'theme9-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme9/Home-1.png')),
                     'color' => '793838',
                 ],
-                'neon-color.css' => [
+                'theme9-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme9/Home-2.png')),
                     'color' => '4a7a6c',
                 ],
-                'dark-blue-color.css' => [
+                'theme9-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme9/Home-3.png')),
                     'color' => '0f3e7a',
                 ],
-                'grey-color.css' => [
+                'theme9-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme9/Home-4.png')),
                     'color' => '848484',
 
@@ -812,48 +814,48 @@ class Utility extends Model
             ],
 
             'theme10' => [
-                'light-blue-color.css' => [
+                'theme10-v1' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home.png')),
                     'color' => '256dff',
                 ],
-                'light-pink-color.css' => [
+                'theme10-v2' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-1.png')),
                     'color' => 'e6007e',
                 ],
-                'orange-color.css' => [
+                'theme10-v3' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-2.png')),
                     'color' => 'f25c05',
                 ],
-                'royal-blue-color.css' => [
+                'theme10-v4' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-3.png')),
                     'color' => '210070',
                 ],
-                'royal-yellow-color.css' => [
+                'theme10-v5' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-4.png')),
                     'color' => 'f4b41a',
 
                 ],
-                'navy-blue-color.css' => [
+                'theme10-v6' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-5.png')),
                     'color' => '1f3767',
 
                 ],
-                'soft-grey-color.css' => [
+                'theme10-v7' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-6.png')),
                     'color' => '727272',
 
                 ],
-                'royal-red-color.css' => [
+                'theme10-v8' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-7.png')),
                     'color' => 'ff1f00',
 
                 ],
-                'sapphire-color.css' => [
+                'theme10-v9' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-8.png')),
                     'color' => '004870',
 
                 ],
-                'dark-spring-green.css' => [
+                'theme10-v10' => [
                     'img_path' => asset(Storage::url('uploads/store_theme/theme10/Home-9.png')),
                     'color' => '425b23',
 
@@ -2260,5 +2262,21 @@ Order Date:" . ' ' . self::dateFormat($order->created_at));
         }
 
         return $settings;
+    }
+    public static function pixel_plateforms(){
+        $plateforms = [
+            'facebook' => 'Facebook',
+            'twitter' => 'Twitter',
+            'linkedin' => 'Linkedin',
+            'pinterest' => 'Pinterest',
+            'quora' => 'Quora',
+            'bing' => 'Bing',
+            'google-adwords' => 'Google Adwords',
+            'google-analytics' => 'Google Analytics',
+            'snapchat' => 'Snapchat',
+            'tiktok' => 'Tiktok',
+        ];
+
+        return $plateforms;
     }
 }

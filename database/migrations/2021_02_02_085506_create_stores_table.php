@@ -74,6 +74,7 @@ class CreateStoresTable extends Migration
             $table->string('enable_cod')->default('off');
             $table->string('enable_bank')->default('off');
             $table->string('bank_number')->nullable();
+            // $table->string('enable_pwa_store')->default('off');
             $table->timestamps();
         }
         );

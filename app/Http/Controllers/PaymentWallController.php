@@ -47,7 +47,7 @@ class PaymentWallController extends Controller
     }
 
    public function planPayWithPaymentWall(Request $request,$plan_id){
-
+    
        $user                  = Auth::user();
        $store_id              = Auth::user()->current_store;
         $admin_payment_setting = Utility::getAdminPaymentSetting();

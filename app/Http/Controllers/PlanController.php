@@ -121,6 +121,9 @@ class PlanController extends Controller
                 if (!isset($request->blog)) {
                     $post['blog'] = 'off';
                 }
+                if (!isset($request->pwa_store)) {
+                    $post['pwa_store'] = 'off';
+                }
 
                 if (Plan::create($post)) {
                     return redirect()->back()->with('success', __('Plan created Successfully!'));
@@ -185,6 +188,11 @@ class PlanController extends Controller
                 || (isset($admin_payments_setting['is_flutterwave_enabled']) && $admin_payments_setting['is_flutterwave_enabled'] == 'on')
                 || (isset($admin_payments_setting['is_razorpay_enabled']) && $admin_payments_setting['is_razorpay_enabled'] == 'on')
                 || (isset($admin_payments_setting['is_mercado_enabled']) && $admin_payments_setting['is_mercado_enabled'] == 'on')
+                || (isset($admin_payments_setting['is_mollie_enabled']) && $admin_payments_setting['is_mollie_enabled'] == 'on')
+                || (isset($admin_payments_setting['is_coingate_enabled']) && $admin_payments_setting['is_coingate_enabled'] == 'on')
+                || (isset($admin_payments_setting['is_paytm_enabled']) && $admin_payments_setting['is_paytm_enabled'] == 'on') 
+                || (isset($admin_payments_setting['is_skrill_enabled']) && $admin_payments_setting['is_skrill_enabled'] == 'on')
+                || (isset($admin_payments_setting['is_paymentwall_enabled']) && $admin_payments_setting['is_paymentwall_enabled'] == 'on')
             ) {
                 $plan = Plan::find($planID);
                 if ($plan) {
@@ -234,6 +242,10 @@ class PlanController extends Controller
                     if (!isset($request->shipping_method)) {
                         $post['shipping_method'] = 'off';
                     }
+                    if (!isset($request->pwa_store)) {
+                        $post['pwa_store'] = 'off';
+                    }
+
                     if ($request->hasFile('image')) {
                         $filenameWithExt = $request->file('image')->getClientOriginalName();
                         $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);

@@ -60,10 +60,6 @@ class Store extends Model
         'paypal_mode',
         'paypal_client_id',
         'paypal_secret_key',
-        'is_rapyd_enabled',
-        'rapyd_mode',
-        'rapyd_client_id',
-        'rapyd_secret_key',
         'mail_driver',
         'mail_host',
         'mail_port',
@@ -113,4 +109,19 @@ class Store extends Model
         return $slug;
     }
 
+    public static function pwa_store($slug){
+
+
+        $store = Store::where('slug', $slug)->first();
+        try {
+
+            $pwa_data = \File::get(storage_path('uploads/customer_app/store_' . $store->id . '/manifest.json'));
+
+            $pwa_data = json_decode($pwa_data);
+        } catch (\Throwable $th) {
+            $pwa_data = [];
+        }
+        return $pwa_data;
+
+    }
 }

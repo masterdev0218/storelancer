@@ -1,131 +1,42 @@
 @extends('layouts.admin')
 @php
-// $logo = asset(Storage::url('uploads/logo/'));
-$logo=\App\Models\Utility::get_file('uploads/logo/');
-
-$logo_img=\App\Models\Utility::getValByName('company_logo');
-$logo_light = \App\Models\Utility::getValByName('company_light_logo');
-$s_logo=\App\Models\Utility::get_file('uploads/store_logo/');
-// $logo_light = \App\Models\Utility::getValByName('company_logo_light');
-// $logo_dark = \App\Models\Utility::getValByName('company_logo_dark');
-$company_favicon = \App\Models\Utility::getValByName('company_favicon');
-// $store_logo = asset(Storage::url('uploads/store_logo/'));
-$lang = \App\Models\Utility::getValByName('default_language');
-$company_logo = \App\Models\Utility::GetLogo();
-
-if (Auth::user()->type == 'Owner') {
-    $store_lang = $store_settings->lang;
-}
-
-// storage setting
-$file_type = config('files_types');
-$setting = App\Models\Utility::settings();
-
-$local_storage_validation    = $setting['local_storage_validation'];
-$local_storage_validations   = explode(',', $local_storage_validation);
-
-$s3_storage_validation    = $setting['s3_storage_validation'];
-$s3_storage_validations   = explode(',', $s3_storage_validation);
-
-$wasabi_storage_validation    = $setting['wasabi_storage_validation'];
-$wasabi_storage_validations   = explode(',', $wasabi_storage_validation);
-
-$setting = App\Models\Utility::colorset();
-
-$color = 'theme-3';
-if (!empty($setting['color'])) {
-   $color = $setting['color'];
-}
+    // $logo = asset(Storage::url('uploads/logo/'));
+    $logo = \App\Models\Utility::get_file('uploads/logo/');
+    
+    $logo_img = \App\Models\Utility::getValByName('company_logo');
+    $logo_light = \App\Models\Utility::getValByName('company_light_logo');
+    $s_logo = \App\Models\Utility::get_file('uploads/store_logo/');
+    // $logo_light = \App\Models\Utility::getValByName('company_logo_light');
+    // $logo_dark = \App\Models\Utility::getValByName('company_logo_dark');
+    $company_favicon = \App\Models\Utility::getValByName('company_favicon');
+    // $store_logo = asset(Storage::url('uploads/store_logo/'));
+    $lang = \App\Models\Utility::getValByName('default_language');
+    $company_logo = \App\Models\Utility::GetLogo();
+    
+    if (Auth::user()->type == 'Owner') {
+        $store_lang = $store_settings->lang;
+    }
+    
+    // storage setting
+    $file_type = config('files_types');
+    $setting = App\Models\Utility::settings();
+    
+    $local_storage_validation = $setting['local_storage_validation'];
+    $local_storage_validations = explode(',', $local_storage_validation);
+    
+    $s3_storage_validation = $setting['s3_storage_validation'];
+    $s3_storage_validations = explode(',', $s3_storage_validation);
+    
+    $wasabi_storage_validation = $setting['wasabi_storage_validation'];
+    $wasabi_storage_validations = explode(',', $wasabi_storage_validation);
+    
+    $setting = App\Models\Utility::colorset();
+    
+    $color = 'theme-3';
+    if (!empty($setting['color'])) {
+        $color = $setting['color'];
+    }
 @endphp
-
-@if($color == 'theme-3')
-    <style>
-    .btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
-            color: #ffffff;
-            background-color: #6fd943 !important;
-            border-color: #6fd943 !important;
-
-        }
-
-        .btn-outline-primary:hover
-        {
-            color: #ffffff;
-            background-color: #6fd943 !important;
-            border-color: #6fd943 !important;
-        }
-        .btn.btn-outline-primary{
-            color: #6fd943;
-            border-color: #6fd943 !important;
-        }
-    </style>
-@endif
-
-@if($color == 'theme-2')
-    <style>
-        .btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
-            color: #ffffff;
-            background: linear-gradient(141.55deg, rgba(240, 244, 243, 0) 3.46%, #4ebbd3 99.86%)#1f3996 !important;
-            border-color: #1F3996 !important;
-
-        }
-
-        .btn-outline-primary:hover
-        {
-            color: #ffffff;
-            background: linear-gradient(141.55deg, rgba(240, 244, 243, 0) 3.46%, #4ebbd3 99.86%)#1f3996 !important;
-            border-color: #1F3996 !important;
-        }
-        .btn.btn-outline-primary{
-            color: #1F3996;
-            border-color: #1F3996 !important;
-        }
-        </style>
-@endif
-
-@if($color == 'theme-4')
-    <style>
-        .btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
-            color: #ffffff;
-            background-color: #584ed2 !important;
-            border-color: #584ed2 !important;
-
-        }
-
-        .btn-outline-primary:hover
-        {
-            color: #ffffff;
-            background-color: #584ed2 !important;
-            border-color: #584ed2 !important;
-        }
-        .btn.btn-outline-primary{
-            color: #584ed2;
-            border-color: #584ed2 !important;
-        }
-    </style>
-@endif
-
-@if($color == 'theme-1')
-    <style>
-        .btn-check:checked + .btn-outline-primary, .btn-check:active + .btn-outline-primary, .btn-outline-primary:active, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show {
-            color: #ffffff;
-            background: linear-gradient(141.55deg, rgba(81, 69, 157, 0) 3.46%, rgba(255, 58, 110, 0.6) 99.86%), #51459d !important;
-            border-color: #51459d !important;
-
-        }
-
-        .btn-outline-primary:hover
-        {
-            color: #ffffff;
-            background: linear-gradient(141.55deg, rgba(81, 69, 157, 0) 3.46%, rgba(255, 58, 110, 0.6) 99.86%), #51459d !important;
-            border-color: #51459d !important;
-        }
-        .btn.btn-outline-primary{
-            color: #51459d;
-            border-color: #51459d !important;
-        }
-    </style>
-@endif
-
 @section('page-title')
     @if (Auth::user()->type == 'super admin')
         {{ __('Settings') }}
@@ -143,21 +54,82 @@ if (!empty($setting['color'])) {
     </div>
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ __('Settings') }}</li>
+<li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ __('Settings') }}</li>
 @endsection
 @section('action-btn')
+    <ul class="nav nav-pills cust-nav   rounded  mb-3" id="pills-tab" role="tablist">
+        @if (Auth::user()->type == 'Owner')
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-theme_setting-tab" data-bs-toggle="pill" href="#pills-theme_setting"
+                    role="tab" aria-controls="pills-theme_setting" aria-selected="true">{{ __('Theme Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-brand_setting-tab" data-bs-toggle="pill" href="#pills-brand-setting"
+                    role="tab" aria-controls="pills-brandsetting" aria-selected="false">{{ __('Brand Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-store_setting-tab" data-bs-toggle="pill" href="#pills-store_setting"
+                    role="tab" aria-controls="pills-store_setting" aria-selected="false">{{ __('Store Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-store_payment-setting-tab" data-bs-toggle="pill"
+                    href="#pills-store_payment-setting" role="tab" aria-controls="pills-store_payment-setting"
+                    aria-selected="false">{{ __('Payment Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-store_email_setting-tab" data-bs-toggle="pill"
+                    href="#pills-store_email_setting" role="tab" aria-controls="pills-store_email_setting"
+                    aria-selected="false">{{ __('Email Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-whatsapp_custom_massage-tab" data-bs-toggle="pill"
+                    href="#pills-whatsapp_custom_massage" role="tab" aria-controls="pills-whatsapp_custom_massage"
+                    aria-selected="false">{{ __('Whatsapp Message Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-twilio_setting-tab" data-bs-toggle="pill" href="#pills-twilio_setting"
+                    role="tab" aria-controls="pills-twilio_setting"
+                    aria-selected="false">{{ __('Twilio Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-pixel_setting-tab" data-bs-toggle="pill" href="#pixel_settings"
+                    role="tab" aria-controls="pixel_settings"
+                    aria-selected="false">{{ __('Pixel Settings') }}</a>
+            </li>
+        @endif
+
+        @if (Auth::user()->type == 'super admin')
+            <li class="nav-item">
+                <a class="nav-link active" id="site_setting_tab" data-bs-toggle="pill" href="#pills-brand-setting"
+                    role="tab" aria-controls="pills-brand-setting" aria-selected="true">{{ __('Brand Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-payment-setting_tab" data-bs-toggle="pill" href="#pills-payment-setting"
+                    role="tab" aria-controls="pills-payment-setting"
+                    aria-selected="false">{{ __('Payment Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-email-settings_tab" data-bs-toggle="pill" href="#pills-email-settings"
+                    role="tab" aria-controls="pills-email-settings"
+                    aria-selected="false">{{ __('Email Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="recaptcha-settings_tab" data-bs-toggle="pill" href="#pills-recaptcha-settings"
+                    role="tab" aria-controls="pills-recaptcha-settings-tab"
+                    aria-selected="false">{{ __('ReCaptcha Settings') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="storage_settings_tab" data-bs-toggle="pill" href="#storage_settings"
+                    role="tab" aria-controls="pills-storage_settings-tab"
+                    aria-selected="false">{{ __('Storage Settings') }}</a>
+            </li>
+        @endif
+
+    </ul>
 @endsection
 @section('filter')
 @endsection
-@push('css-page')
-    <link rel="stylesheet" href="{{ asset('custom/libs/summernote/summernote-bs4.css') }}">
-    <style>
-        hr {
-            margin: 8px;
-        }
-    </style>
-@endpush
 @push('script-page')
     <script src="{{ asset('custom/libs/summernote/summernote-bs4.js') }}"></script>
     <script>
@@ -216,195 +188,109 @@ if (!empty($setting['color'])) {
         })
     </script>
     <script>
-       $(document).on('change','[name=storage_setting]',function(){
-            if($(this).val() == 's3'){
+        $(document).on('change', '[name=storage_setting]', function() {
+            if ($(this).val() == 's3') {
                 $('.s3-setting').removeClass('d-none');
                 $('.wasabi-setting').addClass('d-none');
                 $('.local-setting').addClass('d-none');
-            }else if($(this).val() == 'wasabi'){
+            } else if ($(this).val() == 'wasabi') {
                 $('.s3-setting').addClass('d-none');
                 $('.wasabi-setting').removeClass('d-none');
                 $('.local-setting').addClass('d-none');
-            }else{
+            } else {
                 $('.s3-setting').addClass('d-none');
                 $('.wasabi-setting').addClass('d-none');
                 $('.local-setting').removeClass('d-none');
             }
         });
     </script>
-        <script>
-            var multipleCancelButton = new Choices(
-               '#choices-multiple-remove-button', {
-                   removeItemButton: true,
-               }
-           );
-           var multipleCancelButton = new Choices(
-               '#choices-multiple-remove-button1', {
-                   removeItemButton: true,
-               }
-           );
-           var multipleCancelButton = new Choices(
-               '#choices-multiple-remove-button2', {
-                   removeItemButton: true,
-               }
-           );
-       </script>
+    <script>
+        var multipleCancelButton = new Choices(
+            '#choices-multiple-remove-button', {
+                removeItemButton: true,
+            }
+        );
+        var multipleCancelButton = new Choices(
+            '#choices-multiple-remove-button1', {
+                removeItemButton: true,
+            }
+        );
+        var multipleCancelButton = new Choices(
+            '#choices-multiple-remove-button2', {
+                removeItemButton: true,
+            }
+        );
+    </script>
 @endpush
 @section('content')
     <div class="row">
+        <!-- [ sample-page ] start -->
         <div class="col-sm-12">
-            <div class="row">
-                <div class="col-xl-3">
-                    <div class="card sticky-top" style="top:30px">
-                        <div class="list-group list-group-flush" id="useradd-sidenav">
-                            @if (Auth::user()->type == 'Owner')
+            @if (Auth::user()->type == 'Owner')
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade active show" id="pills-theme_setting" role="tabpanel"
+                        aria-labelledby="pills-theme_setting">
+                        {{ Form::open(['route' => ['store.changetheme', $store_settings->id], 'method' => 'POST']) }}
+                        <div class="d-flex mb-3 align-items-center justify-content-between">
+                            <h3>{{ __('Theme Settings') }}</h3>
+                            {{ Form::hidden('themefile', null, ['id' => 'themefile']) }}
+                            <button type="submit" class="btn  btn-primary"> <i data-feather="check-circle"
+                                    class="me-2"></i>{{ __('Save Changes') }}</button>
 
-
-                                <a href="#theme_setting" id="theme_setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Theme Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#brand-setting" id="site_setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Brand Settings') }}<div
-                                        class="float-end"><i class="ti ti-chevron-right"></i></div></a>
-
-                                <a href="#store_setting" id="store_setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Store Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#store_payment-setting" id="payment-setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Payment Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#store_email_setting" id="store_email_setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Email Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#whatsapp_custom_massage" id="system_setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Whatsapp Message Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#twilio_setting" id="twilio_setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Twilio Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-                            @endif
-
-                            @if (Auth::user()->type == 'super admin')
-                                <a href="#brand-setting" id="site_setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Brand Settings') }}<div
-                                        class="float-end"><i class="ti ti-chevron-right"></i></div></a>
-
-                                <a href="#payment-setting" id="payment-setting_tab"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Payment Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#email-settings"
-                                    class="list-group-item list-group-item-action dash-link  border-0">{{ __('Email Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#recaptcha-settings"
-                                    class="list-group-item list-group-item-action border-0">{{ __('ReCaptcha Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-
-                                <a href="#storage_settings"
-                                    class="list-group-item list-group-item-action border-0">{{ __('Storage Settings') }}
-                                    <div class="float-end"><i class="ti ti-chevron-right"></i></div>
-                                </a>
-                            @endif
                         </div>
-                    </div>
-                </div>
-                <div class="col-xl-9">
-                    @if (Auth::user()->type == 'Owner')
-                        <div class="" id="theme_setting">
-                            {{ Form::open(['route' => ['store.changetheme', $store_settings->id], 'method' => 'POST']) }}
-                            <div class="row">
-                                <div class="col-lg-12 col-sm-12 col-md-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>{{ __('Theme Settings') }}</h5>
-                                        </div>
-
-                                        @php
-                                        $themeImg = \App\Models\Utility::get_file('uploads/store_theme/');
-                                        @endphp
-
-                                        <div class="card-body">
-                                            <div class="row">
-                                                @foreach (\App\Models\Utility::themeOne() as $key => $v)
-                                                    <div class="col-4 cc-selector mb-2">
-                                                        <div class="mb-3 screen image">
-                                                            <img src="{{asset(Storage::url('uploads/store_theme/'.$key.'/Home.png'))}}"
-                                                                class="color1 img-center pro_max_width pro_max_height {{ $key }}_img"
-                                                                data-id="{{ $key }}">
-                                                            <div class="actions">
-                                                                <a href="">
-                                                                    <button type="button"
-                                                                        class="btn btn-default delete-image-btn pull-right">
-                                                                        <span class="glyphicon glyphicon-trash"></span>
-                                                                    </button>
-                                                                </a>
-                                                                <a href="">
-                                                                    <button type="button"
-                                                                        class="btn btn-default edit-image-btn pull-right">
-                                                                        <span class="glyphicon glyphicon-pencil"></span>
-                                                                    </button>
-                                                                </a>
-                                                            </div>
+                        @php
+                            $themeImg = \App\Models\Utility::get_file('uploads/store_theme/');
+                        @endphp
+                        <div class="border border-primary rounded p-3">
+                            <div class="row gy-4 ">
+                                @foreach (\App\Models\Utility::themeOne() as $key => $v)
+                                    <div class="col-xl-3 col-lg-4 col-md-6">
+                                        <div class="theme-card selected border-primary">
+                                            <div class="theme-card-inner">
+                                                <div class="theme-image border  rounded">
+                                                    <img src="{{ asset(Storage::url('uploads/store_theme/' . $key . '/Home.png')) }}"
+                                                        class="color1 img-center pro_max_width pro_max_height {{ $key }}_img"
+                                                        data-id="{{ $key }}">
+                                                </div>
+                                                <div class="theme-content mt-3">
+                                                    <p class="mb-0">{{ __('Select Sub-Color') }}</p>
+                                                    <div class="d-flex mt-2 justify-content-between align-items-center {{ $key == 'theme10' ? 'theme10box' : '' }}"
+                                                        id="{{ $key }}">
+                                                        <div class="color-inputs">
+                                                            @foreach ($v as $css => $val)
+                                                                <label class="colorinput">
+                                                                    <input name="theme_color" 
+                                                                        id="color1-theme4" type="radio"
+                                                                        value="{{ $css }}"
+                                                                        data-theme="{{ $key }}"
+                                                                        data-imgpath="{{ $val['img_path'] }}"
+                                                                        class="colorinput-input color-{{ $loop->index++ }}"
+                                                                        {{ isset($store_settings['store_theme']) && $store_settings['store_theme'] == $css && $store_settings['theme_dir'] == $key ? 'checked' : '' }}>
+                                                                    <span class="border-box">
+                                                                        <span class="colorinput-color"
+                                                                            style="background: #{{ $val['color'] }}"></span>
+                                                                    </span>
+                                                                </label>
+                                                            @endforeach
                                                         </div>
-                                                        <div class="form-group">
-                                                            <div class="row gutters-xs {{$key == 'theme10' ? 'theme10box' : '' }}" id="{{ $key }}">
-                                                                @foreach ($v as $css => $val)
-                                                                    <div class="col">
-                                                                        <label class="colorinput">
-                                                                            <input name="theme_color" type="radio"
-                                                                                value="{{ $css }}"
-                                                                                data-theme="{{ $key }}"
-                                                                                data-imgpath="{{ $val['img_path'] }}"
-                                                                                class="colorinput-input color-{{$loop->index++}}" {{ (isset($store_settings['store_theme']) && $store_settings['store_theme'] == $css) && $store_settings['theme_dir'] == $key ? 'checked' : '' }}>
-                                                                            <span class="colorinput-color"
-                                                                                style="background:#{{ $val['color'] }}"></span>
-                                                                        </label>
-                                                                    </div>
-                                                                @endforeach
-                                                                <div class="col">
-                                                                    @if (isset($store_settings['theme_dir']) && $store_settings['theme_dir'] == $key)
-                                                                        <a href="{{ route('store.editproducts', [$store_settings->slug, $key]) }}"
-                                                                            class="btn btn-outline-primary theme_btn"
-                                                                            type="button"
-                                                                            id="button-addon2">{{ __('Edit') }}</a>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        @if (isset($store_settings['theme_dir']) && $store_settings['theme_dir'] == $key)
+                                                            <a href="{{ route('store.editproducts', [$store_settings->slug, $key]) }}"
+                                                                class="btn btn-primary" id="button-addon2"> <i
+                                                                    data-feather="edit"></i> {{ __('Edit') }}</a>
+                                                        @endif
                                                     </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="col-sm-12 px-2">
-                                                <div class="text-end">
-                                                    {{ Form::hidden('themefile', null, ['id' => 'themefile']) }}
-                                                    {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endforeach
                             </div>
-                            {!! Form::close() !!}
                         </div>
-                        <div class="" id="brand-setting">
-                            {{ Form::model($settings, ['route' => 'business.setting', 'method' => 'POST', 'enctype' => 'multipart/form-data']) }}
+                        {!! Form::close() !!}
+                    </div>
+                    <div class="tab-pane fade" id="pills-brand-setting" role="tabpanel"
+                        aria-labelledby="pills-brand_setting-tab">
+                        {{ Form::model($settings, ['route' => 'business.setting', 'method' => 'POST', 'enctype' => 'multipart/form-data']) }}
                             <div class="row">
                                 <div class="col-lg-12 col-sm-12 col-md-12">
                                     <div class="card">
@@ -425,10 +311,12 @@ if (!empty($setting['color'])) {
                                                                     {{-- <img src="{{ $logo . '/' . (isset($logo_dark) && !empty($logo_dark) ? $logo_dark : ' logo-dark.png') }}"
                                                                         class="img-setting" width="170px"> --}}
 
-                                                                        <a href="{{route('dashboard')}}" class="b-brand">
-                                                                            <img src="{{ $logo . '/' . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo-dark.png') }}"
-                                                                              alt="{{ config('app.name', 'Storego') }}" alt="logo" class="logo logo-lg nav-sidebar-logo">
-                                                                            </a>
+                                                                    <a href="{{ route('dashboard') }}" class="b-brand">
+                                                                        <img src="{{ $logo . '/' . (isset($company_logo) && !empty($company_logo) ? $company_logo : 'logo-dark.png') }}"
+                                                                            alt="{{ config('app.name', 'Storego') }}"
+                                                                            alt="logo"
+                                                                            class="logo logo-lg nav-sidebar-logo">
+                                                                    </a>
                                                                 </div>
                                                                 <div class="choose-files mt-5">
                                                                     <label for="company_logo">
@@ -472,8 +360,10 @@ if (!empty($setting['color'])) {
                                                                             class=" img_setting" width="170px"
                                                                             id="logo-light">
                                                                     </a> --}}
-                                                                    <a href="{{$logo.'logo-light.png'}}" target="_blank">
-                                                                        <img id="logo-light" alt="your image" src="{{$logo.'logo-light.png'}}" width="170px" class="img_setting">
+                                                                    <a href="{{ $logo . 'logo-light.png' }}" target="_blank">
+                                                                        <img id="logo-light" alt="your image"
+                                                                            src="{{ $logo . 'logo-light.png' }}" width="170px"
+                                                                            class="img_setting">
                                                                     </a>
                                                                 </div>
                                                                 <div class="choose-files mt-5">
@@ -507,15 +397,15 @@ if (!empty($setting['color'])) {
                                                         <div class="card-body pt-0">
                                                             <div class=" setting-card">
                                                                 <div class="logo-content mt-3">
-                                                                    {{-- <a href="{{ $logo . '/' . (isset($company_favicon) && !empty($company_favicon) ? $company_favicon : 'favicon.png') }}"
+                                                                    <a href="{{ $logo . '/' . (isset($company_favicon) && !empty($company_favicon) ? $company_favicon : 'favicon.png') }}"
                                                                         target="_blank">
                                                                         <img src="{{ $logo . '/' . (isset($company_favicon) && !empty($company_favicon) ? $company_favicon : 'favicon.png') }}"
                                                                             width="50px" height="50px"
                                                                             class=" img_setting favicon" id="faviCon">
-                                                                    </a> --}}
-                                                                    <a href="{{$logo.(isset($logo) && !empty($logo)? $logo :'favicon.png')}}" target="_blank">
-                                                                        <img alt="your image" src="{{$logo.'favicon.png'}}"   width="50px" height="50px" class=" img_setting favicon" id="faviCon">
                                                                     </a>
+                                                                    {{--  <a href="{{$logo.(isset($logo) && !empty($logo)? $logo :'favicon.png')}}" target="_blank">
+                                                                        <img alt="your image" src="{{$logo.'favicon.png'}}"   width="50px" height="50px" class=" img_setting favicon" id="faviCon">
+                                                                    </a>  --}}
                                                                 </div>
                                                                 <div class="choose-files mt-5">
                                                                     <label for="company_favicon">
@@ -600,51 +490,48 @@ if (!empty($setting['color'])) {
                                                         <label class="form-check-label"
                                                             for="SITE_RTL">{{ __('Enable RTL') }}</label><br>
                                                         <input type="checkbox" class="form-check-input"
-                                                            data-toggle="switchbutton" data-onstyle="primary"
-                                                            name="SITE_RTL" id="SITE_RTL"
+                                                            data-toggle="switchbutton" data-onstyle="primary" name="SITE_RTL"
+                                                            id="SITE_RTL"
                                                             {{ $settings['SITE_RTL'] == 'on' ? 'checked="checked"' : '' }}>
                                                     </div>
                                                 </div>
                                                 <div class="setting-card setting-logo-box p-3">
                                                     <div class="row">
                                                         <h5>{{ __('Theme Customizer') }}</h5>
-                                                        <div class="col-4 my-auto">
+                                                        <div class="col-md-4 my-auto">
                                                             <h6 class="mt-2">
                                                                 <i data-feather="credit-card"
                                                                     class="me-2"></i>{{ __('Primary Color Settings') }}
                                                             </h6>
                                                             <hr class="my-2" />
                                                             <div class="theme-color themes-color">
+                                                                
                                                                 <a href="#!"
                                                                     class="{{ $settings['color'] == 'theme-1' ? 'active_color' : '' }}"
-                                                                    data-value="theme-1"
-                                                                    onclick="check_theme('theme-1')"></a>
+                                                                    data-value="theme-1" onclick="check_theme('theme-1')"></a>
                                                                 <input type="radio" class="theme_color" name="color"
-                                                                    value="theme-1" style="display: none;">
+                                                                    value="theme-1" style="display: none;" @if($setting['color'] == 'theme-1') {{ 'checked' }}  @endif>
 
                                                                 <a href="#!"
                                                                     class="{{ $settings['color'] == 'theme-2' ? 'active_color' : '' }}"
-                                                                    data-value="theme-2"
-                                                                    onclick="check_theme('theme-2')"></a>
+                                                                    data-value="theme-2" onclick="check_theme('theme-2')"></a>
                                                                 <input type="radio" class="theme_color" name="color"
-                                                                    value="theme-2" style="display: none;">
+                                                                    value="theme-2" style="display: none;" @if($setting['color'] == 'theme-2') {{ 'checked' }}  @endif>
 
                                                                 <a href="#!"
                                                                     class="{{ $settings['color'] == 'theme-3' ? 'active_color' : '' }}"
-                                                                    data-value="theme-3"
-                                                                    onclick="check_theme('theme-3')"></a>
+                                                                    data-value="theme-3" onclick="check_theme('theme-3')"></a>
                                                                 <input type="radio" class="theme_color" name="color"
-                                                                    value="theme-3" style="display: none;">
+                                                                    value="theme-3" style="display: none;" @if($setting['color'] == 'theme-3') {{ 'checked' }}  @endif>
 
                                                                 <a href="#!"
                                                                     class="{{ $settings['color'] == 'theme-4' ? 'active_color' : '' }}"
-                                                                    data-value="theme-4"
-                                                                    onclick="check_theme('theme-4')"></a>
+                                                                    data-value="theme-4" onclick="check_theme('theme-4')"></a>
                                                                 <input type="radio" class="theme_color" name="color"
-                                                                    value="theme-4" style="display: none;">
+                                                                    value="theme-4" style="display: none;" @if($setting['color'] == 'theme-4') {{ 'checked' }}  @endif>
                                                             </div>
                                                         </div>
-                                                        <div class="col-4 my-auto mt-2">
+                                                        <div class="col-md-4 my-auto mt-2">
                                                             <h6 class="">
                                                                 <i data-feather="layout"
                                                                     class="me-2"></i>{{ __('Sidebar Settings') }}
@@ -652,13 +539,13 @@ if (!empty($setting['color'])) {
                                                             <hr class="my-2" />
                                                             <div class="form-check form-switch">
                                                                 <input type="checkbox" class="form-check-input"
-                                                                    id="cust-theme-bg" name="cust_theme_bg"
+                                                                    id="cust-theme-bg" name="cust_theme_bg" 
                                                                     {{ Utility::getValByName('cust_theme_bg') == 'on' ? 'checked' : '' }} />
-                                                                <label class="form-check-label f-w-600 pl-1"
+                                                                <label class="form-check-label f-w-600 pl-1" 
                                                                     for="cust-theme-bg">{{ __('Transparent layout') }}</label>
                                                             </div>
                                                         </div>
-                                                        <div class="col-4 my-auto mt-2">
+                                                        <div class="col-md-4 my-auto mt-2">
                                                             <h6 class="">
                                                                 <i data-feather="sun"
                                                                     class="me-2"></i>{{ __('Layout Settings') }}
@@ -667,7 +554,7 @@ if (!empty($setting['color'])) {
                                                             <div class="form-check form-switch mt-2">
                                                                 <input type="checkbox" class="form-check-input"
                                                                     id="cust-darklayout" name="cust_darklayout"
-                                                                    {{ $settings['cust_darklayout'] == 'on' ? 'checked="checked"' : '' }} />
+                                                                    {{ $settings['cust_darklayout'] == 'on' ? 'checked' : '' }} />
                                                                 <label class="form-check-label f-w-600 pl-1"
                                                                     for="cust-darklayout">{{ __('Dark Layout') }}</label>
                                                             </div>
@@ -686,446 +573,488 @@ if (!empty($setting['color'])) {
                                     </div>
                                 </div>
                             </div>
-                            {!! Form::close() !!}
-                        </div>
-                        <div class="active" id="store_setting">
-                            {{ Form::model($store_settings, ['route' => ['settings.store', $store_settings['id']], 'method' => 'POST', 'enctype' => 'multipart/form-data']) }}
-                            <div class="row">
-                                <div class="col-lg-12 col-sm-12 col-md-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>{{ __('Store Settings') }}</h5>
-                                        </div>
-                                        <div class="card-body pt-0">
-                                            <div class=" setting-card">
-                                                <div class="row mt-2">
-                                                    <div class="col-lg-4 col-sm-6 col-md-6">
-                                                        <div class="card">
-                                                            <div class="card-header">
-                                                                <h5>{{ __('Store Logo') }}</h5>
-                                                            </div>
-                                                            <div class="card-body pt-0">
-                                                                <div class=" setting-card">
-                                                                    <div class="logo-content mt-3">
-                                                                        {{-- <a href="{{ $store_logo . '/' . (isset($store_settings['logo']) && !empty($store_settings['logo']) ? $store_settings['logo'] : 'logo.png') }}"
-                                                                            target="_blank">
-                                                                            <img src="{{ $store_logo . '/' . (isset($store_settings['logo']) && !empty($store_settings['logo']) ? $store_settings['logo'] : 'logo.png') }}"
-                                                                                class="big-logo invoice_logo img_setting"
-                                                                                id="storeLogo">
-                                                                        </a> --}}
-                                                                        <a href="{{$s_logo.(isset($store_settings['logo']) && !empty($store_settings['logo'])? $store_settings['logo']:'logo.png')}}" target="_blank">
-                                                                            <img id="StorelogoOwner" alt="your image" src="{{$s_logo.(isset($store_settings['logo']) && !empty($store_settings['logo'])? $store_settings['logo']:'logo.png')}}"  class="big-logo invoice_logo img_setting" id="storeLogo">
-                                                                        </a>
-                                                                    </div>
-                                                                    <div class="choose-files mt-4">
-                                                                        <label for="logo">
-                                                                            <div class=" bg-primary logo_update"> <i
-                                                                                    class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
-                                                                            </div>
-                                                                            <input type="file"
-                                                                                class="form-control file" name="logo"
-                                                                                id="logo" data-filename="logo_update"
-                                                                                onchange="document.getElementById('storeLogo').src = window.URL.createObjectURL(this.files[0])">
-                                                                        </label>
-                                                                    </div>
-                                                                    @error('logo')
-                                                                        <div class="row">
-                                                                            <span class="invalid-logo" role="alert">
-                                                                                <strong
-                                                                                    class="text-danger">{{ $message }}</strong>
-                                                                            </span>
-                                                                        </div>
-                                                                    @enderror
-                                                                </div>
-                                                            </div>
+                        {!! Form::close() !!}
+                    </div>
+                    <div class="tab-pane fade" id="pills-store_setting" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        {{ Form::model($store_settings, ['route' => ['settings.store', $store_settings['id']], 'method' => 'POST', 'enctype' => 'multipart/form-data']) }}
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12 col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>{{ __('Store Settings') }}</h5>
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class=" setting-card">
+                                            <div class="row mt-2">
+                                                <div class="col-lg-4 col-sm-6 col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h5>{{ __('Store Logo') }}</h5>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-lg-4 col-sm-6 col-md-6">
-                                                        <div class="card">
-                                                            <div class="card-header">
-                                                                <h5>{{ __('Invoice Logo') }}</h5>
-                                                            </div>
-                                                            <div class="card-body pt-0">
-                                                                <div class=" setting-card">
-                                                                    <div class="logo-content mt-3">
-                                                                        {{-- <a href="{{ $store_logo . '/' . (isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo']) ? $store_settings['invoice_logo'] : 'invoice_logo.png') }}"
-                                                                            target="_blank">
-                                                                            <img src="{{ $store_logo . '/' . (isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo']) ? $store_settings['invoice_logo'] : 'invoice_logo.png') }}"
-                                                                                class="big-logo invoice_logo img_setting"
-                                                                                id="invoiceLogo">
-                                                                        </a> --}}
-                                                                        <a href="{{$s_logo.(isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo'])? $store_settings['invoice_logo']:'invoice_logo.png')}}" target="_blank">
-                                                                            <img id="invoiceOwner" alt="your image" src="{{$s_logo.(isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo'])? $store_settings['invoice_logo']:'invoice_logo.png')}}" width="150px" class="big-logo invoice_logo img_setting" id="invoiceLogo">
-                                                                        </a>
-                                                                    </div>
-                                                                    <div class="choose-files mt-4">
-                                                                        <label for="invoice_logo">
-                                                                            <div class=" bg-primary logo_update"> <i
-                                                                                    class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
-                                                                            </div>
-                                                                            <input type="file" name="invoice_logo"
-                                                                                id="invoice_logo"
-                                                                                class="form-control file"
-                                                                                data-filename="invoice_logo_update"
-                                                                                onchange="document.getElementById('invoiceLogo').src = window.URL.createObjectURL(this.files[0])">
-                                                                        </label>
-                                                                    </div>
-                                                                    @error('invoice_logo')
-                                                                        <div class="row">
-                                                                            <span class="invalid-invoice_logo" role="alert">
-                                                                                <strong
-                                                                                    class="text-danger">{{ $message }}</strong>
-                                                                            </span>
-                                                                        </div>
-                                                                    @enderror
+                                                        <div class="card-body pt-0">
+                                                            <div class=" setting-card">
+                                                                <div class="logo-content mt-3">
+                                                                    {{-- <a href="{{ $store_logo . '/' . (isset($store_settings['logo']) && !empty($store_settings['logo']) ? $store_settings['logo'] : 'logo.png') }}"
+                                                                    target="_blank">
+                                                                    <img src="{{ $store_logo . '/' . (isset($store_settings['logo']) && !empty($store_settings['logo']) ? $store_settings['logo'] : 'logo.png') }}"
+                                                                        class="big-logo invoice_logo img_setting"
+                                                                        id="storeLogo">
+                                                                </a> --}}
+                                                                    <a href="{{ $s_logo . (isset($store_settings['logo']) && !empty($store_settings['logo']) ? $store_settings['logo'] : 'logo.png') }}"
+                                                                        target="_blank">
+                                                                        <img id="StorelogoOwner" alt="your image"
+                                                                            src="{{ $s_logo . (isset($store_settings['logo']) && !empty($store_settings['logo']) ? $store_settings['logo'] : 'logo.png') }}"
+                                                                            class="big-logo invoice_logo img_setting"
+                                                                            id="storeLogo">
+                                                                    </a>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group col-md-6">
-                                                        {{ Form::label('store_name', __('Store Name'), ['class' => 'form-label']) }}
-                                                        {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Store Name')]) !!}
-                                                        @error('store_name')
-                                                            <span class="invalid-store_name" role="alert">
-                                                                <strong class="text-danger">
-                                                                    {{ $message }}
-                                                                </strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="form-group col-md-6">
-                                                        {{ Form::label('email', __('Email'), ['class' => 'form-label']) }}
-                                                        {{ Form::text('email', null, ['class' => 'form-control', 'placeholder' => __('Email')]) }}
-                                                        @error('email')
-                                                            <span class="invalid-email" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    @if ($plan->enable_custdomain == 'on' || $plan->enable_custsubdomain == 'on')
-                                                        <div class="col-md-6 py-4">
-                                                            <div class="radio-button-group mts">
-                                                                <div class="item">
-                                                                    <label
-                                                                        class="btn btn-outline-primary {{ $store_settings['enable_storelink'] == 'on' ? 'active' : '' }}">
-                                                                        <input type="radio"
-                                                                            class="domain_click  radio-button"
-                                                                            name="enable_domain" value="enable_storelink"
-                                                                            id="enable_storelink"
-                                                                            {{ $store_settings['enable_storelink'] == 'on' ? 'checked' : '' }}">
-                                                                        {{ __('Store Link') }}
+                                                                <div class="choose-files mt-4">
+                                                                    <label for="logo">
+                                                                        <div class=" bg-primary logo_update"> <i
+                                                                                class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
+                                                                        </div>
+                                                                        <input type="file" class="form-control file"
+                                                                            name="logo" id="logo"
+                                                                            data-filename="logo_update"
+                                                                            onchange="document.getElementById('storeLogo').src = window.URL.createObjectURL(this.files[0])">
                                                                     </label>
                                                                 </div>
+                                                                @error('logo')
+                                                                    <div class="row">
+                                                                        <span class="invalid-logo" role="alert">
+                                                                            <strong
+                                                                                class="text-danger">{{ $message }}</strong>
+                                                                        </span>
+                                                                    </div>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 col-sm-6 col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h5>{{ __('Invoice Logo') }}</h5>
+                                                        </div>
+                                                        <div class="card-body pt-0">
+                                                            <div class=" setting-card">
+                                                                <div class="logo-content mt-3">
+                                                                    {{-- <a href="{{ $store_logo . '/' . (isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo']) ? $store_settings['invoice_logo'] : 'invoice_logo.png') }}"
+                                                                    target="_blank">
+                                                                    <img src="{{ $store_logo . '/' . (isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo']) ? $store_settings['invoice_logo'] : 'invoice_logo.png') }}"
+                                                                        class="big-logo invoice_logo img_setting"
+                                                                        id="invoiceLogo">
+                                                                </a> --}}
+                                                                    <a href="{{ $s_logo . (isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo']) ? $store_settings['invoice_logo'] : 'invoice_logo.png') }}"
+                                                                        target="_blank">
+                                                                        <img id="invoiceOwner" alt="your image"
+                                                                            src="{{ $s_logo . (isset($store_settings['invoice_logo']) && !empty($store_settings['invoice_logo']) ? $store_settings['invoice_logo'] : 'invoice_logo.png') }}"
+                                                                            width="150px"
+                                                                            class="big-logo invoice_logo img_setting"
+                                                                            id="invoiceLogo">
+                                                                    </a>
+                                                                </div>
+                                                                <div class="choose-files mt-4">
+                                                                    <label for="invoice_logo">
+                                                                        <div class=" bg-primary logo_update"> <i
+                                                                                class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
+                                                                        </div>
+                                                                        <input type="file" name="invoice_logo"
+                                                                            id="invoice_logo" class="form-control file"
+                                                                            data-filename="invoice_logo_update"
+                                                                            onchange="document.getElementById('invoiceLogo').src = window.URL.createObjectURL(this.files[0])">
+                                                                    </label>
+                                                                </div>
+                                                                @error('invoice_logo')
+                                                                    <div class="row">
+                                                                        <span class="invalid-invoice_logo" role="alert">
+                                                                            <strong
+                                                                                class="text-danger">{{ $message }}</strong>
+                                                                        </span>
+                                                                    </div>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    {{ Form::label('store_name', __('Store Name'), ['class' => 'form-label']) }}
+                                                    {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Store Name')]) !!}
+                                                    @error('store_name')
+                                                        <span class="invalid-store_name" role="alert">
+                                                            <strong class="text-danger">
+                                                                {{ $message }}
+                                                            </strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    {{ Form::label('email', __('Email'), ['class' => 'form-label']) }}
+                                                    {{ Form::text('email', null, ['class' => 'form-control', 'placeholder' => __('Email')]) }}
+                                                    @error('email')
+                                                        <span class="invalid-email" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                @if ($plan->enable_custdomain == 'on' || $plan->enable_custsubdomain == 'on')
+                                                    <div class="col-md-6 py-4">
+                                                        <div class="radio-button-group row gy-2 mts">
+                                                            <div class="col-sm-4">
+                                                                <label
+                                                            class="btn btn-outline-primary w-100 {{ $store_settings['enable_storelink'] == 'on' ? 'active' : '' }}">
+                                                            <input type="radio"
+                                                                class="domain_click  radio-button"
+                                                                name="enable_domain" value="enable_storelink"
+                                                                id="enable_storelink"
+                                                                {{ $store_settings['enable_storelink'] == 'on' ? 'checked' : '' }}>
+                                                            {{ __('Store Link') }}
+                                                        </label>
+                                                            </div>
+                                                   
+                                                            <div class="col-sm-4">
                                                                 @if ($plan->enable_custdomain == 'on')
-                                                                    <div class="item">
-                                                                        <label
-                                                                            class="btn btn-outline-primary {{ $store_settings['enable_domain'] == 'on' ? 'active' : '' }}">
-                                                                            <input type="radio"
-                                                                                class="domain_click radio-button"
-                                                                                name="enable_domain" value="enable_domain"
-                                                                                id="enable_domain"
-                                                                                {{ $store_settings['enable_domain'] == 'on' ? 'checked' : '' }}>
-                                                                            {{ __('Domain') }}
-                                                                        </label>
-                                                                    </div>
-                                                                @endif
+                                                                    <label
+                                                                        class="btn btn-outline-primary w-100 {{ $store_settings['enable_domain'] == 'on' ? 'active' : '' }}">
+                                                                        <input type="radio"
+                                                                            class="domain_click radio-button"
+                                                                            name="enable_domain" value="enable_domain"
+                                                                            id="enable_domain"
+                                                                            {{ $store_settings['enable_domain'] == 'on' ? 'checked' : '' }}>
+                                                                        {{ __('Domain') }}
+                                                                    </label>
+                                                            @endif
+                                                            </div>
+                                                            <div class="col-sm-4">
                                                                 @if ($plan->enable_custsubdomain == 'on')
-                                                                    <div class="item">
-                                                                        <label
-                                                                            class="btn btn-outline-primary {{ $store_settings['enable_subdomain'] == 'on' ? 'active' : '' }}">
-                                                                            <input type="radio"
-                                                                                class="domain_click radio-button"
-                                                                                name="enable_domain"
-                                                                                value="enable_subdomain"
-                                                                                id="enable_subdomain"
-                                                                                {{ $store_settings['enable_subdomain'] == 'on' ? 'checked' : '' }}>
-                                                                            {{ __('Sub Domain') }}
-                                                                        </label>
-                                                                    </div>
-                                                                @endif
-                                                                {{-- </div> --}}
+                                                                    <label
+                                                                        class="btn btn-outline-primary w-100 {{ $store_settings['enable_subdomain'] == 'on' ? 'active' : '' }}">
+                                                                        <input type="radio"
+                                                                            class="domain_click radio-button"
+                                                                            name="enable_domain" value="enable_subdomain"
+                                                                            id="enable_subdomain"
+                                                                            {{ $store_settings['enable_subdomain'] == 'on' ? 'checked' : '' }}>
+                                                                        {{ __('Sub Domain') }}
+                                                                    </label>
+                                                            @endif
                                                             </div>
-                                                            <div class="text-sm mt-2" id="domainnote"
-                                                                style="display: none">
-                                                                {{ __('Note : Before add custom domain, your domain A record is pointing to our server IP :') }}{{ $serverIp }}
-                                                                <br>
+                                                            {{-- </div> --}}
+                                                        </div>
+                                                        <div class="text-sm mt-2" id="domainnote" style="display: none">
+                                                            {{ __('Note : Before add custom domain, your domain A record is pointing to our server IP :') }}{{ $serverIp }}
+                                                            <br>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-6" id="StoreLink"
+                                                        style="{{ $store_settings['enable_storelink'] == 'on' ? 'display: block' : 'display: none' }}">
+                                                        {{ Form::label('store_link', __('Store Link'), ['class' => 'form-label']) }}
+                                                        <div class="input-group">
+                                                            <input type="text"
+                                                                value="{{ $store_settings['store_url'] }}"
+                                                                id="myInput" class="form-control d-inline-block"
+                                                                aria-label="Recipient's username"
+                                                                aria-describedby="button-addon2" readonly>
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-primary" type="button"
+                                                                    onclick="myFunction()" id="button-addon2"><i
+                                                                        class="far fa-copy"></i>
+                                                                    {{ __('Copy Link') }}</button>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group col-md-6" id="StoreLink"
-                                                            style="{{ $store_settings['enable_storelink'] == 'on' ? 'display: block' : 'display: none' }}">
-                                                            {{ Form::label('store_link', __('Store Link'), ['class' => 'form-label']) }}
+                                                    </div>
+                                                    <div class="form-group col-md-6 domain"
+                                                        style="{{ $store_settings['enable_domain'] == 'on' ? 'display:block' : 'display:none' }}">
+                                                        {{ Form::label('store_domain', __('Custom Domain'), ['class' => 'form-label']) }}
+                                                        {{ Form::text('domains', $store_settings['domains'], ['class' => 'form-control', 'placeholder' => __('xyz.com')]) }}
+                                                    </div>
+                                                    @if ($plan->enable_custsubdomain == 'on')
+                                                        <div class="form-group col-md-6 sundomain"
+                                                            style="{{ $store_settings['enable_subdomain'] == 'on' ? 'display:block' : 'display:none' }}">
+                                                            {{ Form::label('store_subdomain', __('Sub Domain'), ['class' => 'form-label']) }}
                                                             <div class="input-group">
-                                                                <input type="text"
-                                                                    value="{{ $store_settings['store_url'] }}"
-                                                                    id="myInput" class="form-control d-inline-block"
-                                                                    aria-label="Recipient's username"
-                                                                    aria-describedby="button-addon2" readonly>
+                                                                {{ Form::text('subdomain', $store_settings['slug'], ['class' => 'form-control', 'placeholder' => __('Enter Domain'), 'readonly']) }}
                                                                 <div class="input-group-append">
-                                                                    <button class="btn btn-outline-primary" type="button"
-                                                                        onclick="myFunction()" id="button-addon2"><i
-                                                                            class="far fa-copy"></i>
-                                                                        {{ __('Copy Link') }}</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group col-md-6 domain"
-                                                            style="{{ $store_settings['enable_domain'] == 'on' ? 'display:block' : 'display:none' }}">
-                                                            {{ Form::label('store_domain', __('Custom Domain'), ['class' => 'form-label']) }}
-                                                            {{ Form::text('domains', $store_settings['domains'], ['class' => 'form-control', 'placeholder' => __('xyz.com')]) }}
-                                                        </div>
-                                                        @if ($plan->enable_custsubdomain == 'on')
-                                                            <div class="form-group col-md-6 sundomain"
-                                                                style="{{ $store_settings['enable_subdomain'] == 'on' ? 'display:block' : 'display:none' }}">
-                                                                {{ Form::label('store_subdomain', __('Sub Domain'), ['class' => 'form-label']) }}
-                                                                <div class="input-group">
-                                                                    {{ Form::text('subdomain', $store_settings['slug'], ['class' => 'form-control', 'placeholder' => __('Enter Domain'), 'readonly']) }}
-                                                                    <div class="input-group-append">
-                                                                        <span class="input-group-text"
-                                                                            id="basic-addon2">.{{ $subdomain_name }}</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    @else
-                                                        <div class="form-group col-md-6" id="StoreLink">
-                                                            {{ Form::label('store_link', __('Store Link'), ['class' => 'form-label']) }}
-                                                            <div class="input-group">
-                                                                <input type="text"
-                                                                    value="{{ $store_settings['store_url'] }}"
-                                                                    id="myInput" class="form-control d-inline-block"
-                                                                    aria-label="Recipient's username"
-                                                                    aria-describedby="button-addon2" readonly>
-                                                                <div class="input-group-append">
-                                                                    <button class="btn btn-outline-primary" type="button"
-                                                                        onclick="myFunction()" id="button-addon2"><i
-                                                                            class="far fa-copy"></i>
-                                                                        {{ __('Copy Link') }}</button>
+                                                                    <span class="input-group-text"
+                                                                        id="basic-addon2">.{{ $subdomain_name }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     @endif
-
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('tagline', __('Tagline'), ['class' => 'form-label']) }}
-                                                        {{ Form::text('tagline', null, ['class' => 'form-control', 'placeholder' => __('Tagline')]) }}
-                                                        @error('tagline')
-                                                            <span class="invalid-tagline" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('address', __('Address'), ['class' => 'form-label']) }}
-                                                        {{ Form::text('address', null, ['class' => 'form-control', 'placeholder' => __('Address')]) }}
-                                                        @error('address')
-                                                            <span class="invalid-address" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('city', __('City'), ['class' => 'form-label']) }}
-                                                        {{ Form::text('city', null, ['class' => 'form-control', 'placeholder' => __('City')]) }}
-                                                        @error('city')
-                                                            <span class="invalid-city" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('state', __('State'), ['class' => 'form-label']) }}
-                                                        {{ Form::text('state', null, ['class' => 'form-control', 'placeholder' => __('State')]) }}
-                                                        @error('state')
-                                                            <span class="invalid-state" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('zipcode', __('Zipcode'), ['class' => 'form-label']) }}
-                                                        {{ Form::text('zipcode', null, ['class' => 'form-control', 'placeholder' => __('Zipcode')]) }}
-                                                        @error('zipcode')
-                                                            <span class="invalid-zipcode" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('country', __('Country'), ['class' => 'form-label']) }}
-                                                        {{ Form::text('country', null, ['class' => 'form-control', 'placeholder' => __('Country')]) }}
-                                                        @error('country')
-                                                            <span class="invalid-country" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('store_default_language', __('Store Default Language'), ['class' => 'form-label']) }}
-                                                        <div class="changeLanguage">
-                                                            <select name="store_default_language"
-                                                                id="store_default_language" class="form-control"
-                                                                data-toggle="select">
-                                                                @foreach (\App\Models\Utility::languages() as $language)
-                                                                    <option
-                                                                        @if ($store_lang == $language) selected @endif
-                                                                        value="{{ $language }}">
-                                                                        {{ Str::upper($language) }}</option>
-                                                                @endforeach
-                                                            </select>
+                                                @else
+                                                    <div class="form-group col-md-6" id="StoreLink">
+                                                        {{ Form::label('store_link', __('Store Link'), ['class' => 'form-label']) }}
+                                                        <div class="input-group">
+                                                            <input type="text"
+                                                                value="{{ $store_settings['store_url'] }}"
+                                                                id="myInput" class="form-control d-inline-block"
+                                                                aria-label="Recipient's username"
+                                                                aria-describedby="button-addon2" readonly>
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-primary" type="button"
+                                                                    onclick="myFunction()" id="button-addon2"><i
+                                                                        class="far fa-copy"></i>
+                                                                    {{ __('Copy Link') }}</button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-4">
-                                                        {{ Form::label('decimal_number_format', __('Decimal Number Format'), ['class' => 'form-label']) }}
-                                                        {{ Form::number('decimal_number', isset($store_settings['decimal_number']) ? $store_settings['decimal_number'] : 2, ['class' => 'form-control', 'placeholder' => __('decimal_number')]) }}
-                                                        @error('decimal_number')
-                                                            <span class="invalid-decimal_number" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
+                                                @endif
+
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('tagline', __('Tagline'), ['class' => 'form-label']) }}
+                                                    {{ Form::text('tagline', null, ['class' => 'form-control', 'placeholder' => __('Tagline')]) }}
+                                                    @error('tagline')
+                                                        <span class="invalid-tagline" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('address', __('Address'), ['class' => 'form-label']) }}
+                                                    {{ Form::text('address', null, ['class' => 'form-control', 'placeholder' => __('Address')]) }}
+                                                    @error('address')
+                                                        <span class="invalid-address" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('city', __('City'), ['class' => 'form-label']) }}
+                                                    {{ Form::text('city', null, ['class' => 'form-control', 'placeholder' => __('City')]) }}
+                                                    @error('city')
+                                                        <span class="invalid-city" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('state', __('State'), ['class' => 'form-label']) }}
+                                                    {{ Form::text('state', null, ['class' => 'form-control', 'placeholder' => __('State')]) }}
+                                                    @error('state')
+                                                        <span class="invalid-state" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('zipcode', __('Zipcode'), ['class' => 'form-label']) }}
+                                                    {{ Form::text('zipcode', null, ['class' => 'form-control', 'placeholder' => __('Zipcode')]) }}
+                                                    @error('zipcode')
+                                                        <span class="invalid-zipcode" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('country', __('Country'), ['class' => 'form-label']) }}
+                                                    {{ Form::text('country', null, ['class' => 'form-control', 'placeholder' => __('Country')]) }}
+                                                    @error('country')
+                                                        <span class="invalid-country" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('store_default_language', __('Store Default Language'), ['class' => 'form-label']) }}
+                                                    <div class="changeLanguage">
+                                                        <select name="store_default_language" id="store_default_language"
+                                                            class="form-control" data-toggle="select">
+                                                            @foreach (\App\Models\Utility::languages() as $language)
+                                                                <option @if ($store_lang == $language) selected @endif
+                                                                    value="{{ $language }}">
+                                                                    {{ Str::upper($language) }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
-                                                    <div class="form-group col-md-4 mt-3">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    {{ Form::label('decimal_number_format', __('Decimal Number Format'), ['class' => 'form-label']) }}
+                                                    {{ Form::number('decimal_number', isset($store_settings['decimal_number']) ? $store_settings['decimal_number'] : 2, ['class' => 'form-control', 'placeholder' => __('decimal_number')]) }}
+                                                    @error('decimal_number')
+                                                        <span class="invalid-decimal_number" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md-4 mt-3">
+                                                    <label class="form-check-label"
+                                                        for="is_checkout_login_required"></label>
+                                                    <div class="custom-control form-switch">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            name="is_checkout_login_required"
+                                                            id="is_checkout_login_required"
+                                                            @if ($store_settings['is_checkout_login_required'] == null) @if ($settings['is_checkout_login_required'] == 'on')
+                                                                {{ 'checked=checked' }} @endif
+                                                        @elseif($store_settings['is_checkout_login_required'] == 'on') {{ 'checked=checked' }}
+                                                        @else {{ '' }} @endif
+                                                        {{-- {{ $store_settings['is_checkout_login_required'] == 'on' ? 'checked=checked' : '' }} --}}
+                                                        >
+                                                        {{ Form::label('is_checkout_login_required', __('Is Checkout Login Required'), ['class' => 'form-check-label mb-3']) }}
+                                                    </div>
+                                                </div>
+                                                @if ($plan->blog == 'on')
+                                                    <div class="form-group col-md-4">
+                                                        <label class="form-check-label" for="blog_enable"></label>
+                                                        <div class="custom-control form-switch">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                name="blog_enable" id="blog_enable"
+                                                                {{ $store_settings['blog_enable'] == 'on' ? 'checked=checked' : '' }}>
+                                                            {{ Form::label('blog_enable', __('Blog Menu Dispay'), ['class' => 'form-check-label mb-3']) }}
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if ($plan->shipping_method == 'on')
+                                                    <div class="form-group col-md-4">
+                                                        <label class="form-check-label" for="enable_shipping"></label>
+                                                        <div class="custom-control form-switch">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                name="enable_shipping" id="enable_shipping"
+                                                                {{ $store_settings['enable_shipping'] == 'on' ? 'checked=checked' : '' }}>
+                                                            {{ Form::label('enable_shipping', __('Shipping Method Enable'), ['class' => 'form-check-label mb-3']) }}
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                <div class="form-group col-md-4 ">
+                                                    <label class="form-check-label" for="enable_rating"></label>
+                                                    <div class="custom-control form-switch">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            name="enable_rating" id="enable_rating"
+                                                            {{ $store_settings['enable_rating'] == 'on' ? 'checked=checked' : '' }}>
+                                                        {{ Form::label('enable_rating', __('Product Rating Display'), ['class' => 'form-check-label mb-3']) }}
+                                                    </div>
+                                                </div>
+
+                                                @if ($plan->pwa_store == 'on')
+                                                    <div class="form-group col-md-4 ">
                                                         <label class="form-check-label"
                                                             for="is_checkout_login_required"></label>
                                                         <div class="custom-control form-switch">
-                                                            <input type="checkbox" class="form-check-input"
-                                                                name="is_checkout_login_required"
-                                                                id="is_checkout_login_required"
-                                                                @if ($store_settings['is_checkout_login_required'] == null) @if ($settings['is_checkout_login_required'] == 'on')
-                                                                        {{ 'checked=checked' }} @endif
-                                                            @elseif($store_settings['is_checkout_login_required'] == 'on')
-                                                            {{ 'checked=checked' }} @else {{ '' }}
-                                                                @endif
-                                                            {{-- {{ $store_settings['is_checkout_login_required'] == 'on' ? 'checked=checked' : '' }} --}}
-                                                            >
-                                                            {{ Form::label('is_checkout_login_required', __('Is Checkout Login Required'), ['class' => 'form-check-label mb-3']) }}
+                                                            <input type="checkbox"
+                                                                class="form-check-input enable_pwa_store" name="pwa_store"
+                                                                id="pwa_store"
+                                                                {{ $store_settings['enable_pwa_store'] == 'on' ? 'checked=checked' : '' }}>
+                                                            {{ Form::label('pwa_store', __('Progressive Web App (PWA)'), ['class' => 'form-check-label mb-3']) }}
                                                         </div>
                                                     </div>
-                                                    @if ($plan->blog == 'on')
-                                                        <div class="form-group col-md-4">
-                                                            <label class="form-check-label" for="blog_enable"></label>
-                                                            <div class="custom-control form-switch">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    name="blog_enable" id="blog_enable"
-                                                                    {{ $store_settings['blog_enable'] == 'on' ? 'checked=checked' : '' }}>
-                                                                {{ Form::label('blog_enable', __('Blog Menu Dispay'), ['class' => 'form-check-label mb-3']) }}
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                    @if ($plan->shipping_method == 'on')
-                                                        <div class="form-group col-md-4">
-                                                            <label class="form-check-label" for="enable_shipping"></label>
-                                                            <div class="custom-control form-switch">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    name="enable_shipping" id="enable_shipping"
-                                                                    {{ $store_settings['enable_shipping'] == 'on' ? 'checked=checked' : '' }}>
-                                                                {{ Form::label('enable_shipping', __('Shipping Method Enable'), ['class' => 'form-check-label mb-3']) }}
-                                                            </div>
-                                                        </div>
-                                                    @endif
 
-                                                    <div class="form-group col-md-4 ">
-                                                        <label class="form-check-label" for="enable_rating"></label>
-                                                        <div class="custom-control form-switch">
-                                                            <input type="checkbox" class="form-check-input"
-                                                                name="enable_rating" id="enable_rating"
-                                                                {{ $store_settings['enable_rating'] == 'on' ? 'checked=checked' : '' }}>
-                                                            {{ Form::label('enable_rating', __('Product Rating Display'), ['class' => 'form-check-label mb-3']) }}
-                                                        </div>
+                                                    <div class="form-group col-md-6 pwa_is_enable">
+                                                        {{ Form::label('pwa_app_title', __('App Title'), ['class' => 'form-label']) }}
+                                                        {{ Form::text('pwa_app_title', !empty($pwa_data->name) ? $pwa_data->name : '', ['class' => 'form-control', 'placeholder' => __('App Title')]) }}
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <i class="fab fa-google" aria-hidden="true"></i>
-                                                            {{ Form::label('google_analytic', __('Google Analytic'), ['class' => 'form-label']) }}
-                                                            {{ Form::text('google_analytic', null, ['class' => 'form-control', 'placeholder' => 'UA-XXXXXXXXX-X']) }}
-                                                            @error('google_analytic')
-                                                                <span class="invalid-google_analytic" role="alert">
-                                                                    <strong class="text-danger">{{ $message }}</strong>
-                                                                </span>
-                                                            @enderror
-                                                        </div>
+
+                                                    <div class="form-group col-md-6 pwa_is_enable">
+                                                        {{ Form::label('pwa_app_name', __('App Name'), ['class' => 'form-label']) }}
+                                                        {{ Form::text('pwa_app_name', !empty($pwa_data->short_name) ? $pwa_data->short_name : '', ['class' => 'form-control', 'placeholder' => __('App Name')]) }}
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <i class="fab fa-facebook-f" aria-hidden="true"></i>
-                                                            {{ Form::label('facebook_pixel_code', __('Facebook Pixel'), ['class' => 'form-label']) }}
-                                                            {{ Form::text('fbpixel_code', null, ['class' => 'form-control', 'placeholder' => 'UA-0000000-0']) }}
-                                                            @error('facebook_pixel_code')
-                                                                <span class="invalid-google_analytic" role="alert">
-                                                                    <strong class="text-danger">{{ $message }}</strong>
-                                                                </span>
-                                                            @enderror
-                                                        </div>
+
+                                                    <div class="form-group col-md-6 pwa_is_enable">
+                                                        {{ Form::label('pwa_app_background_color', __('App Background Color'), ['class' => 'form-label']) }}
+                                                        {{-- {{ Form::text('pwa_app_background_color', , ['class' => 'form-control', 'placeholder' => __('App Background Color')]) }} --}}
+                                                        {{ Form::color('pwa_app_background_color', !empty($pwa_data->background_color) ? $pwa_data->background_color : '', ['class' => 'form-control color-picker', 'placeholder' => __('18761234567')]) }}
                                                     </div>
-                                                    <div class="form-group col-md-12">
-                                                        {{ Form::label('storejs', __('Store Custom JS'), ['class' => 'form-label']) }}
-                                                        {{ Form::textarea('storejs', null, ['class' => 'form-control', 'rows' => 3, 'placehold   er' => __('About')]) }}
-                                                        @error('storejs')
-                                                            <span class="invalid-about" role="alert">
+
+                                                    <div class="form-group col-md-6 pwa_is_enable">
+                                                        {{ Form::label('pwa_app_theme_color', __('App Theme Color'), ['class' => 'form-label']) }}
+                                                        {{-- {{ Form::text('pwa_app_theme_color', !empty($pwa_data->theme_color) ? $pwa_data->theme_color : '', ['class' => 'form-control', 'placeholder' => __('App Theme Color')]) }} --}}
+                                                        {{ Form::color('pwa_app_theme_color', !empty($pwa_data->theme_color) ? $pwa_data->theme_color : '', ['class' => 'form-control color-picker', 'placeholder' => __('18761234567')]) }}
+                                                    </div>
+                                                @endif
+
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <i class="fab fa-google" aria-hidden="true"></i>
+                                                        {{ Form::label('google_analytic', __('Google Analytic'), ['class' => 'form-label']) }}
+                                                        {{ Form::text('google_analytic', null, ['class' => 'form-control', 'placeholder' => 'UA-XXXXXXXXX-X']) }}
+                                                        @error('google_analytic')
+                                                            <span class="invalid-google_analytic" role="alert">
                                                                 <strong class="text-danger">{{ $message }}</strong>
                                                             </span>
                                                         @enderror
                                                     </div>
-
-                                                    <div class="form-group col-md-6 col-lg-6">
-                                                        {{ Form::label('metakeyword', __('Meta Keywords'), ['class' => 'form-label']) }}
-                                                        {!! Form::textarea('metakeyword', null, [
-                                                            'class' => 'form-control',
-                                                            'rows' => 3,
-                                                            'placeholder' => __('Meta Keyword'),
-                                                        ]) !!}
-                                                        @error('meta_keywords')
-                                                            <span class="invalid-about" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-
-                                                    <div class="form-group col-md-6 col-lg-6">
-                                                        {{ Form::label('metadesc', __('Meta Description'), ['class' => 'form-label']) }}
-                                                        {!! Form::textarea('metadesc', null, [
-                                                            'class' => 'form-control',
-                                                            'rows' => 3,
-                                                            'placeholder' => __('Meta Description'),
-                                                        ]) !!}
-
-                                                        @error('meta_description')
-                                                            <span class="invalid-about" role="alert">
-                                                                <strong class="text-danger">{{ $message }}</strong>
-                                                            </span>
-                                                        @enderror
-                                                    </div>
-
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                                                        {{ Form::label('facebook_pixel_code', __('Facebook Pixel'), ['class' => 'form-label']) }}
+                                                        {{ Form::text('fbpixel_code', null, ['class' => 'form-control', 'placeholder' => 'UA-0000000-0']) }}
+                                                        @error('facebook_pixel_code')
+                                                            <span class="invalid-google_analytic" role="alert">
+                                                                <strong class="text-danger">{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    {{ Form::label('storejs', __('Store Custom JS'), ['class' => 'form-label']) }}
+                                                    {{ Form::textarea('storejs', null, ['class' => 'form-control', 'rows' => 3, 'placehold   er' => __('About')]) }}
+                                                    @error('storejs')
+                                                        <span class="invalid-about" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-6">
+                                                    {{ Form::label('metakeyword', __('Meta Keywords'), ['class' => 'form-label']) }}
+                                                    {!! Form::textarea('metakeyword', null, [
+                                                        'class' => 'form-control',
+                                                        'rows' => 3,
+                                                        'placeholder' => __('Meta Keyword'),
+                                                    ]) !!}
+                                                    @error('meta_keywords')
+                                                        <span class="invalid-about" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="form-group col-md-6 col-lg-6">
+                                                    {{ Form::label('metadesc', __('Meta Description'), ['class' => 'form-label']) }}
+                                                    {!! Form::textarea('metadesc', null, [
+                                                        'class' => 'form-control',
+                                                        'rows' => 3,
+                                                        'placeholder' => __('Meta Description'),
+                                                    ]) !!}
+
+                                                    @error('meta_description')
+                                                        <span class="invalid-about" role="alert">
+                                                            <strong class="text-danger">{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+
                                             </div>
                                         </div>
-                                        <div class="card-footer">
-                                            <div class="col-sm-12 px-2">
-                                                <div class="text-end">
-                                                    <button type="button"
-                                                        class="btn bs-pass-para btn-secondary btn-light"
-                                                        data-title="{{ __('Delete') }}"
-                                                        data-confirm="{{ __('Are You Sure?') }}"
-                                                        data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
-                                                        data-confirm-yes="delete-form-{{ $store_settings->id }}">
-                                                        <span class="text-black">{{ __('Delete Store') }}</span>
-                                                    </button>
-                                                    {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
-                                                </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="col-sm-12 px-2">
+                                            <div class="text-end">
+                                                <button type="button" class="btn bs-pass-para btn-secondary btn-light"
+                                                    data-title="{{ __('Delete') }}"
+                                                    data-confirm="{{ __('Are You Sure?') }}"
+                                                    data-text="{{ __('This action can not be undone. Do you want to continue?') }}"
+                                                    data-confirm-yes="delete-form-{{ $store_settings->id }}">
+                                                    <span class="text-black">{{ __('Delete Store') }}</span>
+                                                </button>
+                                                {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            {{ Form::close() }}
-                            {!! Form::open([
-                                'method' => 'DELETE',
-                                'route' => ['ownerstore.destroy', $store_settings->id],
-                                'id' => 'delete-form-' . $store_settings->id,
-                            ]) !!}
-                            {!! Form::close() !!}
                         </div>
-                        <div class="card" id="store_payment-setting">
+                        {{ Form::close() }}
+                        {!! Form::open([
+                            'method' => 'DELETE',
+                            'route' => ['ownerstore.destroy', $store_settings->id],
+                            'id' => 'delete-form-' . $store_settings->id,
+                        ]) !!}
+                        {!! Form::close() !!}
+                    </div>
+                    <div class="tab-pane fade" id="pills-store_payment-setting" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        <div class="card">
                             <div class="card-header">
                                 <h5>{{ 'Payment Settings' }}</h5>
                                 <small
@@ -1397,8 +1326,7 @@ if (!empty($setting['color'])) {
                                                 </div>
                                             </div>
 
-                                            @if (auth()->user()->currentPlan->id !== 1)
-
+                                            @if ($plan->name !== 'Free Plan')
                                             <!-- Bank Transfer -->
                                             <div class="accordion-item card">
                                                 <h2 class="accordion-header" id="heading-2-2">
@@ -1625,7 +1553,7 @@ if (!empty($setting['color'])) {
                                                                 <label class="paypal-label col-form-label"
                                                                     for="paypal_mode">{{ __('Paypal Mode') }}</label>
                                                                 <br>
-                                                                <div class="d-flex">
+                                                                <div class="d-flex flex-wrap">
                                                                     <div class="mr-2" style="margin-right: 15px;">
                                                                         <div class="border card p-3">
                                                                             <div class="form-check">
@@ -1794,6 +1722,7 @@ if (!empty($setting['color'])) {
                                                     </div>
                                                 </div>
                                             </div>
+                                            @endif
 
                                             <!-- Razorpay -->
                                             <div class="accordion-item card">
@@ -1854,7 +1783,6 @@ if (!empty($setting['color'])) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            @endif
 
                                             <!-- Paytm -->
                                             <div class="accordion-item card">
@@ -1892,7 +1820,7 @@ if (!empty($setting['color'])) {
                                                                 <label class="paypal-label col-form-label"
                                                                     for="paypal_mode">{{ __('Paytm Environment') }}</label>
                                                                 <br>
-                                                                <div class="d-flex">
+                                                                <div class="d-flex flex-wrap">
                                                                     <div class="mr-2" style="margin-right: 15px;">
                                                                         <div class="border card p-3">
                                                                             <div class="form-check">
@@ -2009,7 +1937,7 @@ if (!empty($setting['color'])) {
                                                                 <label class="coingate-label col-form-label"
                                                                     for="mercado_mode">{{ __('Mercado Mode') }}</label>
                                                                 <br>
-                                                                <div class="d-flex">
+                                                                <div class="d-flex flex-wrap">
                                                                     <div class="mr-2" style="margin-right: 15px;">
                                                                         <div class="border card p-3">
                                                                             <div class="form-check">
@@ -2059,6 +1987,7 @@ if (!empty($setting['color'])) {
                                                     </div>
                                                 </div>
                                             </div>
+                                            @endif
 
                                             <!-- Mollie -->
                                             <div class="accordion-item card">
@@ -2126,7 +2055,6 @@ if (!empty($setting['color'])) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            @endif
 
                                             <!-- Skrill -->
                                             <div class="accordion-item card">
@@ -2216,7 +2144,7 @@ if (!empty($setting['color'])) {
                                                                 <label class="col-form-label"
                                                                     for="coingate_mode">{{ __('CoinGate Mode') }}</label>
                                                                 <br>
-                                                                <div class="d-flex">
+                                                                <div class="d-flex flex-wrap">
                                                                     <div class="mr-2" style="margin-right: 15px;">
                                                                         <div class="border card p-3">
                                                                             <div class="form-check">
@@ -2322,8 +2250,65 @@ if (!empty($setting['color'])) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            @else
-                                            <p class="alert alert-warning">Please upgrade your plan to use payment gateways.</p>
+                                            <!-- toyyibpay -->
+                                            <div class="accordion-item card">
+                                                <h2 class="accordion-header" id="heading-2-13">
+                                                    <button class="accordion-button collapsed" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapse12"
+                                                        aria-expanded="true" aria-controls="collapse12">
+                                                        <span class="d-flex align-items-center">
+                                                            <i class="ti ti-credit-card text-primary"></i>
+                                                            {{ __('Toyyibpay') }}
+                                                        </span>
+                                                    </button>
+                                                </h2>
+                                                <div id="collapse12" class="accordion-collapse collapse"
+                                                    aria-labelledby="heading-2-13" data-bs-parent="#accordionExample">
+                                                    <div class="accordion-body">
+                                                        <div class="row">
+                                                            <div class="col-6 py-2">
+                                                                {{-- <h5 class="h5">{{ __('PaymentWall') }}</h5> --}}
+                                                            </div>
+                                                            <div class="col-6 py-2 text-end">
+                                                                <div
+                                                                    class="form-check form-switch form-switch-right mb-2">
+                                                                    <input type="hidden" name="is_toyyibpay_enabled"
+                                                                        value="off">
+                                                                    <input type="checkbox" class="form-check-input mx-2"
+                                                                        name="is_toyyibpay_enabled"
+                                                                        id="is_toyyibpay_enabled"
+                                                                        {{ isset($store_payment_setting['is_toyyibpay_enabled']) && $store_payment_setting['is_toyyibpay_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_toyyibpay_enabled">{{ __('Enable') }}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="toyyibpay_category_code"
+                                                                        class="col-form-label">{{ __('category Code') }}</label>
+                                                                    <input type="text" name="toyyibpay_category_code"
+                                                                        id="toyyibpay_category_code" class="form-control"
+                                                                        value="{{ !isset($store_payment_setting['toyyibpay_category_code']) || is_null($store_payment_setting['toyyibpay_category_code']) ? '' : $store_payment_setting['toyyibpay_category_code'] }}"
+                                                                        placeholder="{{ __('category Code') }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="toyyibpay_secret_key"
+                                                                        class="col-form-label">{{ __('Secret Key') }}</label>
+                                                                    <input type="text" name="toyyibpay_secret_key"
+                                                                        id="toyyibpay_secret_key"
+                                                                        class="form-control"
+                                                                        value="{{ !isset($store_payment_setting['toyyibpay_secret_key']) || is_null($store_payment_setting['toyyibpay_secret_key']) ? '' : $store_payment_setting['toyyibpay_secret_key'] }}"
+                                                                        placeholder="{{ __('Secret Key') }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @endif
 
                                         </div>
@@ -2339,186 +2324,261 @@ if (!empty($setting['color'])) {
                             </div>
                             {{ Form::close() }}
                         </div>
-                        <div id="store_email_setting" class="tab-pane">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="">
-                                            {{ __('Email Settings') }}
-                                        </h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        {{ Form::open(['route' => ['owner.email.setting', $store_settings->slug], 'method' => 'post']) }}
-                                        <div class="row">
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_driver', __('Mail Driver'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_driver', $store_settings->mail_driver, ['class' => 'form-control', 'id' => 'mail_driver', 'placeholder' => __('Enter Mail Driver')]) }}
-                                                @error('mail_driver')
-                                                    <span class="invalid-mail_driver" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_host', __('Mail Host'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_host', $store_settings->mail_host, ['class' => 'form-control ', 'id' => 'mail_host', 'placeholder' => __('Enter Mail Host')]) }}
-                                                @error('mail_host')
-                                                    <span class="invalid-mail_driver" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_port', __('Mail Port'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_port', $store_settings->mail_port, ['class' => 'form-control', 'id' => 'mail_port', 'placeholder' => __('Enter Mail Port')]) }}
-                                                @error('mail_port')
-                                                    <span class="invalid-mail_port" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_username', __('Mail Username'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_username', $store_settings->mail_username, ['class' => 'form-control', 'id' => 'mail_username', 'placeholder' => __('Enter Mail Username')]) }}
-                                                @error('mail_username')
-                                                    <span class="invalid-mail_username" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_password', __('Mail Password'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_password', $store_settings->mail_password, ['class' => 'form-control', 'id' => 'mail_password', 'placeholder' => __('Enter Mail Password')]) }}
-                                                @error('mail_password')
-                                                    <span class="invalid-mail_password" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_encryption', __('Mail Encryption'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_encryption', $store_settings->mail_encryption, ['class' => 'form-control', 'id' => 'mail_encryption', 'placeholder' => __('Enter Mail Encryption')]) }}
-                                                @error('mail_encryption')
-                                                    <span class="invalid-mail_encryption" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_from_address', __('Mail From Address'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_from_address', $store_settings->mail_from_address, ['class' => 'form-control', 'id' => 'mail_from_address', 'placeholder' => __('Enter Mail From Address')]) }}
-                                                @error('mail_from_address')
-                                                    <span class="invalid-mail_from_address" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                {{ Form::label('mail_from_name', __('Mail From Name'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_from_name', $store_settings->mail_from_name, ['class' => 'form-control', 'id' => 'mail_from_name', 'placeholder' => __('Enter Mail From Name')]) }}
-                                                @error('mail_from_name')
-                                                    <span class="invalid-mail_from_name" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-
+                    </div>
+                    <div class="tab-pane fade" id="pills-store_email_setting" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="">
+                                        {{ __('Email Settings') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    {{ Form::open(['route' => ['owner.email.setting', $store_settings->slug], 'method' => 'post']) }}
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_driver', __('Mail Driver'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_driver', $store_settings->mail_driver, ['class' => 'form-control', 'id' => 'mail_driver', 'placeholder' => __('Enter Mail Driver')]) }}
+                                            @error('mail_driver')
+                                                <span class="invalid-mail_driver" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="text-end">
-                                            <div class="card-footer">
-                                                <div class="col-sm-12 px-2">
-                                                    <div class="d-flex justify-content-between">
-                                                        <a href="#" data-url="{{ route('test.mail') }}"
-                                                            data-title="{{ __('Send Test Mail') }}"
-                                                            class="btn btn-xs btn-primary send_email">
-                                                            {{ __('Send Test Mail') }}
-                                                        </a>
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_host', __('Mail Host'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_host', $store_settings->mail_host, ['class' => 'form-control ', 'id' => 'mail_host', 'placeholder' => __('Enter Mail Host')]) }}
+                                            @error('mail_host')
+                                                <span class="invalid-mail_driver" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_port', __('Mail Port'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_port', $store_settings->mail_port, ['class' => 'form-control', 'id' => 'mail_port', 'placeholder' => __('Enter Mail Port')]) }}
+                                            @error('mail_port')
+                                                <span class="invalid-mail_port" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_username', __('Mail Username'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_username', $store_settings->mail_username, ['class' => 'form-control', 'id' => 'mail_username', 'placeholder' => __('Enter Mail Username')]) }}
+                                            @error('mail_username')
+                                                <span class="invalid-mail_username" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_password', __('Mail Password'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_password', $store_settings->mail_password, ['class' => 'form-control', 'id' => 'mail_password', 'placeholder' => __('Enter Mail Password')]) }}
+                                            @error('mail_password')
+                                                <span class="invalid-mail_password" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_encryption', __('Mail Encryption'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_encryption', $store_settings->mail_encryption, ['class' => 'form-control', 'id' => 'mail_encryption', 'placeholder' => __('Enter Mail Encryption')]) }}
+                                            @error('mail_encryption')
+                                                <span class="invalid-mail_encryption" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_from_address', __('Mail From Address'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_from_address', $store_settings->mail_from_address, ['class' => 'form-control', 'id' => 'mail_from_address', 'placeholder' => __('Enter Mail From Address')]) }}
+                                            @error('mail_from_address')
+                                                <span class="invalid-mail_from_address" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ Form::label('mail_from_name', __('Mail From Name'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_from_name', $store_settings->mail_from_name, ['class' => 'form-control', 'id' => 'mail_from_name', 'placeholder' => __('Enter Mail From Name')]) }}
+                                            @error('mail_from_name')
+                                                <span class="invalid-mail_from_name" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
 
-                                                        {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
-                                                    </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="text-end">
+                                        <div class="card-footer">
+                                            <div class="col-sm-12 px-2">
+                                                <div class="d-flex justify-content-between gap-2 flex-column flex-sm-row">
+                                                    <a href="#" data-url="{{ route('test.mail') }}"
+                                                        data-title="{{ __('Send Test Mail') }}"
+                                                        class="btn btn-xs btn-primary send_email">
+                                                        {{ __('Send Test Mail') }}
+                                                    </a>
+
+                                                    {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    {{ Form::close() }}
                                 </div>
+                                {{ Form::close() }}
                             </div>
                         </div>
-                        <div id="whatsapp_custom_massage" class="tab-pane">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="">
-                                            {{ __('Whatsapp Message Settings') }}
-                                        </h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        {{ Form::model($store_settings, ['route' => ['customMassage', $store_settings->slug], 'method' => 'POST']) }}
-                                        <div class="row">
-                                            <h6 class="font-weight-bold">{{ __('Order Variable') }}</h6>
-                                            <div class="form-group col-md-6">
-                                                <p class="mb-1">{{ __('Store Name') }} : <span
-                                                        class="pull-right text-primary">{store_name}</span></p>
-                                                <p class="mb-1">{{ __('Order No') }} : <span
-                                                        class="pull-right text-primary">{order_no}</span></p>
-                                                <p class="mb-1">{{ __('Customer Name') }} : <span
-                                                        class="pull-right text-primary">{customer_name}</span></p>
-                                                <p class="mb-1">{{ __('Billing Address') }} : <span
-                                                        class="pull-right text-primary">{billing_address}</span></p>
-                                                <p class="mb-1">{{ __('Billing Ccountry') }} : <span
-                                                        class="pull-right text-primary">{billing_country}</span></p>
-                                                <p class="mb-1">{{ __('Billing City') }} : <span
-                                                        class="pull-right text-primary">{billing_city}</span></p>
-                                                <p class="mb-1">{{ __('Billing Postalcode') }} : <span
-                                                        class="pull-right text-primary">{billing_postalcode}</span></p>
-                                                <p class="mb-1">{{ __('Shipping Address') }} : <span
-                                                        class="pull-right text-primary">{shipping_address}</span></p>
-                                                <p class="mb-1">{{ __('Shipping Country') }} : <span
-                                                        class="pull-right text-primary">{shipping_country}</span></p>
+                    </div>
+                    <div class="tab-pane fade" id="pills-whatsapp_custom_massage" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="">
+                                        {{ __('Whatsapp Message Settings') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    {{ Form::model($store_settings, ['route' => ['customMassage', $store_settings->slug], 'method' => 'POST']) }}
+                                    <div class="row">
+                                        <h6 class="font-weight-bold">{{ __('Order Variable') }}</h6>
+                                        <div class="form-group col-md-6">
+                                            <p class="mb-1">{{ __('Store Name') }} : <span
+                                                    class="pull-right text-primary">{store_name}</span></p>
+                                            <p class="mb-1">{{ __('Order No') }} : <span
+                                                    class="pull-right text-primary">{order_no}</span></p>
+                                            <p class="mb-1">{{ __('Customer Name') }} : <span
+                                                    class="pull-right text-primary">{customer_name}</span></p>
+                                            <p class="mb-1">{{ __('Billing Address') }} : <span
+                                                    class="pull-right text-primary">{billing_address}</span></p>
+                                            <p class="mb-1">{{ __('Billing Ccountry') }} : <span
+                                                    class="pull-right text-primary">{billing_country}</span></p>
+                                            <p class="mb-1">{{ __('Billing City') }} : <span
+                                                    class="pull-right text-primary">{billing_city}</span></p>
+                                            <p class="mb-1">{{ __('Billing Postalcode') }} : <span
+                                                    class="pull-right text-primary">{billing_postalcode}</span></p>
+                                            <p class="mb-1">{{ __('Shipping Address') }} : <span
+                                                    class="pull-right text-primary">{shipping_address}</span></p>
+                                            <p class="mb-1">{{ __('Shipping Country') }} : <span
+                                                    class="pull-right text-primary">{shipping_country}</span></p>
 
-                                                <p class="mb-1">{{ __('Shipping City') }} : <span
-                                                        class="pull-right text-primary">{shipping_city}</span></p>
-                                                <p class="mb-1">{{ __('Shipping Postalcode') }} : <span
-                                                        class="pull-right text-primary">{shipping_postalcode}</span></p>
-                                                <p class="mb-1">{{ __('Item Variable') }} : <span
-                                                        class="pull-right text-primary">{item_variable}</span></p>
-                                                <p class="mb-1">{{ __('Qty Total') }} : <span
-                                                        class="pull-right text-primary">{qty_total}</span></p>
-                                                <p class="mb-1">{{ __('Sub Total') }} : <span
-                                                        class="pull-right text-primary">{sub_total}</span></p>
-                                                <p class="mb-1">{{ __('Discount Amount') }} : <span
-                                                        class="pull-right text-primary">{discount_amount}</span></p>
-                                                <p class="mb-1">{{ __('Shipping Amount') }} : <span
-                                                        class="pull-right text-primary">{shipping_amount}</span></p>
-                                                <p class="mb-1">{{ __('Total Tax') }} : <span
-                                                        class="pull-right text-primary">{total_tax}</span></p>
-                                                <p class="mb-1">{{ __('Final Total') }} : <span
-                                                        class="pull-right text-primary">{final_total}</span></p>
+                                            <p class="mb-1">{{ __('Shipping City') }} : <span
+                                                    class="pull-right text-primary">{shipping_city}</span></p>
+                                            <p class="mb-1">{{ __('Shipping Postalcode') }} : <span
+                                                    class="pull-right text-primary">{shipping_postalcode}</span></p>
+                                            <p class="mb-1">{{ __('Item Variable') }} : <span
+                                                    class="pull-right text-primary">{item_variable}</span></p>
+                                            <p class="mb-1">{{ __('Qty Total') }} : <span
+                                                    class="pull-right text-primary">{qty_total}</span></p>
+                                            <p class="mb-1">{{ __('Sub Total') }} : <span
+                                                    class="pull-right text-primary">{sub_total}</span></p>
+                                            <p class="mb-1">{{ __('Discount Amount') }} : <span
+                                                    class="pull-right text-primary">{discount_amount}</span></p>
+                                            <p class="mb-1">{{ __('Shipping Amount') }} : <span
+                                                    class="pull-right text-primary">{shipping_amount}</span></p>
+                                            <p class="mb-1">{{ __('Total Tax') }} : <span
+                                                    class="pull-right text-primary">{total_tax}</span></p>
+                                            <p class="mb-1">{{ __('Final Total') }} : <span
+                                                    class="pull-right text-primary">{final_total}</span></p>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <h6 class="font-weight-bold">{{ __('Item Variable') }}</h6>
+                                            <p class="mb-1">{{ __('Sku') }} : <span
+                                                    class="pull-right text-primary">{sku}</span></p>
+                                            <p class="mb-1">{{ __('Quantity') }} : <span
+                                                    class="pull-right text-primary">{quantity}</span></p>
+                                            <p class="mb-1">{{ __('Product Name') }} : <span
+                                                    class="pull-right text-primary">{product_name}</span></p>
+                                            <p class="mb-1">{{ __('Variant Name') }} : <span
+                                                    class="pull-right text-primary">{variant_name}</span></p>
+                                            <p class="mb-1">{{ __('Item Tax') }} : <span
+                                                    class="pull-right text-primary">{item_tax}</span></p>
+                                            <p class="mb-1">{{ __('Item total') }} : <span
+                                                    class="pull-right text-primary">{item_total}</span></p>
+                                            <div class="form-group">
+                                                <label for="storejs" class="col-form-label">{item_variable}</label>
+                                                {{ Form::text('item_variable', null, ['class' => 'form-control', 'placeholder' => '{quantity} x {product_name} - {variant_name} + {item_tax} = {item_total}']) }}
                                             </div>
-                                            <div class="form-group col-md-6">
-                                                <h6 class="font-weight-bold">{{ __('Item Variable') }}</h6>
-                                                <p class="mb-1">{{ __('Sku') }} : <span
-                                                        class="pull-right text-primary">{sku}</span></p>
-                                                <p class="mb-1">{{ __('Quantity') }} : <span
-                                                        class="pull-right text-primary">{quantity}</span></p>
-                                                <p class="mb-1">{{ __('Product Name') }} : <span
-                                                        class="pull-right text-primary">{product_name}</span></p>
-                                                <p class="mb-1">{{ __('Variant Name') }} : <span
-                                                        class="pull-right text-primary">{variant_name}</span></p>
-                                                <p class="mb-1">{{ __('Item Tax') }} : <span
-                                                        class="pull-right text-primary">{item_tax}</span></p>
-                                                <p class="mb-1">{{ __('Item total') }} : <span
-                                                        class="pull-right text-primary">{item_total}</span></p>
-                                                <div class="form-group">
-                                                    <label for="storejs" class="col-form-label">{item_variable}</label>
-                                                    {{ Form::text('item_variable', null, ['class' => 'form-control', 'placeholder' => '{quantity} x {product_name} - {variant_name} + {item_tax} = {item_total}']) }}
+                                            <div class="form-group">
+                                                {{ Form::label('content', __('Whatsapp Message'), ['class' => 'col-form-label']) }}
+                                                {{ Form::textarea('content', null, ['class' => 'form-control', 'required' => 'required']) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="text-end">
+                                        <div class="card-footer">
+                                            <div class="col-sm-12 px-2">
+                                                <div class="d-flex justify-content-end">
+                                                    {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
                                                 </div>
-                                                <div class="form-group">
-                                                    {{ Form::label('content', __('Whatsapp Message'), ['class' => 'col-form-label']) }}
-                                                    {{ Form::textarea('content', null, ['class' => 'form-control', 'required' => 'required']) }}
-                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{ Form::close() }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-twilio_setting" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row ">
+                                        <div class="col-6">
+                                            <h5>{{ __('Twilio Settings') }}</h5>
+                                            <small>{{__('Edit Twilio Settings')}}</small>
+                                        </div>
+                                        <div class="col-6 d-flex justify-content-end">
+                                            <div class="form-check form-switch ">
+                                                <input type="checkbox" class="form-check-input off switch"
+                                                    data-toggle="switchbutton" name="is_twilio_enabled"
+                                                    id="twilio_module"
+                                                    {{ $store_settings['is_twilio_enabled'] == 'on' ? 'checked=checked' : '' }}>
+                                                {{-- <label class="form-check-label" for="twilio_module">
+                                                    {{ __('Twilio') }}
+                                                </label> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <form method="POST"
+                                    action="{{ route('owner.twilio.setting', $store_settings->slug) }}"
+                                    accept-charset="UTF-8">
+                                    @csrf
+                                    <div class="card-body p-4">
+                                        <div class="row">
+
+                                            <div class="col-lg-4 col-md-6 col-sm-6 form-group">
+                                                <label for="twilio_token"
+                                                    class="form-label">{{ __('Twilio SID') }}</label>
+                                                <input class="form-control" name="twilio_sid" type="text"
+                                                    value="{{ $store_settings->twilio_sid }}" id="twilio_sid">
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-6 form-group">
+                                                <label for="twilio_token"
+                                                    class="form-label">{{ __('Twilio Token') }}</label>
+                                                <input class="form-control " name="twilio_token" type="text"
+                                                    value="{{ $store_settings->twilio_token }}" id="twilio_token">
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-6 form-group">
+                                                <label for="twilio_from"
+                                                    class="form-label">{{ __('Twilio From') }}</label>
+                                                <input class="form-control " name="twilio_from" type="text"
+                                                    value="{{ $store_settings->twilio_from }}" id="twilio_from">
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-6 form-group">
+                                                <label for="notification_number"
+                                                    class="form-label">{{ __('Notification Number') }}</label>
+                                                <input class="form-control " name="notification_number"
+                                                    type="text"
+                                                    value="{{ $store_settings->notification_number }}"
+                                                    id="notification_number">
+                                                <small>* {{ __('Use country code with your number') }} *</small>
                                             </div>
                                         </div>
                                     </div>
@@ -2533,90 +2593,77 @@ if (!empty($setting['color'])) {
                                             </div>
                                         </div>
                                     </div>
-                                    {{ Form::close() }}
-                                </div>
+                                </form>
                             </div>
                         </div>
-                        <div id="twilio_setting" class="tab-pane">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="row ">
-                                            <div class="col-6">
-                                                <h5>{{ 'Twilio Settings' }}</h5>
-                                                <small>{{__('Edit Twilio Settings')}}</small>
-                                            </div>
-                                            <div class="col-6 d-flex justify-content-end">
-                                                <div class="form-check form-switch ">
-                                                    <input type="checkbox" class="form-check-input off switch"
-                                                        data-toggle="switchbutton" name="is_twilio_enabled"
-                                                        id="twilio_module"
-                                                        {{ $store_settings['is_twilio_enabled'] == 'on' ? 'checked=checked' : '' }}>
-                                                    {{-- <label class="form-check-label" for="twilio_module">
-                                                        {{ __('Twilio') }}
-                                                    </label> --}}
-                                                </div>
-                                            </div>
-                                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pixel_settings" role="tabpanel" aria-labelledby="pills-pixel_setting-tab">
+                        <div class="card">
+                            <div class="custom-fields">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <div class="">
+                                        <h5 class="">{{ __('Pixel Fields Settings') }}</h5>
+                                        <small>{{ __('Enter Your Pixel Fields Settings') }}</small>
                                     </div>
-
-                                    <form method="POST"
-                                        action="{{ route('owner.twilio.setting', $store_settings->slug) }}"
-                                        accept-charset="UTF-8">
-                                        @csrf
-                                        <div class="card-body p-4">
-                                            <div class="row">
-
-                                                <div class="col-lg-4 col-md-6 col-sm-6 form-group">
-                                                    <label for="twilio_token"
-                                                        class="form-label">{{ __('Twilio SID') }}</label>
-                                                    <input class="form-control" name="twilio_sid" type="text"
-                                                        value="{{ $store_settings->twilio_sid }}" id="twilio_sid">
-                                                </div>
-                                                <div class="col-lg-4 col-md-6 col-sm-6 form-group">
-                                                    <label for="twilio_token"
-                                                        class="form-label">{{ __('Twilio Token') }}</label>
-                                                    <input class="form-control " name="twilio_token" type="text"
-                                                        value="{{ $store_settings->twilio_token }}" id="twilio_token">
-                                                </div>
-                                                <div class="col-lg-4 col-md-6 col-sm-6 form-group">
-                                                    <label for="twilio_from"
-                                                        class="form-label">{{ __('Twilio From') }}</label>
-                                                    <input class="form-control " name="twilio_from" type="text"
-                                                        value="{{ $store_settings->twilio_from }}" id="twilio_from">
-                                                </div>
-                                                <div class="col-lg-4 col-md-6 col-sm-6 form-group">
-                                                    <label for="notification_number"
-                                                        class="form-label">{{ __('Notification Number') }}</label>
-                                                    <input class="form-control " name="notification_number"
-                                                        type="text"
-                                                        value="{{ $store_settings->notification_number }}"
-                                                        id="notification_number">
-                                                    <small>* Use country code with your number *</small>
-                                                </div>
-                                            </div>
+                                    {{--  <a data-repeater-create 
+                                        class="btn btn-sm btn-icon  btn-primary me-2"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="{{ __('Create Custom Field') }}">
+                                        <i  data-feather="plus"></i>
+                                    </a>  --}}
+                                    <a href="#" class="btn btn-sm btn-icon  btn-primary me-2" data-ajax-popup="true" data-url="{{ route('owner.pixel.create') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Create') }}" data-title="{{ __('Create New Pixel') }}">
+                                        <i  data-feather="plus"></i>
+                                    </a>
+                                </div>
+                                <div class="card-body table-border-style">
+                                    <div class="row">
+                                      
+                                        <div class="table-responsive custom-field-table">
+                                            
+                                            <table class="table dataTable-table" id="pc-dt-simple" data-repeater-list="fields">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th>{{ __('Platform') }}</th>
+                                                        <th>{{ __('Pixel Id') }}</th>
+                    
+                                                        <th class="text-right">{{ __('Action') }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($PixelFields as  $PixelField)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $PixelField->platform }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $PixelField->pixel_id }}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div class="d-flex">
+                                                                    <a class="bs-pass-para btn btn-sm btn-icon bg-light-secondary" href="#" data-title="{{ __('Delete pixel') }}" data-confirm="{{ __('Are You Sure?') }}" data-text="{{ __('This action can not be undone. Do you want to continue?') }}" data-confirm-yes="pixel-delete-form-{{ $PixelField->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Delete') }}">
+                                                                        <i class="ti ti-trash f-20"></i>
+                                                                    </a>
+                                                                    {!! Form::open(['method' => 'DELETE', 'route' => ['pixel.delete', $PixelField->id], 'id' => 'pixel-delete-form-' . $PixelField->id]) !!}
+                                                                    {!! Form::close() !!}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        <div class="col-lg-12">
-                                            <div class="text-end">
-                                                <div class="card-footer">
-                                                    <div class="col-sm-12 px-2">
-                                                        <div class="d-flex justify-content-end">
-                                                            {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                    @endif
-
-                    @if (Auth::user()->type == 'super admin')
-                        <div class="" id="brand-setting">
-                            {{ Form::model($settings, ['route' => 'business.setting', 'method' => 'POST', 'enctype' => 'multipart/form-data']) }}
+                    </div>
+                </div>
+            @endif
+            @if (Auth::user()->type == 'super admin')
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade active show" id="pills-brand-setting" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        {{ Form::model($settings, ['route' => 'business.setting', 'method' => 'POST', 'enctype' => 'multipart/form-data']) }}
                             <div class="row">
                                 <div class="col-lg-12 col-sm-12 col-md-12">
                                     <div class="card">
@@ -2858,6 +2905,17 @@ if (!empty($setting['color'])) {
                                                             data-onstyle="primary">
                                                     </div>
                                                 </div>
+                                                <div class="form-group col-6 col-md-3">
+                                                    <div class="custom-control form-switch p-0">
+                                                        <label class="form-check-label"
+                                                            for="email_verification">{{ __('Enable Email Verification') }}</label><br>
+                                                        <input type="checkbox" name="email_verification"
+                                                            class="form-check-input" id="email_verification"
+                                                            data-toggle="switchbutton"
+                                                            {{ Utility::getValByName('email_verification') == 'on' ? 'checked="checked"' : '' }}
+                                                            data-onstyle="primary">
+                                                    </div>
+                                                </div>
                                                 <div class="form-group col-md-12">
                                                     {{ Form::label('cookie_text', __('GDPR Cookie Text'), ['class' => 'fulltime form-label']) }}
                                                     {!! Form::textarea(
@@ -2870,7 +2928,7 @@ if (!empty($setting['color'])) {
                                                 <div class="setting-card setting-logo-box p-3">
                                                     <div class="row">
                                                         <h5>{{ __('Theme Customizer') }}</h5>
-                                                        <div class="col-4 my-auto">
+                                                        <div class="col-md-4 my-auto">
                                                             <h6 class="mt-2">
                                                                 <i data-feather="credit-card"
                                                                     class="me-2"></i>{{ __('Primary Color Settings') }}
@@ -2910,7 +2968,7 @@ if (!empty($setting['color'])) {
                                                                     style="display: none;">
                                                             </div>
                                                         </div>
-                                                        <div class="col-4 my-auto mt-2">
+                                                        <div class="col-md-4 my-auto mt-2">
                                                             <h6 class="">
                                                                 <i data-feather="layout"
                                                                     class="me-2"></i>{{ __('Sidebar Settings') }}
@@ -2924,7 +2982,7 @@ if (!empty($setting['color'])) {
                                                                     for="cust-theme-bg">{{ __('Transparent layout') }}</label>
                                                             </div>
                                                         </div>
-                                                        <div class="col-4 my-auto mt-2">
+                                                        <div class="col-md-4 my-auto mt-2">
                                                             <h6 class="">
                                                                 <i data-feather="sun"
                                                                     class="me-2"></i>{{ __('Layout Settings') }}
@@ -2954,8 +3012,9 @@ if (!empty($setting['color'])) {
                                 </div>
                             </div>
                             {!! Form::close() !!}
-                        </div>
-                        <div class="card" id="payment-setting">
+                    </div>
+                    <div class="tab-pane fade" id="pills-payment-setting" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        <div class="card">
                             <div class="card-header">
                                 <h5>{{ 'Payment Setting' }}</h5>
                                 <small>{{__('These details will be used to collect subscription plan payments. Each subscription plan will have a payment button based on the below configuration.')}}</small>
@@ -2991,44 +3050,41 @@ if (!empty($setting['color'])) {
                                             {{-- </div> --}}
                                         </div>
                                     </div>
-                                    <div class="faq justify-content-center">
-                                        <div class="col-sm-12 col-md-10 col-xxl-12">
-                                            <div class="accordion accordion-flush" id="accordionExample">
-                                                <!-- Strip -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-2">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse1"
-                                                            aria-expanded="true" aria-controls="collapse1">
+                                   
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="accordion accordion-flush setting-accordion"
+                                                id="accordionExample">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseOne"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseOne">
                                                             <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
                                                                 {{ __('Stripe') }}
                                                             </span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div
+                                                                    class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_stripe_enabled" value="off">
+                                                                    <input type="checkbox" class="form-check-input input-primary" name="is_stripe_enabled" id="is_stripe_enabled" {{ isset($admin_payment_setting['is_stripe_enabled']) && $admin_payment_setting['is_stripe_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_stripe_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse1" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-2"
+                                                    <div id="collapseOne"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingOne"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Stripe') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_stripe_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_stripe_enabled"
-                                                                            id="is_stripe_enabled"
-                                                                            {{ isset($admin_payment_setting['is_stripe_enabled']) && $admin_payment_setting['is_stripe_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_stripe_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
+                                                            <div class="row gy-4">
+                                                                
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         {{ Form::label('stripe_key', __('Stripe Key'), ['class' => 'col-form-label']) }}
                                                                         {{ Form::text('stripe_key', isset($admin_payment_setting['stripe_key']) ? $admin_payment_setting['stripe_key'] : '', ['class' => 'form-control', 'placeholder' => __('Enter Stripe Key')]) }}
@@ -3040,7 +3096,7 @@ if (!empty($setting['color'])) {
                                                                         @enderror
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         {{ Form::label('stripe_secret', __('Stripe Secret'), ['class' => 'col-form-label']) }}
                                                                         {{ Form::text('stripe_secret', isset($admin_payment_setting['stripe_secret']) ? $admin_payment_setting['stripe_secret'] : '', ['class' => 'form-control ', 'placeholder' => __('Enter Stripe Secret')]) }}
@@ -3057,221 +3113,185 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Paypal -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-3">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse2"
-                                                            aria-expanded="true" aria-controls="collapse2">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Paypal') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingTwo">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseTwo"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseTwo">
+                                                            <span class="d-flex align-items-center"> {{ __('Paypal') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div
+                                                                    class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_paypal_enabled" value="off">
+                                                                    <input type="checkbox"  name="is_paypal_enabled" id="is_paypal_enabled" class="form-check-input input-primary" {{ isset($admin_payment_setting['is_paypal_enabled']) && $admin_payment_setting['is_paypal_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_paypal_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse2" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-3"
+                                                    <div id="collapseTwo"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingTwo"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Paypal') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_paypal_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_paypal_enabled"
-                                                                            id="is_paypal_enabled"
-                                                                            {{ isset($admin_payment_setting['is_paypal_enabled']) && $admin_payment_setting['is_paypal_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_paypal_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12 pb-4">
-                                                                    <label class="paypal-label col-form-label"
-                                                                        for="paypal_mode">{{ __('Paypal Mode') }}</label>
-                                                                    <br>
-                                                                    <div class="d-flex">
-                                                                        <div class="mr-2" style="margin-right: 15px;">
-                                                                            <div class="border card p-3">
-                                                                                <div class="form-check">
-                                                                                    <label
-                                                                                        class="form-check-labe text-dark">
-                                                                                        <input type="radio"
-                                                                                            name="paypal_mode"
-                                                                                            value="sandbox"
-                                                                                            class="form-check-input"
-                                                                                            {{ !isset($admin_payment_setting['paypal_mode']) || $admin_payment_setting['paypal_mode'] == '' || $admin_payment_setting['paypal_mode'] == 'sandbox' ? 'checked="checked"' : '' }}>
-                                                                                        {{ __('Sandbox') }}
-                                                                                    </label>
+                                                            <div class="bussiness-hours">
+                                                                <div class="row align-items-center gy-4">
+                                                                    <div class="col-lg-12">
+                                                                        <label class="paypal-label col-form-label" for="paypal_mode">{{ __('Paypal Mode') }}</label>
+                                                                        <br>
+                                                                        <div class="d-flex flex-wrap">
+                                                                            <div class="mr-2" style="margin-right: 15px;">
+                                                                                <div class="border card p-3">
+                                                                                    <div class="form-check">
+                                                                                        <label
+                                                                                            class="form-check-labe text-dark">
+                                                                                            <input type="radio"
+                                                                                                name="paypal_mode"
+                                                                                                value="sandbox"
+                                                                                                class="form-check-input"
+                                                                                                {{ !isset($admin_payment_setting['paypal_mode']) || $admin_payment_setting['paypal_mode'] == '' || $admin_payment_setting['paypal_mode'] == 'sandbox' ? 'checked="checked"' : '' }}>
+                                                                                            {{ __('Sandbox') }}
+                                                                                        </label>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="mr-2">
-                                                                            <div class="border card p-3">
-                                                                                <div class="form-check">
-                                                                                    <label
-                                                                                        class="form-check-labe text-dark">
-                                                                                        <input type="radio"
-                                                                                            name="paypal_mode"
-                                                                                            value="live"
-                                                                                            class="form-check-input"
-                                                                                            {{ isset($admin_payment_setting['paypal_mode']) && $admin_payment_setting['paypal_mode'] == 'live' ? 'checked="checked"' : '' }}>
-                                                                                        {{ __('Live') }}
-                                                                                    </label>
+                                                                            <div class="mr-2">
+                                                                                <div class="border card p-3">
+                                                                                    <div class="form-check">
+                                                                                        <label
+                                                                                            class="form-check-labe text-dark">
+                                                                                            <input type="radio"
+                                                                                                name="paypal_mode"
+                                                                                                value="live"
+                                                                                                class="form-check-input"
+                                                                                                {{ isset($admin_payment_setting['paypal_mode']) && $admin_payment_setting['paypal_mode'] == 'live' ? 'checked="checked"' : '' }}>
+                                                                                            {{ __('Live') }}
+                                                                                        </label>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label for="paypal_client_id"
-                                                                            class="col-form-label">{{ __('Client ID') }}</label>
-                                                                        <input type="text" name="paypal_client_id"
-                                                                            id="paypal_client_id" class="form-control"
-                                                                            value="{{ !isset($admin_payment_setting['paypal_client_id']) || is_null($admin_payment_setting['paypal_client_id']) ? '' : $admin_payment_setting['paypal_client_id'] }}"
-                                                                            placeholder="{{ __('Client ID') }}">
+                                                                    <div class="col-lg-6">
+                                                                        <div class="form-group">
+                                                                            <label for="paypal_client_id" class="col-form-label">{{ __('Client ID') }}</label>
+                                                                            <input type="text" name="paypal_client_id"
+                                                                                id="paypal_client_id" class="form-control"
+                                                                                value="{{ !isset($admin_payment_setting['paypal_client_id']) || is_null($admin_payment_setting['paypal_client_id']) ? '' : $admin_payment_setting['paypal_client_id'] }}"
+                                                                                placeholder="{{ __('Client ID') }}">
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label for="paypal_secret_key"
-                                                                            class="col-form-label">{{ __('Secret Key') }}</label>
-                                                                        <input type="text" name="paypal_secret_key"
-                                                                            id="paypal_secret_key" class="form-control"
-                                                                            value="{{ !isset($admin_payment_setting['paypal_secret_key']) || is_null($admin_payment_setting['paypal_secret_key']) ? '' : $admin_payment_setting['paypal_secret_key'] }}"
-                                                                            placeholder="{{ __('Secret Key') }}">
+                                                                    <div class="col-lg-6">
+                                                                        <div class="form-group">
+                                                                            <label for="paypal_secret_key"
+                                                                                class="col-form-label">{{ __('Secret Key') }}</label>
+                                                                            <input type="text" name="paypal_secret_key"
+                                                                                id="paypal_secret_key" class="form-control"
+                                                                                value="{{ !isset($admin_payment_setting['paypal_secret_key']) || is_null($admin_payment_setting['paypal_secret_key']) ? '' : $admin_payment_setting['paypal_secret_key'] }}"
+                                                                                placeholder="{{ __('Secret Key') }}">
+                                                                        </div>  
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Paystack -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-4">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse3"
-                                                            aria-expanded="true" aria-controls="collapse3">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Paystack') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingThree">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseThree"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseTwo">
+                                                            <span
+                                                                class="d-flex align-items-center">{{ __('Paystack') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div
+                                                                    class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_paystack_enabled" value="off">
+                                                                    <input type="checkbox" name="is_paystack_enabled" class="form-check-input input-primary" id="is_paystack_enabled" {{ isset($admin_payment_setting['is_paystack_enabled']) && $admin_payment_setting['is_paystack_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label" for="is_paystack_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse3" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-4"
+                                                    <div id="collapseThree"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingTwo"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Paystack') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_paystack_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_paystack_enabled"
-                                                                            id="is_paystack_enabled"
-                                                                            {{ isset($admin_payment_setting['is_paystack_enabled']) && $admin_payment_setting['is_paystack_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_paystack_enabled">{{ __('Enable') }}</label>
+                                                            <div class="bussiness-hours">
+                                                                <div class="row align-items-center gy-4">
+                                                                    <div class="col-lg-6">
+                                                                        <div class="form-group">
+                                                                            <label for="paypal_client_id" class="col-form-label">{{ __('Public Key') }}</label>
+                                                                            <input type="text" name="paystack_public_key" id="paystack_public_key" class="form-control"
+                                                                                value="{{ !isset($admin_payment_setting['paystack_public_key']) || is_null($admin_payment_setting['paystack_public_key']) ? '' : $admin_payment_setting['paystack_public_key'] }}"
+                                                                                placeholder="{{ __('Public Key') }}">
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label for="paypal_client_id"
-                                                                            class="col-form-label">{{ __('Public Key') }}</label>
-                                                                        <input type="text" name="paystack_public_key"
-                                                                            id="paystack_public_key"
-                                                                            class="form-control"
-                                                                            value="{{ !isset($admin_payment_setting['paystack_public_key']) || is_null($admin_payment_setting['paystack_public_key']) ? '' : $admin_payment_setting['paystack_public_key'] }}"
-                                                                            placeholder="{{ __('Public Key') }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label for="paystack_secret_key"
-                                                                            class="col-form-label">{{ __('Secret Key') }}</label>
-                                                                        <input type="text" name="paystack_secret_key"
-                                                                            id="paystack_secret_key"
-                                                                            class="form-control"
-                                                                            value="{{ !isset($admin_payment_setting['paystack_secret_key']) || is_null($admin_payment_setting['paystack_secret_key']) ? '' : $admin_payment_setting['paystack_secret_key'] }}"
-                                                                            placeholder="{{ __('Secret Key') }}">
+                                                                    <div class="col-lg-6">
+                                                                        <div class="form-group">
+                                                                            <label for="paystack_secret_key" class="col-form-label">{{ __('Secret Key') }}</label>
+                                                                            <input type="text" name="paystack_secret_key"
+                                                                                id="paystack_secret_key"
+                                                                                class="form-control"
+                                                                                value="{{ !isset($admin_payment_setting['paystack_secret_key']) || is_null($admin_payment_setting['paystack_secret_key']) ? '' : $admin_payment_setting['paystack_secret_key'] }}"
+                                                                                placeholder="{{ __('Secret Key') }}">
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- FLUTTERWAVE -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-5">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse4"
-                                                            aria-expanded="true" aria-controls="collapse4">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Flutterwave') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingFour">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseFour"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseTwo">
+                                                            <span
+                                                                class="d-flex align-items-center">{{ __('Flutterwave') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_flutterwave_enabled" value="off">
+                                                                    <input type="checkbox" name="is_flutterwave_enabled"
+                                                                        class="form-check-input input-primary"
+                                                                        id="is_flutterwave_enabled"  {{ isset($admin_payment_setting['is_flutterwave_enabled']) && $admin_payment_setting['is_flutterwave_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_flutterwave_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse4" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-5"
+                                                    <div id="collapseFour"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingFour"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Flutterwave') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden"
-                                                                            name="is_flutterwave_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_flutterwave_enabled"
-                                                                            id="is_flutterwave_enabled"
-                                                                            {{ isset($admin_payment_setting['is_flutterwave_enabled']) && $admin_payment_setting['is_flutterwave_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_flutterwave_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-
+                                                            <div class="row gy-4">
                                                                 <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label for="paypal_client_id"
-                                                                            class="col-form-label">{{ __('Public Key') }}</label>
-                                                                        <input type="text"
-                                                                            name="flutterwave_public_key"
-                                                                            id="flutterwave_public_key"
-                                                                            class="form-control"
-                                                                            value="{{ !isset($admin_payment_setting['flutterwave_public_key']) || is_null($admin_payment_setting['flutterwave_public_key']) ? '' : $admin_payment_setting['flutterwave_public_key'] }}"
-                                                                            placeholder="Public Key">
-                                                                    </div>
+                                                                        <div class="form-group">
+                                                                            <label for="paypal_client_id" class="col-form-label">{{ __('Public Key') }}</label>
+                                                                            <input type="text" name="flutterwave_public_key" id="flutterwave_public_key"
+                                                                                class="form-control"
+                                                                                value="{{ !isset($admin_payment_setting['flutterwave_public_key']) || is_null($admin_payment_setting['flutterwave_public_key']) ? '' : $admin_payment_setting['flutterwave_public_key'] }}"
+                                                                                placeholder="Public Key">
+                                                                        </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
-                                                                        <label for="paystack_secret_key"
-                                                                            class="col-form-label">{{ __('Secret Key') }}</label>
-                                                                        <input type="text"
-                                                                            name="flutterwave_secret_key"
-                                                                            id="flutterwave_secret_key"
-                                                                            class="form-control"
+                                                                        <label for="paystack_secret_key" class="col-form-label">{{ __('Secret Key') }}</label>
+                                                                        <input type="text" name="flutterwave_secret_key"
+                                                                            id="flutterwave_secret_key" class="form-control"
                                                                             value="{{ !isset($admin_payment_setting['flutterwave_secret_key']) || is_null($admin_payment_setting['flutterwave_secret_key']) ? '' : $admin_payment_setting['flutterwave_secret_key'] }}"
                                                                             placeholder="Secret Key">
                                                                     </div>
@@ -3280,110 +3300,75 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Razorpay -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-6">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse5"
-                                                            aria-expanded="true" aria-controls="collapse5">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Razorpay') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingFive">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseFive"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseFive">
+                                                            <span
+                                                                class="d-flex align-items-center">  {{ __('Razorpay') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_razorpay_enabled" value="off"> 
+                                                                    <input type="checkbox"
+                                                                        class="form-check-input input-primary" 
+                                                                        name="is_razorpay_enabled"
+                                                                        id="is_razorpay_enabled"  {{ isset($admin_payment_setting['is_razorpay_enabled']) && $admin_payment_setting['is_razorpay_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_razorpay_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse5" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-6"
+                                                    <div id="collapseFive"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingFive"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Razorpay') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_razorpay_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_razorpay_enabled"
-                                                                            id="is_razorpay_enabled"
-                                                                            {{ isset($admin_payment_setting['is_razorpay_enabled']) && $admin_payment_setting['is_razorpay_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_razorpay_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-md-6">
+                                                            <div class="row gy-4">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
-                                                                        <label for="paypal_client_id"
-                                                                            class="col-form-label">{{ __('Public Key') }}</label>
-
-                                                                        <input type="text" name="razorpay_public_key"
-                                                                            id="razorpay_public_key"
-                                                                            class="form-control"
+                                                                        <label for="paypal_client_id" class="col-form-label">{{ __('Public Key') }}</label>
+                                                                        <input type="text" name="razorpay_public_key" id="razorpay_public_key" class="form-control"
                                                                             value="{{ !isset($admin_payment_setting['razorpay_public_key']) || is_null($admin_payment_setting['razorpay_public_key']) ? '' : $admin_payment_setting['razorpay_public_key'] }}"
                                                                             placeholder="Public Key">
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
-                                                                        <label for="paystack_secret_key"
-                                                                            class="col-form-label">
-                                                                            {{ __('Secret Key') }}</label>
-                                                                        <input type="text" name="razorpay_secret_key"
-                                                                            id="razorpay_secret_key"
-                                                                            class="form-control"
-                                                                            value="{{ !isset($admin_payment_setting['razorpay_secret_key']) || is_null($admin_payment_setting['razorpay_secret_key']) ? '' : $admin_payment_setting['razorpay_secret_key'] }}"
-                                                                            placeholder="Secret Key">
+                                                                        <label for="paystack_secret_key" class="col-form-label"> {{ __('Secret Key') }}</label>
+                                                                        <input type="text" name="razorpay_secret_key" id="razorpay_secret_key" class="form-control" value="{{ !isset($admin_payment_setting['razorpay_secret_key']) || is_null($admin_payment_setting['razorpay_secret_key']) ? '' : $admin_payment_setting['razorpay_secret_key'] }}" placeholder="Secret Key">
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Paytm -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-7">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse6"
-                                                            aria-expanded="true" aria-controls="collapse6">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Paytm') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingSix">
+                                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                                            <span
+                                                                class="d-flex align-items-center"> {{ __('Paytm') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_paytm_enabled" value="off">
+                                                                    <input type="checkbox" class="form-check-input input-primary"  name="is_paytm_enabled" id="is_paytm_enabled" {{ isset($admin_payment_setting['is_paytm_enabled']) && $admin_payment_setting['is_paytm_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label" for="is_paytm_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse6" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-7"
-                                                        data-bs-parent="#accordionExample">
+                                                    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Paytm') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_paytm_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_paytm_enabled"
-                                                                            id="is_paytm_enabled"
-                                                                            {{ isset($admin_payment_setting['is_paytm_enabled']) && $admin_payment_setting['is_paytm_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_paytm_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12 pb-4">
-                                                                    <label class="paypal-label col-form-label"
-                                                                        for="paypal_mode">{{ __('Paytm Environment') }}</label>
+                                                            <div class="row gy-4">
+                                                                <div class="col-lg-12 pb-4">
+                                                                    <label class="paypal-label col-form-label" for="paypal_mode">{{ __('Paytm Environment') }}</label>
                                                                     <br>
-                                                                    <div class="d-flex">
+                                                                    <div class="d-flex flex-wrap">
                                                                         <div class="mr-2" style="margin-right: 15px;">
                                                                             <div class="border card p-3">
                                                                                 <div class="form-check">
@@ -3416,10 +3401,9 @@ if (!empty($setting['color'])) {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-4">
+                                                                <div class="col-lg-4">
                                                                     <div class="form-group">
-                                                                        <label for="paytm_public_key"
-                                                                            class="col-form-label">{{ __('Merchant ID') }}</label>
+                                                                        <label for="paytm_public_key" class="col-form-label">{{ __('Merchant ID') }}</label>
                                                                         <input type="text" name="paytm_merchant_id"
                                                                             id="paytm_merchant_id" class="form-control"
                                                                             value="{{ isset($admin_payment_setting['paytm_merchant_id']) ? $admin_payment_setting['paytm_merchant_id'] : '' }}"
@@ -3431,10 +3415,9 @@ if (!empty($setting['color'])) {
                                                                         @endif
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-4">
+                                                                <div class="col-lg-4">
                                                                     <div class="form-group">
-                                                                        <label for="paytm_secret_key"
-                                                                            class="col-form-label">{{ __('Merchant Key') }}</label>
+                                                                        <label for="paytm_secret_key" class="col-form-label">{{ __('Merchant Key') }}</label>
                                                                         <input type="text" name="paytm_merchant_key"
                                                                             id="paytm_merchant_key" class="form-control"
                                                                             value="{{ isset($admin_payment_setting['paytm_merchant_key']) ? $admin_payment_setting['paytm_merchant_key'] : '' }}"
@@ -3446,10 +3429,9 @@ if (!empty($setting['color'])) {
                                                                         @endif
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-4">
+                                                                <div class="col-lg-4">
                                                                     <div class="form-group">
-                                                                        <label for="paytm_industry_type"
-                                                                            class="col-form-label">{{ __('Industry Type') }}</label>
+                                                                        <label for="paytm_industry_type" class="col-form-label">{{ __('Industry Type') }}</label>
                                                                         <input type="text" name="paytm_industry_type"
                                                                             id="paytm_industry_type"
                                                                             class="form-control"
@@ -3466,46 +3448,32 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Mercado Pago-->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-8">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse7"
-                                                            aria-expanded="true" aria-controls="collapse7">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Mercado Pago') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingseven">
+                                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseseven" aria-expanded="false" aria-controls="collapseseven">
+                                                            <span
+                                                                class="d-flex align-items-center">{{ __('Mercado Pago') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">On/Off:</span>
+                                                                <div class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_mercado_enabled" value="off">
+                                                                    <input type="checkbox"  name="is_mercado_enabled"
+                                                                        class="form-check-input input-primary"
+                                                                        id="is_mercado_enabled" {{ isset($admin_payment_setting['is_mercado_enabled']) && $admin_payment_setting['is_mercado_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_mercado_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse7" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-8"
-                                                        data-bs-parent="#accordionExample">
+                                                    <div id="collapseseven" class="accordion-collapse collapse" aria-labelledby="headingseven" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
                                                             <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Mercado Pago') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_mercado_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_mercado_enabled"
-                                                                            id="is_mercado_enabled"
-                                                                            {{ isset($admin_payment_setting['is_mercado_enabled']) && $admin_payment_setting['is_mercado_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_mercado_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12 pb-4">
-                                                                    <label class="coingate-label col-form-label"
+                                                                <div class="col-lg-12 pb-4">
+                                                                    <label class="col-form-label"
                                                                         for="mercado_mode">{{ __('Mercado Mode') }}</label>
                                                                     <br>
-                                                                    <div class="d-flex">
+                                                                    <div class="d-flex flex-wrap">
                                                                         <div class="mr-2" style="margin-right: 15px;">
                                                                             <div class="border card p-3">
                                                                                 <div class="form-check">
@@ -3538,7 +3506,7 @@ if (!empty($setting['color'])) {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label for="mercado_access_token"
                                                                             class="col-form-label">{{ __('Access Token') }}</label>
@@ -3559,43 +3527,28 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Mollie -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-9">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse8"
-                                                            aria-expanded="true" aria-controls="collapse8">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Mollie') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingeight">
+                                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseeight" aria-expanded="false" aria-controls="collapseeight">
+                                                            <span class="d-flex align-items-center">{{ __('Mollie') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_mollie_enabled" value="off">
+                                                                    <input type="checkbox" name="is_mollie_enabled" 
+                                                                        class="form-check-input input-primary"
+                                                                        id="is_mollie_enabled"  {{ isset($admin_payment_setting['is_mollie_enabled']) && $admin_payment_setting['is_mollie_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_mollie_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse8" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-9"
-                                                        data-bs-parent="#accordionExample">
+                                                    <div id="collapseeight" class="accordion-collapse collapse" aria-labelledby="headingeight" data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
                                                             <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Mollie') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_mollie_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_mollie_enabled"
-                                                                            id="is_mollie_enabled"
-                                                                            {{ isset($admin_payment_setting['is_mollie_enabled']) && $admin_payment_setting['is_mollie_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_mollie_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-md-6">
+                                                                
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label for="mollie_api_key"
                                                                             class="col-form-label">{{ __('Mollie Api Key') }}</label>
@@ -3605,7 +3558,7 @@ if (!empty($setting['color'])) {
                                                                             placeholder="Mollie Api Key">
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label for="mollie_profile_id"
                                                                             class="col-form-label">{{ __('Mollie Profile Id') }}</label>
@@ -3615,7 +3568,7 @@ if (!empty($setting['color'])) {
                                                                             placeholder="Mollie Profile Id">
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label for="mollie_partner_id"
                                                                             class="col-form-label">{{ __('Mollie Partner Id') }}</label>
@@ -3629,41 +3582,35 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- Skrill -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-10">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse9"
-                                                            aria-expanded="true" aria-controls="collapse9">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('Skrill') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingnine">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseNine"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseNine">
+                                                            <span
+                                                                class="d-flex align-items-center">{{ __('Skrill') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_skrill_enabled" value="off">
+                                                                    <input type="checkbox"
+                                                                        class="form-check-input input-primary"
+                                                                        name="is_skrill_enabled"
+                                                                        id="is_skrill_enabled" {{ isset($admin_payment_setting['is_skrill_enabled']) && $admin_payment_setting['is_skrill_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_skrill_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse9" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-10"
+                                                    <div id="collapseNine"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingnine"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('Skrill') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_skrill_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_skrill_enabled"
-                                                                            id="is_skrill_enabled"
-                                                                            {{ isset($admin_payment_setting['is_skrill_enabled']) && $admin_payment_setting['is_skrill_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_skrill_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
+                                                            <div class="row gy-4">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="mollie_api_key"
@@ -3671,7 +3618,7 @@ if (!empty($setting['color'])) {
                                                                         <input type="email" name="skrill_email"
                                                                             id="skrill_email" class="form-control"
                                                                             value="{{ isset($admin_payment_setting['skrill_email']) ? $admin_payment_setting['skrill_email'] : '' }}"
-                                                                            placeholder="{{ __('Mollie Api Key') }}" />
+                                                                            placeholder="{{ __('Skrill Email') }}" />
                                                                         @if ($errors->has('skrill_email'))
                                                                             <span class="invalid-feedback d-block">
                                                                                 {{ $errors->first('skrill_email') }}
@@ -3683,51 +3630,42 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-                                                <!-- CoinGate -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-11">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse10"
-                                                            aria-expanded="true" aria-controls="collapse10">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('CoinGate') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingTen">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseTen"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseTen">
+                                                            <span
+                                                                class="d-flex align-items-center">{{ __('CoinGate') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_coingate_enabled" value="off">
+                                                                    <input type="checkbox" name="is_coingate_enabled"
+                                                                        class="form-check-input input-primary"
+                                                                        id="is_coingate_enabled"  {{ isset($admin_payment_setting['is_coingate_enabled']) && $admin_payment_setting['is_coingate_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_coingate_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse10" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-11"
+                                                    <div id="collapseTen"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingTen"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('CoinGate') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden" name="is_coingate_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_coingate_enabled"
-                                                                            id="is_coingate_enabled"
-                                                                            {{ isset($admin_payment_setting['is_coingate_enabled']) && $admin_payment_setting['is_coingate_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_coingate_enabled">{{ __('Enable') }}</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-12 pb-4">
-                                                                    <label class="col-form-label"
-                                                                        for="coingate_mode">{{ __('CoinGate Mode') }}</label>
+                                                            <div class="row gy-4">
+                                                                <div class="col-lg-12 pb-4">
+                                                                    <label class="col-form-label" for="coingate_mode">{{ __('CoinGate Mode') }}</label>
                                                                     <br>
-                                                                    <div class="d-flex">
+                                                                    <div class="d-flex flex-wrap">
                                                                         <div class="mr-2" style="margin-right: 15px;">
                                                                             <div class="border card p-3">
                                                                                 <div class="form-check">
-                                                                                    <label
-                                                                                        class="form-check-labe text-dark">
+                                                                                    <label class="form-check-labe text-dark">
                                                                                         <input type="radio"
                                                                                             name="coingate_mode"
                                                                                             value="sandbox"
@@ -3755,7 +3693,7 @@ if (!empty($setting['color'])) {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label for="coingate_auth_token"
                                                                             class="col-form-label">{{ __('CoinGate Auth Token') }}</label>
@@ -3770,45 +3708,36 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <!-- PaymentWall -->
-                                                <div class="accordion-item card">
-                                                    <h2 class="accordion-header" id="heading-2-12">
-                                                        <button class="accordion-button" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#collapse11"
-                                                            aria-expanded="true" aria-controls="collapse11">
-                                                            <span class="d-flex align-items-center">
-                                                                <i class="ti ti-credit-card text-primary"></i>
-                                                                {{ __('PaymentWall') }}
-                                                            </span>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingEleven">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseEleven"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseEleven">
+                                                            <span
+                                                                class="d-flex align-items-center">{{ __('PaymentWall') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div
+                                                                    class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_paymentwall_enabled" value="off">
+                                                                    <input type="checkbox"  name="is_paymentwall_enabled"
+                                                                        class="form-check-input input-primary"
+                                                                        id="is_paymentwall_enabled" {{ isset($admin_payment_setting['is_paymentwall_enabled']) && $admin_payment_setting['is_paymentwall_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_paymentwall_enabled"></label>
+                                                                </div>
+                                                            </div>
                                                         </button>
                                                     </h2>
-                                                    <div id="collapse11" class="accordion-collapse collapse"
-                                                        aria-labelledby="heading-2-12"
+                                                    <div id="collapseEleven"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingEleven"
                                                         data-bs-parent="#accordionExample">
                                                         <div class="accordion-body">
-                                                            <div class="row">
-                                                                <div class="col-6 py-2">
-                                                                    {{-- <h5 class="h5">{{ __('PaymentWall') }}</h5> --}}
-                                                                </div>
-                                                                <div class="col-6 py-2 text-end">
-                                                                    <div
-                                                                        class="form-check form-switch form-switch-right mb-2">
-                                                                        <input type="hidden"
-                                                                            name="is_paymentwall_enabled"
-                                                                            value="off">
-                                                                        <input type="checkbox"
-                                                                            class="form-check-input mx-2"
-                                                                            name="is_paymentwall_enabled"
-                                                                            id="is_paymentwall_enabled"
-                                                                            {{ isset($admin_payment_setting['is_paymentwall_enabled']) && $admin_payment_setting['is_paymentwall_enabled'] == 'on' ? 'checked="checked"' : '' }}>
-                                                                        <label class="form-check-label"
-                                                                            for="is_paymentwall_enabled">{{ __('Enable') }}
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-md-6">
+                                                            <div class="row gy-4">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label for="paymentwall_public_key"
                                                                             class="col-form-label">{{ __('Public Key') }}</label>
@@ -3820,7 +3749,7 @@ if (!empty($setting['color'])) {
                                                                             placeholder="{{ __('Public Key') }}">
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label for="paymentwall_private_key"
                                                                             class="col-form-label">{{ __('Private Key') }}</label>
@@ -3836,7 +3765,63 @@ if (!empty($setting['color'])) {
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingTwelve">
+                                                        <button class="accordion-button collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#collapseTwelve"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapseTwelve">
+                                                            <span
+                                                                class="d-flex align-items-center">{{ __('Toyyibpay') }}</span>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="me-2">{{ __('On/Off') }}:</span>
+                                                                <div
+                                                                    class="form-check form-switch custom-switch-v1">
+                                                                    <input type="hidden" name="is_toyyibpay_enabled" value="off">
+                                                                    <input type="checkbox"  name="is_toyyibpay_enabled"
+                                                                        class="form-check-input input-primary"
+                                                                        id="is_toyyibpay_enabled" {{ isset($admin_payment_setting['is_toyyibpay_enabled']) && $admin_payment_setting['is_toyyibpay_enabled'] == 'on' ? 'checked="checked"' : '' }}>
+                                                                    <label class="form-check-label"
+                                                                        for="is_toyyibpay_enabled"></label>
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseTwelve"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="headingTwelve"
+                                                        data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <div class="row gy-4">
+                                                                <div class="col-lg-6">
+                                                                    <div class="form-group">
+                                                                        <label for="toyyibpay_category_code"
+                                                                            class="col-form-label">{{ __('Category Code') }}</label>
+                                                                        <input type="text"
+                                                                            name="toyyibpay_category_code"
+                                                                            id="toyyibpay_category_code"
+                                                                            class="form-control"
+                                                                            value="{{ !isset($admin_payment_setting['toyyibpay_category_code']) || is_null($admin_payment_setting['toyyibpay_category_code']) ? '' : $admin_payment_setting['toyyibpay_category_code'] }}"
+                                                                            placeholder="{{ __('category code') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-6">
+                                                                    <div class="form-group">
+                                                                        <label for="toyyibpay_secret_key"
+                                                                            class="col-form-label">{{ __('Secret Key') }}</label>
+                                                                        <input type="text"
+                                                                            name="toyyibpay_secret_key"
+                                                                            id="toyyibpay_secret_key"
+                                                                            class="form-control"
+                                                                            value="{{ !isset($admin_payment_setting['toyyibpay_secret_key']) || is_null($admin_payment_setting['toyyibpay_secret_key']) ? '' : $admin_payment_setting['toyyibpay_secret_key'] }}"
+                                                                            placeholder="{{ __('toyyibpay secret key') }}">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -3849,125 +3834,125 @@ if (!empty($setting['color'])) {
                                     </div>
                                 </form>
                             </div>
-
                         </div>
-                        <div id="email-settings" class="tab-pane">
-                            <div class="col-md-12">
+                    </div>
+                    <div class="tab-pane fade" id="pills-email-settings" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        <div class="col-md-12">
 
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="">
-                                            {{ __('Email Settings') }}
-                                        </h5>
-                                    </div>
-                                    <div class="card-body p-4">
-                                        {{ Form::open(['route' => 'email.setting', 'method' => 'post']) }}
-                                        <div class="row">
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_driver', __('Mail Driver'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_driver', env('MAIL_DRIVER'), ['class' => 'form-control', 'id' => 'mail_driver', 'placeholder' => __('Enter Mail Driver')]) }}
-                                                @error('mail_driver')
-                                                    <span class="invalid-mail_driver" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_host', __('Mail Host'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_host', env('MAIL_HOST'), ['class' => 'form-control ', 'id' => 'mail_host', 'placeholder' => __('Enter Mail Driver')]) }}
-                                                @error('mail_host')
-                                                    <span class="invalid-mail_driver" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_port', __('Mail Port'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_port', env('MAIL_PORT'), ['class' => 'form-control', 'id' => 'mail_port', 'placeholder' => __('Enter Mail Port')]) }}
-                                                @error('mail_port')
-                                                    <span class="invalid-mail_port" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_username', __('Mail Username'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_username', env('MAIL_USERNAME'), ['class' => 'form-control', 'id' => 'mail_username', 'placeholder' => __('Enter Mail Username')]) }}
-                                                @error('mail_username')
-                                                    <span class="invalid-mail_username" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_password', __('Mail Password'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_password', env('MAIL_PASSWORD'), ['class' => 'form-control', 'id' => 'mail_password', 'placeholder' => __('Enter Mail Password')]) }}
-                                                @error('mail_password')
-                                                    <span class="invalid-mail_password" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_encryption', __('Mail Encryption'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_encryption', env('MAIL_ENCRYPTION'), ['class' => 'form-control', 'id' => 'mail_encryption', 'placeholder' => __('Enter Mail Encryption')]) }}
-                                                @error('mail_encryption')
-                                                    <span class="invalid-mail_encryption" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_from_address', __('Mail From Address'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_from_address', env('MAIL_FROM_ADDRESS'), ['class' => 'form-control', 'id' => 'mail_from_address', 'placeholder' => __('Enter Mail From Address')]) }}
-                                                @error('mail_from_address')
-                                                    <span class="invalid-mail_from_address" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-sm-6 form-group">
-                                                {{ Form::label('mail_from_name', __('Mail From Name'), ['class' => 'form-label']) }}
-                                                {{ Form::text('mail_from_name', env('MAIL_FROM_NAME'), ['class' => 'form-control', 'id' => 'mail_from_name', 'placeholder' => __('Enter Mail Encryption')]) }}
-                                                @error('mail_from_name')
-                                                    <span class="invalid-mail_from_name" role="alert">
-                                                        <strong class="text-danger">{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="">
+                                        {{ __('Email Settings') }}
+                                    </h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    {{ Form::open(['route' => 'email.setting', 'method' => 'post']) }}
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_driver', __('Mail Driver'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_driver', env('MAIL_DRIVER'), ['class' => 'form-control', 'id' => 'mail_driver', 'placeholder' => __('Enter Mail Driver')]) }}
+                                            @error('mail_driver')
+                                                <span class="invalid-mail_driver" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
-                                        <div class="col-lg-12 ">
-                                            <div class="row">
-                                                <div class=" text-end">
-                                                    <div class="card-footer p-0">
-                                                        <div class="col-sm-12 mt-3 px-2">
-                                                            <div class="d-flex justify-content-between">
-                                                                <a href="#"
-                                                                    data-size="md" data-url="{{ route('test.mail') }}"
-                                                                    data-title="{{ __('Send Test Mail') }}"
-                                                                    class="btn btn-xs  btn-primary send_email">
-                                                                    {{ __('Send Test Mail') }}
-                                                                </a>
-                                                                {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
-                                                            </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_host', __('Mail Host'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_host', env('MAIL_HOST'), ['class' => 'form-control ', 'id' => 'mail_host', 'placeholder' => __('Enter Mail Driver')]) }}
+                                            @error('mail_host')
+                                                <span class="invalid-mail_driver" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_port', __('Mail Port'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_port', env('MAIL_PORT'), ['class' => 'form-control', 'id' => 'mail_port', 'placeholder' => __('Enter Mail Port')]) }}
+                                            @error('mail_port')
+                                                <span class="invalid-mail_port" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_username', __('Mail Username'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_username', env('MAIL_USERNAME'), ['class' => 'form-control', 'id' => 'mail_username', 'placeholder' => __('Enter Mail Username')]) }}
+                                            @error('mail_username')
+                                                <span class="invalid-mail_username" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_password', __('Mail Password'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_password', env('MAIL_PASSWORD'), ['class' => 'form-control', 'id' => 'mail_password', 'placeholder' => __('Enter Mail Password')]) }}
+                                            @error('mail_password')
+                                                <span class="invalid-mail_password" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_encryption', __('Mail Encryption'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_encryption', env('MAIL_ENCRYPTION'), ['class' => 'form-control', 'id' => 'mail_encryption', 'placeholder' => __('Enter Mail Encryption')]) }}
+                                            @error('mail_encryption')
+                                                <span class="invalid-mail_encryption" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_from_address', __('Mail From Address'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_from_address', env('MAIL_FROM_ADDRESS'), ['class' => 'form-control', 'id' => 'mail_from_address', 'placeholder' => __('Enter Mail From Address')]) }}
+                                            @error('mail_from_address')
+                                                <span class="invalid-mail_from_address" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 form-group">
+                                            {{ Form::label('mail_from_name', __('Mail From Name'), ['class' => 'form-label']) }}
+                                            {{ Form::text('mail_from_name', env('MAIL_FROM_NAME'), ['class' => 'form-control', 'id' => 'mail_from_name', 'placeholder' => __('Enter Mail Encryption')]) }}
+                                            @error('mail_from_name')
+                                                <span class="invalid-mail_from_name" role="alert">
+                                                    <strong class="text-danger">{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+
+                                    </div>
+                                    <div class="col-lg-12 ">
+                                        <div class="row">
+                                            <div class=" text-end">
+                                                <div class="card-footer p-0">
+                                                    <div class="col-sm-12 mt-3 px-2">
+                                                        <div class="d-flex justify-content-between gap-2 flex-column flex-sm-row">
+                                                            <a href="#" 
+                                                                data-size="md" data-url="{{ route('test.mail') }}"
+                                                                data-title="{{ __('Send Test Mail') }}"
+                                                                class="btn btn-xs  btn-primary send_email">
+                                                                {{ __('Send Test Mail') }}
+                                                            </a>
+                                                            {{ Form::submit(__('Save Changes'), ['class' => 'btn btn-xs btn-primary']) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        {{ Form::close() }}
                                     </div>
+                                    {{ Form::close() }}
                                 </div>
                             </div>
                         </div>
-                        <div id="recaptcha-settings" class="card">
-                            <form method="POST" action="{{ route('recaptcha.settings.store') }}"
-                                accept-charset="UTF-8">
-                                @csrf
-                                <div class="col-md-12">
+                    </div>
+                    <div class="tab-pane fade" id="pills-recaptcha-settings" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        <form method="POST" action="{{ route('recaptcha.settings.store') }}" accept-charset="UTF-8">
+                            @csrf
+                            <div class="col-md-12">
+                                <div class="card">
                                     <div class="card-header">
-                                        <div class="row">
+                                        <div class="row gy-2">
                                             <div class="col-lg-8 col-md-8 col-sm-8">
                                                 <h5 class="">{{ __('ReCaptcha Settings') }}</h5><small
                                                     class="text-secondary font-weight-bold"><a
@@ -3976,7 +3961,7 @@ if (!empty($setting['color'])) {
                                                         <small>({{ __('How to Get Google reCaptcha Site and Secret key') }})</small>
                                                     </a></small>
                                             </div>
-                                            <div class="col-lg-4 col-md-4 col-sm-4 text-end">
+                                            <div class="col-lg-4 col-md-4 col-sm-4 text-sm-end">
                                                 <div class="col switch-width">
                                                     <div class="custom-control custom-switch">
                                                         <input type="checkbox" data-toggle="switchbutton"
@@ -4024,178 +4009,179 @@ if (!empty($setting['color'])) {
                                         </div>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
-                        <div id="storage_settings" class="card mb-3">
-                            {{ Form::open(array('route' => 'storage.setting.store', 'enctype' => "multipart/form-data")) }}
-                                <div class="card-header">
-                                    <div class="row">
-                                        <div class="col-lg-10 col-md-10 col-sm-10">
-                                            <h5 class="">{{ __('Storage Settings') }}</h5>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="storage_settings" role="tabpanel" aria-labelledby="pills-brand_setting-tab">
+                        {{ Form::open(array('route' => 'storage.setting.store', 'enctype' => "multipart/form-data")) }}
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-lg-10 col-md-10 col-sm-10">
+                                        <h5 class="">{{ __('Storage Settings') }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="pe-2">
+                                        <input type="radio" class="btn-check" name="storage_setting" id="local-outlined" autocomplete="off" {{  $settings['storage_setting'] == 'local'?'checked':'' }} value="local" checked>
+                                        <label class="btn btn-outline-primary" for="local-outlined">{{ __('Local') }}</label>
+                                    </div>
+                                    <div  class="pe-2">
+                                        <input type="radio" class="btn-check" name="storage_setting" id="s3-outlined" autocomplete="off" {{  $settings['storage_setting']=='s3'?'checked':'' }}  value="s3">
+                                        <label class="btn btn-outline-primary" for="s3-outlined"> {{ __('AWS S3') }}</label>
+                                    </div>
+
+                                    <div  class="pe-2">
+                                        <input type="radio" class="btn-check" name="storage_setting" id="wasabi-outlined" autocomplete="off" {{  $settings['storage_setting']=='wasabi'?'checked':'' }} value="wasabi">
+                                        <label class="btn btn-outline-primary" for="wasabi-outlined">{{ __('Wasabi') }}</label>
+                                    </div>
+                                </div>
+                                <div  class="mt-2">
+                                <div class="local-setting row {{  $settings['storage_setting']=='local'?' ':'d-none' }}">
+                                    {{-- <h4 class="small-title">{{ __('Local Settings') }}</h4> --}}
+                                    <div class="col-lg-6 col-md-11 col-sm-12">
+                                        {{Form::label('local_storage_validation',__('Only Upload Files'),array('class'=>' form-label')) }}
+                                        <select name="local_storage_validation[]" class="form-control" name="choices-multiple-remove-button" id="choices-multiple-remove-button" placeholder="This is a placeholder" multiple>
+                                            @foreach($file_type as $f)
+                                            <option @if (in_array($f, $local_storage_validations)) selected @endif>{{$f}}</option>
+                                        @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label class="form-label" for="local_storage_max_upload_size">{{ __('Max upload size ( In KB)')}}</label>
+                                            <input type="number" name="local_storage_max_upload_size" class="form-control" value="{{(!isset($settings['local_storage_max_upload_size']) || is_null($settings['local_storage_max_upload_size'])) ? '' : $settings['local_storage_max_upload_size']}}" placeholder="{{ __('Max upload size') }}">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="d-flex">
-                                        <div class="pe-2">
-                                            <input type="radio" class="btn-check" name="storage_setting" id="local-outlined" autocomplete="off" {{  $settings['storage_setting'] == 'local'?'checked':'' }} value="local" checked>
-                                            <label class="btn btn-outline-primary" for="local-outlined">{{ __('Local') }}</label>
-                                        </div>
-                                        <div  class="pe-2">
-                                            <input type="radio" class="btn-check" name="storage_setting" id="s3-outlined" autocomplete="off" {{  $settings['storage_setting']=='s3'?'checked':'' }}  value="s3">
-                                            <label class="btn btn-outline-primary" for="s3-outlined"> {{ __('AWS S3') }}</label>
-                                        </div>
 
-                                        <div  class="pe-2">
-                                            <input type="radio" class="btn-check" name="storage_setting" id="wasabi-outlined" autocomplete="off" {{  $settings['storage_setting']=='wasabi'?'checked':'' }} value="wasabi">
-                                            <label class="btn btn-outline-primary" for="wasabi-outlined">{{ __('Wasabi') }}</label>
+                                <div class="s3-setting row {{  $settings['storage_setting']=='s3'?' ':'d-none' }}">
+
+                                    <div class=" row ">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_key">{{ __('S3 Key') }}</label>
+                                                <input type="text" name="s3_key" class="form-control" value="{{(!isset($settings['s3_key']) || is_null($settings['s3_key'])) ? '' : $settings['s3_key']}}" placeholder="{{ __('S3 Key') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_secret">{{ __('S3 Secret') }}</label>
+                                                <input type="text" name="s3_secret" class="form-control" value="{{(!isset($settings['s3_secret']) || is_null($settings['s3_secret'])) ? '' : $settings['s3_secret']}}" placeholder="{{ __('S3 Secret') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_region">{{ __('S3 Region') }}</label>
+                                                <input type="text" name="s3_region" class="form-control" value="{{(!isset($settings['s3_region']) || is_null($settings['s3_region'])) ? '' : $settings['s3_region']}}" placeholder="{{ __('S3 Region') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_bucket">{{ __('S3 Bucket') }}</label>
+                                                <input type="text" name="s3_bucket" class="form-control" value="{{(!isset($settings['s3_bucket']) || is_null($settings['s3_bucket'])) ? '' : $settings['s3_bucket']}}" placeholder="{{ __('S3 Bucket') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_url">{{ __('S3 URL')}}</label>
+                                                <input type="text" name="s3_url" class="form-control" value="{{(!isset($settings['s3_url']) || is_null($settings['s3_url'])) ? '' : $settings['s3_url']}}" placeholder="{{ __('S3 URL')}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_endpoint">{{ __('S3 Endpoint')}}</label>
+                                                <input type="text" name="s3_endpoint" class="form-control" value="{{(!isset($settings['s3_endpoint']) || is_null($settings['s3_endpoint'])) ? '' : $settings['s3_endpoint']}}" placeholder="{{ __('S3 Bucket') }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-8 switch-width">
+                                            {{Form::label('s3_storage_validation',__('Only Upload Files'),array('class'=>' form-label')) }}
+                                                <select name="s3_storage_validation[]"  class="form-control" name="choices-multiple-remove-button" id="choices-multiple-remove-button1" placeholder="This is a placeholder" multiple>
+                                                    @foreach($file_type as $f)
+                                                        <option @if (in_array($f, $s3_storage_validations)) selected @endif>{{$f}}</option>
+                                                    @endforeach
+                                                </select>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_max_upload_size">{{__('Max upload size (In KB)')}}</label>
+                                                <input type="number" name="s3_max_upload_size" class="form-control" value="{{(!isset($settings['s3_max_upload_size']) || is_null($settings['s3_max_upload_size'])) ? '' : $settings['s3_max_upload_size']}}" placeholder="{{ __('Max upload size') }}">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div  class="mt-2">
-                                    <div class="local-setting row {{  $settings['storage_setting']=='local'?' ':'d-none' }}">
-                                        {{-- <h4 class="small-title">{{ __('Local Settings') }}</h4> --}}
-                                        <div class="col-lg-6 col-md-11 col-sm-12">
-                                            {{Form::label('local_storage_validation',__('Only Upload Files'),array('class'=>' form-label')) }}
-                                            <select name="local_storage_validation[]" class="form-control" name="choices-multiple-remove-button" id="choices-multiple-remove-button" placeholder="This is a placeholder" multiple>
+
+                                </div>
+
+                                <div class="wasabi-setting row {{  $settings['storage_setting']=='wasabi'?' ':'d-none' }}">
+                                    <div class=" row ">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_key">{{ __('Wasabi Key') }}</label>
+                                                <input type="text" name="wasabi_key" class="form-control" value="{{(!isset($settings['wasabi_key']) || is_null($settings['wasabi_key'])) ? '' : $settings['wasabi_key']}}" placeholder="{{ __('Wasabi Key') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_secret">{{ __('Wasabi Secret') }}</label>
+                                                <input type="text" name="wasabi_secret" class="form-control" value="{{(!isset($settings['wasabi_secret']) || is_null($settings['wasabi_secret'])) ? '' : $settings['wasabi_secret']}}" placeholder="{{ __('Wasabi Secret') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="s3_region">{{ __('Wasabi Region') }}</label>
+                                                <input type="text" name="wasabi_region" class="form-control" value="{{(!isset($settings['wasabi_region']) || is_null($settings['wasabi_region'])) ? '' : $settings['wasabi_region']}}" placeholder="{{ __('Wasabi Region') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="wasabi_bucket">{{ __('Wasabi Bucket') }}</label>
+                                                <input type="text" name="wasabi_bucket" class="form-control" value="{{(!isset($settings['wasabi_bucket']) || is_null($settings['wasabi_bucket'])) ? '' : $settings['wasabi_bucket']}}" placeholder="{{ __('Wasabi Bucket') }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="wasabi_url">{{ __('Wasabi URL')}}</label>
+                                                <input type="text" name="wasabi_url" class="form-control" value="{{(!isset($settings['wasabi_url']) || is_null($settings['wasabi_url'])) ? '' : $settings['wasabi_url']}}" placeholder="{{ __('Wasabi URL')}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-label" for="wasabi_root">{{ __('Wasabi Root')}}</label>
+                                                <input type="text" name="wasabi_root" class="form-control" value="{{(!isset($settings['wasabi_root']) || is_null($settings['wasabi_root'])) ? '' : $settings['wasabi_root']}}" placeholder="{{ __('Wasabi Bucket') }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-8 switch-width">
+                                            {{Form::label('wasabi_storage_validation',__('Only Upload Files'),array('class'=>'form-label')) }}
+
+                                            <select name="wasabi_storage_validation[]" class="form-control" name="choices-multiple-remove-button" id="choices-multiple-remove-button2" placeholder="This is a placeholder" multiple>
                                                 @foreach($file_type as $f)
-                                                <option @if (in_array($f, $local_storage_validations)) selected @endif>{{$f}}</option>
-                                            @endforeach
+                                                    <option @if (in_array($f, $wasabi_storage_validations)) selected @endif>{{$f}}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="form-group">
-                                                <label class="form-label" for="local_storage_max_upload_size">{{ __('Max upload size ( In KB)')}}</label>
-                                                <input type="number" name="local_storage_max_upload_size" class="form-control" value="{{(!isset($settings['local_storage_max_upload_size']) || is_null($settings['local_storage_max_upload_size'])) ? '' : $settings['local_storage_max_upload_size']}}" placeholder="{{ __('Max upload size') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="s3-setting row {{  $settings['storage_setting']=='s3'?' ':'d-none' }}">
-
-                                        <div class=" row ">
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_key">{{ __('S3 Key') }}</label>
-                                                    <input type="text" name="s3_key" class="form-control" value="{{(!isset($settings['s3_key']) || is_null($settings['s3_key'])) ? '' : $settings['s3_key']}}" placeholder="{{ __('S3 Key') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_secret">{{ __('S3 Secret') }}</label>
-                                                    <input type="text" name="s3_secret" class="form-control" value="{{(!isset($settings['s3_secret']) || is_null($settings['s3_secret'])) ? '' : $settings['s3_secret']}}" placeholder="{{ __('S3 Secret') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_region">{{ __('S3 Region') }}</label>
-                                                    <input type="text" name="s3_region" class="form-control" value="{{(!isset($settings['s3_region']) || is_null($settings['s3_region'])) ? '' : $settings['s3_region']}}" placeholder="{{ __('S3 Region') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_bucket">{{ __('S3 Bucket') }}</label>
-                                                    <input type="text" name="s3_bucket" class="form-control" value="{{(!isset($settings['s3_bucket']) || is_null($settings['s3_bucket'])) ? '' : $settings['s3_bucket']}}" placeholder="{{ __('S3 Bucket') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_url">{{ __('S3 URL')}}</label>
-                                                    <input type="text" name="s3_url" class="form-control" value="{{(!isset($settings['s3_url']) || is_null($settings['s3_url'])) ? '' : $settings['s3_url']}}" placeholder="{{ __('S3 URL')}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_endpoint">{{ __('S3 Endpoint')}}</label>
-                                                    <input type="text" name="s3_endpoint" class="form-control" value="{{(!isset($settings['s3_endpoint']) || is_null($settings['s3_endpoint'])) ? '' : $settings['s3_endpoint']}}" placeholder="{{ __('S3 Bucket') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-8 switch-width">
-                                                {{Form::label('s3_storage_validation',__('Only Upload Files'),array('class'=>' form-label')) }}
-                                                    <select name="s3_storage_validation[]"  class="form-control" name="choices-multiple-remove-button" id="choices-multiple-remove-button1" placeholder="This is a placeholder" multiple>
-                                                        @foreach($file_type as $f)
-                                                            <option @if (in_array($f, $s3_storage_validations)) selected @endif>{{$f}}</option>
-                                                        @endforeach
-                                                    </select>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_max_upload_size">{{__('Max upload size (In KB)')}}</label>
-                                                    <input type="number" name="s3_max_upload_size" class="form-control" value="{{(!isset($settings['s3_max_upload_size']) || is_null($settings['s3_max_upload_size'])) ? '' : $settings['s3_max_upload_size']}}" placeholder="{{ __('Max upload size') }}">
-                                                </div>
+                                                <label class="form-label" for="wasabi_root">{{ __('Max upload size ( In KB)')}}</label>
+                                                <input type="number" name="wasabi_max_upload_size" class="form-control" value="{{(!isset($settings['wasabi_max_upload_size']) || is_null($settings['wasabi_max_upload_size'])) ? '' : $settings['wasabi_max_upload_size']}}" placeholder="{{ __('Max upload size') }}">
                                             </div>
                                         </div>
 
-                                    </div>
-
-                                    <div class="wasabi-setting row {{  $settings['storage_setting']=='wasabi'?' ':'d-none' }}">
-                                        <div class=" row ">
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_key">{{ __('Wasabi Key') }}</label>
-                                                    <input type="text" name="wasabi_key" class="form-control" value="{{(!isset($settings['wasabi_key']) || is_null($settings['wasabi_key'])) ? '' : $settings['wasabi_key']}}" placeholder="{{ __('Wasabi Key') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_secret">{{ __('Wasabi Secret') }}</label>
-                                                    <input type="text" name="wasabi_secret" class="form-control" value="{{(!isset($settings['wasabi_secret']) || is_null($settings['wasabi_secret'])) ? '' : $settings['wasabi_secret']}}" placeholder="{{ __('Wasabi Secret') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="s3_region">{{ __('Wasabi Region') }}</label>
-                                                    <input type="text" name="wasabi_region" class="form-control" value="{{(!isset($settings['wasabi_region']) || is_null($settings['wasabi_region'])) ? '' : $settings['wasabi_region']}}" placeholder="{{ __('Wasabi Region') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="wasabi_bucket">{{ __('Wasabi Bucket') }}</label>
-                                                    <input type="text" name="wasabi_bucket" class="form-control" value="{{(!isset($settings['wasabi_bucket']) || is_null($settings['wasabi_bucket'])) ? '' : $settings['wasabi_bucket']}}" placeholder="{{ __('Wasabi Bucket') }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="wasabi_url">{{ __('Wasabi URL')}}</label>
-                                                    <input type="text" name="wasabi_url" class="form-control" value="{{(!isset($settings['wasabi_url']) || is_null($settings['wasabi_url'])) ? '' : $settings['wasabi_url']}}" placeholder="{{ __('Wasabi URL')}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="wasabi_root">{{ __('Wasabi Root')}}</label>
-                                                    <input type="text" name="wasabi_root" class="form-control" value="{{(!isset($settings['wasabi_root']) || is_null($settings['wasabi_root'])) ? '' : $settings['wasabi_root']}}" placeholder="{{ __('Wasabi Bucket') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-8 switch-width">
-                                                {{Form::label('wasabi_storage_validation',__('Only Upload Files'),array('class'=>'form-label')) }}
-
-                                                <select name="wasabi_storage_validation[]" class="form-control" name="choices-multiple-remove-button" id="choices-multiple-remove-button2" placeholder="This is a placeholder" multiple>
-                                                    @foreach($file_type as $f)
-                                                        <option @if (in_array($f, $wasabi_storage_validations)) selected @endif>{{$f}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="wasabi_root">{{ __('Max upload size ( In KB)')}}</label>
-                                                    <input type="number" name="wasabi_max_upload_size" class="form-control" value="{{(!isset($settings['wasabi_max_upload_size']) || is_null($settings['wasabi_max_upload_size'])) ? '' : $settings['wasabi_max_upload_size']}}" placeholder="{{ __('Max upload size') }}">
-                                                </div>
-                                            </div>
-
-                                        </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-end">
-                                    <input class="btn btn-print-invoice  btn-primary m-r-10" type="submit" value="{{ __('Save Changes') }}">
-                                </div>
-                            {{Form::close()}}
+                            </div>
+                            <div class="card-footer text-end">
+                                <input class="btn btn-print-invoice  btn-primary m-r-10" type="submit" value="{{ __('Save Changes') }}">
+                            </div>
                         </div>
-                    @endif
-
-                </div>
-
-            </div>
-            <!-- [ sample-page ] end -->
+                    {{Form::close()}}
+                    </div>
+                   
+                </div>  
+            @endif
         </div>
+        <!-- [ sample-page ] end -->
     </div>
 @endsection
 @push('script-page')
@@ -4223,6 +4209,24 @@ if (!empty($setting['color'])) {
                 $('#themefile').val(checked.attr('data-theme'));
                 $('.' + checked.attr('data-theme') + '_img').attr('src', checked.attr('data-imgpath'));
             }, 300);
+
+            if ($('.enable_pwa_store').is(':checked')) {
+
+                $('.pwa_is_enable').show();
+            } else {
+
+                $('.pwa_is_enable').hide();
+            }
+
+            $('#pwa_store').on('change', function() {
+                if ($('.enable_pwa_store').is(':checked')) {
+
+                    $('.pwa_is_enable').show();
+                } else {
+
+                    $('.pwa_is_enable').hide();
+                }
+            });
         });
 
         $(".color1").click(function() {
@@ -4289,4 +4293,5 @@ if (!empty($setting['color'])) {
             });
         });
     </script>
+    
 @endpush

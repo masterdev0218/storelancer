@@ -7,11 +7,11 @@ use App\Models\Plan;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\Utility;
+use App\Models\PixelFields;
 use Artisan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
@@ -80,16 +80,25 @@ class SettingController extends Controller
                         ], '', env('APP_URL')
                     );
                 }
-                return view('settings.index', compact('settings', 'store_settings', 'plan', 'serverIp', 'subdomain_name', 'store_payment_setting'));
+                                 
+                try {
+                    $pwa_data = \File::get(storage_path('uploads/customer_app/store_' . $store_settings->id . '/manifest.json'));
+                    $pwa_data = json_decode($pwa_data);
+
+                } catch (\Throwable$th) {
+                    $pwa_data = '';
+                }
+                $PixelFields = PixelFields::where('store_id' , $user->current_store)->orderBy('id')->get();
+                return view('settings.index', compact('settings', 'store_settings', 'plan', 'serverIp', 'subdomain_name', 'store_payment_setting','pwa_data','PixelFields'));
             } else {
                 return redirect()->back()->with('error', __('Permission denied.'));
             }
         }
     }
-
+  
     public function saveBusinessSettings(Request $request)
     {
-
+        // dd($request->all());
         $user = \Auth::user();
 
         if (\Auth::user()->type == 'super admin') {
@@ -166,7 +175,6 @@ class SettingController extends Controller
                 $logo_dark = $path['url'];
 
                 }else{
-
                     return redirect()->back()->with('error', __($path['msg']));
                 }
 
@@ -211,13 +219,11 @@ class SettingController extends Controller
             }
 
 
-            if (!empty($request->title_text) || !empty($request->color) || !empty($request->cust_theme_bg) || !empty($request->cust_darklayout) || !empty($request->footer_text) || !empty($request->default_language) || !empty($request->display_landing_page) || !empty($request->gdpr_cookie)) {
+            if (!empty($request->title_text) || !empty($request->color) || !empty($request->cust_theme_bg) || !empty($request->cust_darklayout) || !empty($request->footer_text) || !empty($request->default_language) || !empty($request->display_landing_page) || !empty($request->gdpr_cookie) || !empty($request->email_verification)) {
                 $post = $request->all();
-
                 if (!isset($request->display_landing_page)) {
                     $post['display_landing_page'] = 'off';
                 }
-
                 if (!isset($request->gdpr_cookie)) {
                     $post['gdpr_cookie'] = 'off';
                 }
@@ -230,7 +236,9 @@ class SettingController extends Controller
                 if (!isset($request->cust_darklayout)) {
                     $post['cust_darklayout'] = 'off';
                 }
-
+                if (!isset($request->email_verification)) {
+                    $post['email_verification'] = 'off';
+                }
                 $SITE_RTL = $request->has('SITE_RTL') ? $request->SITE_RTL : 'off';
                 $post['SITE_RTL'] = $SITE_RTL;
 
@@ -251,7 +259,6 @@ class SettingController extends Controller
             }
 
         } else if (\Auth::user()->type == 'Owner') {
-
             $post = $request->all();
             if ($request->logo_dark) {
 
@@ -344,7 +351,6 @@ class SettingController extends Controller
 
                 $SITE_RTL = $request->has('SITE_RTL') ? $request->SITE_RTL : 'off';
                 $post['SITE_RTL'] = $SITE_RTL;
-
                 if (!isset($request->cust_theme_bg)) {
                     $post['cust_theme_bg'] = 'off';
                 }
@@ -549,6 +555,7 @@ class SettingController extends Controller
                     ]
                 );
             }
+           
             $request->user = Auth::user()->creatorId();
 
             $arrEnv = [
@@ -565,7 +572,6 @@ class SettingController extends Controller
             Artisan::call('config:cache');
             Artisan::call('config:clear');
             Utility::setEnvironmentValue($arrEnv);
-
             $post = $request->all();
             self::adminPaymentSettings($request);
             unset($post['_token'], $post['stripe_key'], $post['stripe_secret']);
@@ -610,6 +616,7 @@ class SettingController extends Controller
                 return redirect()->back()->with('error', $messages->first());
             }
 
+
             if (isset($request->enable_stripe) && $request->enable_stripe == 'on') {
                 $request->validate(
                     [
@@ -617,20 +624,12 @@ class SettingController extends Controller
                         'stripe_secret' => 'required|string|max:255',
                     ]
                 );
-            } else if (isset($request->enable_paypal) && $request->enable_paypal == 'on') {
+            } elseif (isset($request->enable_paypal) && $request->enable_paypal == 'on') {
                 $request->validate(
                     [
                         'paypal_mode' => 'required|string',
                         'paypal_client_id' => 'required|string',
                         'paypal_secret_key' => 'required|string',
-                    ]
-                );
-            } else if (isset($request->enable_rapyd) && $request->enable_rapyd == 'on') {
-                $request->validate(
-                    [
-                        'rapyd_mode' => 'required|string',
-                        'rapyd_client_id' => 'required|string',
-                        'rapyd_secret_key' => 'required|string',
                     ]
                 );
             }
@@ -646,10 +645,6 @@ class SettingController extends Controller
             $store['PAYPAL_MODE'] = $request->paypal_mode;
             $store['PAYPAL_CLIENT_ID'] = $request->paypal_client_id;
             $store['PAYPAL_SECRET_KEY'] = $request->paypal_secret_key;
-            $store['is_rapyd_enabled'] = $request->is_rapyd_enabled ?? 'off';
-            $store['RAPYD_MODE'] = $request->rapyd_mode;
-            $store['RAPYD_CLIENT_ID'] = $request->rapyd_client_id;
-            $store['RAPYD_SECRET_KEY'] = $request->rapyd_secret_key;
             $store['ENABLE_WHATSAPP'] = $request->enable_whatsapp ?? 'off';
             $store['WHATSAPP_NUMBER'] = str_replace(' ', '', $request->whatsapp_number);
             $store['ENABLE_COD'] = $request->enable_cod ?? 'off';
@@ -900,14 +895,10 @@ class SettingController extends Controller
 
     public function shopePaymentSettings($request)
     {
-        $post = [];
-
         $post['custom_field_title_1'] = $request->custom_field_title_1;
         $post['custom_field_title_2'] = $request->custom_field_title_2;
         $post['custom_field_title_3'] = $request->custom_field_title_3;
         $post['custom_field_title_4'] = $request->custom_field_title_4;
-
-        // dd($request->all());
 
         if (isset($request->is_stripe_enabled) && $request->is_stripe_enabled == 'on') {
             $request->validate(
@@ -921,21 +912,6 @@ class SettingController extends Controller
             $post['stripe_secret'] = $request->stripe_secret;
         } else {
             $post['is_stripe_enabled'] = $request->is_stripe_enabled;
-        }
-
-        if (isset($request->is_rapyd_enabled) && $request->is_rapyd_enabled == 'on') {
-            $request->validate(
-                [
-                    'rapyd_client_id' => 'required|string|max:255',
-                    'rapyd_secret_key' => 'required|string|max:255',
-                ]
-            );
-            $post['is_rapyd_enabled'] = $request->is_rapyd_enabled;
-            $post['paypal_mode'] = $request->rapyd_mode;
-            $post['rapyd_client_id'] = $request->rapyd_client_id;
-            $post['rapyd_secret_key'] = $request->rapyd_secret_key;
-        } else {
-            $post['is_rapyd_enabled'] = $request->is_rapyd_enabled;
         }
 
         if (isset($request->is_paypal_enabled) && $request->is_paypal_enabled == 'on') {
@@ -953,7 +929,6 @@ class SettingController extends Controller
         } else {
             $post['is_paypal_enabled'] = $request->is_paypal_enabled;
         }
-
 
         if (isset($request->is_paystack_enabled) && $request->is_paystack_enabled == 'on') {
             $request->validate(
@@ -1044,7 +1019,6 @@ class SettingController extends Controller
             $post['is_mollie_enabled'] = $request->is_mollie_enabled;
         }
 
-
         if (isset($request->is_skrill_enabled) && $request->is_skrill_enabled == 'on') {
             $request->validate(
                 [
@@ -1071,7 +1045,6 @@ class SettingController extends Controller
         } else {
             $post['is_coingate_enabled'] = $request->is_coingate_enabled;
         }
-
 
         if (isset($request->is_paymentwall_enabled) && $request->is_paymentwall_enabled == 'on') {
 
@@ -1117,8 +1090,24 @@ class SettingController extends Controller
         } else {
             $post['enable_telegram'] = 'off';
         }
-
+        if(isset($request->is_toyyibpay_enabled) && $request->is_toyyibpay_enabled == 'on')
+        {
+            $request->validate(
+                [
+                    'toyyibpay_category_code' => 'required|string',
+                    'toyyibpay_secret_key' => 'required|string',
+                ]
+            );
+            $post['is_toyyibpay_enabled'] = $request->is_toyyibpay_enabled;
+            $post['toyyibpay_category_code'] = $request->toyyibpay_category_code;
+            $post['toyyibpay_secret_key'] = $request->toyyibpay_secret_key;
+        }
+        else
+        {
+            $post['is_toyyibpay_enabled'] = $request->is_toyyibpay_enabled;
+        }
         foreach ($post as $key => $data) {
+
             $arr = [
                 $data,
                 $key,
@@ -1254,18 +1243,6 @@ class SettingController extends Controller
             $post['is_mollie_enabled'] = $request->is_mollie_enabled;
         }
 
-        if (isset($request->is_skrill_enabled) && $request->is_skrill_enabled == 'on') {
-            $request->validate(
-                [
-                    'skrill_email' => 'required|email',
-                ]
-            );
-            $post['is_skrill_enabled'] = $request->is_skrill_enabled;
-            $post['skrill_email'] = $request->skrill_email;
-        } else {
-            $post['is_skrill_enabled'] = $request->is_skrill_enabled;
-        }
-
         if (isset($request->is_coingate_enabled) && $request->is_coingate_enabled == 'on') {
             $request->validate(
                 [
@@ -1280,7 +1257,7 @@ class SettingController extends Controller
         } else {
             $post['is_coingate_enabled'] = $request->is_coingate_enabled;
         }
-
+       
         if (isset($request->is_paymentwall_enabled) && $request->is_paymentwall_enabled == 'on') {
 
             $validator = \Validator::make(
@@ -1302,7 +1279,35 @@ class SettingController extends Controller
         } else {
             $post['is_paymentwall_enabled'] = 'off';
         }
-
+        if(isset($request->is_toyyibpay_enabled) && $request->is_toyyibpay_enabled == 'on')
+        {
+            $request->validate(
+                [
+                    'toyyibpay_category_code' => 'required|string',
+                    'toyyibpay_secret_key' => 'required|string',
+                ]
+            );
+            $post['is_toyyibpay_enabled'] = $request->is_toyyibpay_enabled;
+            $post['toyyibpay_category_code'] = $request->toyyibpay_category_code;
+            $post['toyyibpay_secret_key'] = $request->toyyibpay_secret_key;
+        }
+        else
+        {
+            $post['is_toyyibpay_enabled'] = $request->is_toyyibpay_enabled;
+        }
+        
+        if (isset($request->is_skrill_enabled) && $request->is_skrill_enabled == 'on') {
+            $request->validate(
+                [
+                    'skrill_email' => 'required|email',
+                ]
+            );
+           
+            $post['is_skrill_enabled'] = $request->is_skrill_enabled;
+            $post['skrill_email'] = $request->skrill_email;
+        } else {
+            $post['is_skrill_enabled'] = $request->is_skrill_enabled;
+        }
         foreach ($post as $key => $data) {
             $arr = [
                 $data,
@@ -1440,6 +1445,33 @@ class SettingController extends Controller
         return redirect()->back()->with('success', 'Storage setting successfully updated.');
 
     }
+    public function CreatePixel(){
+        $user = Auth::user();
+        $store_settings = Store::where('id', $user->current_store)->first();
+        return view('settings.edit_pixel',compact('store_settings'));
+    }
+    public function savePixelSettings(Request $request, $slug){
+        if(\Auth::user()->type == 'Owner')
+        {
+            $store = Store::where('slug', $slug)->first();
 
+            $request->validate([
+                'platform'=>'required',
+                'pixel_id'=>'required'
+            ]);
+            $pixel_fields = new PixelFields();
+            $pixel_fields->platform = $request->platform;
+            $pixel_fields->pixel_id = $request->pixel_id;
+            $pixel_fields->store_id = $store->id;
+            $pixel_fields->save();
 
+            return redirect()->back()->with('success', __('Fields Saves Successfully.!'));
+        }
+    }
+    public function pixelDelete($id){
+        $pixelfield= PixelFields::find($id);
+        $pixelfield->delete();
+        return redirect()->back()->with('success', __('Pixel Deleted Successfully!'));
+    }
+  
 }

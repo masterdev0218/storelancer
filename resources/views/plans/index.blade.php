@@ -17,7 +17,7 @@
 @section('action-btn')
 
     @if (Auth::user()->type == 'super admin')
-        @if ((isset($admin_payments_setting['is_stripe_enabled']) && $admin_payments_setting['is_stripe_enabled'] == 'on') ||
+    @if ((isset($admin_payments_setting['is_stripe_enabled']) && $admin_payments_setting['is_stripe_enabled'] == 'on') ||
     (isset($admin_payments_setting['is_paypal_enabled']) && $admin_payments_setting['is_paypal_enabled'] == 'on') ||
     (isset($admin_payments_setting['is_paystack_enabled']) && $admin_payments_setting['is_paystack_enabled'] == 'on') ||
     (isset($admin_payments_setting['is_flutterwave_enabled']) && $admin_payments_setting['is_flutterwave_enabled'] == 'on') ||
@@ -26,193 +26,207 @@
     (isset($admin_payments_setting['is_paytm_enabled']) && $admin_payments_setting['is_paytm_enabled'] == 'on') ||
     (isset($admin_payments_setting['is_mollie_enabled']) && $admin_payments_setting['is_mollie_enabled'] == 'on') ||
     (isset($admin_payments_setting['is_skrill_enabled']) && $admin_payments_setting['is_skrill_enabled'] == 'on') ||
-    (isset($admin_payments_setting['is_coingate_enabled']) && $admin_payments_setting['is_coingate_enabled'] == 'on'))
+    (isset($admin_payments_setting['is_coingate_enabled']) && $admin_payments_setting['is_coingate_enabled'] == 'on') ||
+    (isset($admin_payments_setting['is_paymentwall_enabled']) && $admin_payments_setting['is_paymentwall_enabled'] == 'on')
+    )
 
-            <div class="pr-2">
-                <a href="#"  data-ajax-popup="true" data-size="lg" data-title="{{ __('Add Plan') }}" data-url="{{ route('plans.create') }}"   class="btn btn-sm btn-primary btn-icon m-1"
-                   data-bs-toggle="tooltip" data-bs-placement="top"  title="{{ __('Add Plan') }}"><i
-                        class="ti ti-plus"></i></a>
-            </div>
+            <a class="btn btn-sm btn-icon  btn-primary me-2 text-white" data-url="{{ route('plans.create') }}" data-title="{{ __('Add Plan') }}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Add Plan') }}">
+                <i  data-feather="plus"></i>
+            </a>
         @endif
     @endif
 @endsection
 @section('content')
     <div class="row">
         @foreach ($plans as $plan)
-            <div class="plan_card">
-                <div class="card price-card price-1 wow animate__fadeInUp" data-wow-delay="0.2s" style="
-                                    visibility: visible;
-                                    animation-delay: 0.2s;
-                                    animation-name: fadeInUp;
-                                  ">
-                    <div class="card-body">
-                        <span class="price-badge bg-primary">{{ $plan->name }}</span>
-                        @if (\Auth::user()->type == 'Owner' && \Auth::user()->plan == $plan->id)
-                            <div class="d-flex flex-row-reverse m-0 p-0 plan-active-status">
-                                <span class="d-flex align-items-center ">
-                                    <i class="f-10 lh-1 fas fa-circle text-success"></i>
-                                    <span class="ms-2">{{ __('Active') }}</span>
-                                </span>
-                            </div>
-                        @endif
-
-                        <div class="text-end">
-                            <div class="">
-                                @if( \Auth::user()->type == 'super admin')
-                                    <div class="action-btn bg-primary ms-2">
-                                        <a href="#"  data-url="{{ route('plans.edit',$plan->id) }}"
-                                           class="mx-3 btn btn-sm d-inline-flex align-items-center"
-                                           data-ajax-popup="true" data-title="{{__('Edit Plan')}}"  data-bs-toggle="tooltip"
-                                           data-bs-placement="top" title="{{ __('Edit ') }}"><i
-                                                class="fas fa-edit text-white"></i></a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                        <h3 class="mb-4 f-w-600">
-                            {{ env('CURRENCY_SYMBOL') ? env('CURRENCY_SYMBOL') : '$' }}{{ $plan->price . ' / ' . __(\App\Models\Plan::$arrDuration[$plan->duration]) }}</small>
-                        </h3>
-                        <div class="plan-card-detail">
-                            <p class="mb-0">
-                                {{ __('Trial : ') . $plan->trial_days . __(' Days') }}<br />
-                            </p>
-
-                            <ul class="list-unstyled  my-4">
-                                @if ($plan->enable_custdomain == 'on')
-                                    <li>
-                                        <span class="theme-avtar">
-                                        <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Custom Domain') }}
-                                    </li>
-                                @else
-                                    <li class="text-danger">
-                                            <span class="theme-avtar">
-                                            <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Custom Domain') }}
-                                    </li>
-                                @endif
-                                @if ($plan->enable_custsubdomain == 'on')
-                                    <li>
-                                            <span class="theme-avtar">
-                                            <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Sub Domain') }}
-                                    </li>
-                                @else
-                                    <li class="text-danger">
-                                                <span class="theme-avtar">
-                                            <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Sub Domain') }}
-                                    </li>
-                                @endif
-                                @if ($plan->shipping_method == 'on')
-                                    <li>
-                                            <span class="theme-avtar">
-                                                <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Shipping Method') }}
-                                    </li>
-                                @else
-                                    <li class="text-danger">
-                                            <span class="theme-avtar">
-                                                <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Shipping Method') }}
-                                    </li>
-                                @endif
-
-                                @if ($plan->additional_page == 'on')
-                                    <li>
-                                            <span class="theme-avtar">
-                                                <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Additional Page') }}
-                                    </li>
-                                @else
-                                    <li class="text-danger">
-                                            <span class="theme-avtar">
-                                            <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Additional Page') }}
-                                    </li>
-                                @endif
-                                @if ($plan->blog == 'on')
-                                    <li>
-                                            <span class="theme-avtar">
-                                                <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Blog') }}
-                                    </li>
-                                @else
-                                    <li class="text-danger">
-                                            <span class="theme-avtar">
-                                                <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Blog') }}
-                                    </li>
-
-                                @endif
-                            </ul>
-                            @if ($plan->description)
-                                <p class="mb-0">
-                                    {{ $plan->description }}<br />
-                                </p>
-                            @endif
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6 text-center">
-                                @if ($plan->max_products == '-1')
-                                    <span class="h5 mb-0">{{ __('Unlimited') }}</span>
-                                @else
-                                    <span class="h5 mb-0">{{ $plan->max_products }}</span>
-                                @endif
-                                <span class="d-block text-sm">{{ __('Products') }}</span>
-                            </div>
-                            <div class="col-6 text-center">
-                                    <span class="h5 mb-0">
-                                        @if ($plan->max_stores == '-1')
-                                            <span class="h5 mb-0">{{ __('Unlimited') }}</span>
-                                        @else
-                                            <span class="h5 mb-0">{{ $plan->max_stores }}</span>
-                                        @endif
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                <div class="plan_card">
+                    <div class="card price-card price-1 wow animate__fadeInUp" data-wow-delay="0.2s" style="
+                                        visibility: visible;
+                                        animation-delay: 0.2s;
+                                        animation-name: fadeInUp;
+                                      ">
+                        <div class="card-body">
+                            <span class="price-badge bg-primary">{{ $plan->name }}</span>
+                            @if (\Auth::user()->type == 'Owner' && \Auth::user()->plan == $plan->id)
+                                <div class="d-flex flex-row-reverse m-0 p-0 plan-active-status">
+                                    <span class="d-flex align-items-center ">
+                                        <i class="f-10 lh-1 fas fa-circle text-primary"></i>
+                                        <span class="ms-2">{{ __('Active') }}</span>
                                     </span>
-                                <span class="d-block text-sm">{{ __('Store') }}</span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            @if (\Auth::user()->type != 'super admin')
-                                @if($plan->price <= 0)
-                                    <div class="col-12">
-                                        <p class="server-plan font-bold text-center mx-sm-5 mt-4">
-                                            {{ __('Unlimited') }}
-                                        </p>
-                                    </div>
-                                @elseif (\Auth::user()->plan == $plan->id && date('Y-m-d') < \Auth::user()->plan_expire_date && \Auth::user()->is_trial_done != 1)
-                                    <h5 class="h6 my-4">
-                                        {{ __('Expired : ') }}
-                                        {{ \Auth::user()->plan_expire_date? \App\Models\Utility::dateFormat(\Auth::user()->plan_expire_date): __('Unlimited') }}
-                                    </h5>
-                                @elseif(\Auth::user()->plan == $plan->id && !empty(\Auth::user()->plan_expire_date) && \Auth::user()->plan_expire_date < date('Y-m-d'))
-                                    <div class="col-12">
-                                        <p class="server-plan font-weight-bold text-center mx-sm-5">
-                                            {{ __('Expired') }}
-                                        </p>
-                                    </div>
-                                @else
-                                    <div class="{{ $plan->id == 1 ? 'col-12' : 'col-8' }}">
-                                        <a href="{{ route('stripe', \Illuminate\Support\Facades\Crypt::encrypt($plan->id)) }}"
-                                           class="btn  btn-primary d-flex justify-content-center align-items-center ">{{ __('Subscribe') }}
-                                            <i class="fas fa-arrow-right m-1"></i></a>
-                                        <p></p>
-                                    </div>
-                                @endif
+                                </div>
                             @endif
-                            @if (\Auth::user()->type != 'super admin' && \Auth::user()->plan != $plan->id)
-                                @if ($plan->id != 1)
-                                    @if (\Auth::user()->requested_plan != $plan->id)
-                                        <div class="col-4">
-                                            <a href="{{ route('send.request',[\Illuminate\Support\Facades\Crypt::encrypt($plan->id)]) }}"
-                                               class="btn btn-primary btn-icon"
-                                               data-title="{{ __('Send Request') }}"  data-bs-toggle="tooltip" data-bs-placement="top"
-                                               title="{{ __('Send Request') }}">
-                                                <span class="btn-inner--icon"><i class="fas fa-share"></i></span>
-                                            </a>
-                                        </div>
-                                    @else
-                                        <div class="col-4">
-                                            <a href="{{  route('request.cancel',\Auth::user()->id) }} }}"
-                                               class="btn btn-icon m-1 btn-danger"
-                                               data-title="{{ __('Cancle Request') }}"  data-bs-toggle="tooltip" data-bs-placement="top"
-                                               title="{{ __('Cancel Request') }}">
-                                                <span class="btn-inner--icon"><i class="fas fa-times"></i></span>
+    
+                            <div class="text-end">
+                                <div class="">
+                                    @if( \Auth::user()->type == 'super admin')
+                                        <div class="d-inline-flex align-items-center">
+                                            <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-url="{{ route('plans.edit',$plan->id) }}" data-title="{{__('Edit Plan')}}" data-ajax-popup="true" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Edit') }}">
+                                                <i  class="ti ti-edit f-20"></i>
                                             </a>
                                         </div>
                                     @endif
+                                </div>
+                            </div>
+                            <h3 class="mb-4 f-w-600">
+                                {{ env('CURRENCY_SYMBOL') ? env('CURRENCY_SYMBOL') : '$' }}{{ $plan->price . ' / ' . __(\App\Models\Plan::$arrDuration[$plan->duration]) }}</small>
+                            </h3>
+                            <div class="plan-card-detail text-center">
+                                <p class="mb-0">
+                                    {{ __('Trial : ') . $plan->trial_days . __(' Days') }}<br />
+                                </p>
+    
+                                <ul class="list-unstyled d-inline-block my-4">
+                                    @if ($plan->enable_custdomain == 'on')
+                                        <li class="d-flex align-items-center">
+                                            <span class="theme-avtar">
+                                            <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Custom Domain') }}
+                                        </li>
+                                    @else
+                                        <li class="text-danger d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Custom Domain') }}
+                                        </li>
+                                    @endif
+                                    @if ($plan->enable_custsubdomain == 'on')
+                                        <li class="d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Sub Domain') }}
+                                        </li>
+                                    @else
+                                        <li class="text-danger d-flex align-items-center">
+                                                    <span class="theme-avtar">
+                                                <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Sub Domain') }}
+                                        </li>
+                                    @endif
+                                    @if ($plan->shipping_method == 'on')
+                                        <li class="d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                    <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Shipping Method') }}
+                                        </li>
+                                    @else
+                                        <li class="text-danger d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                    <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Shipping Method') }}
+                                        </li>
+                                    @endif
+    
+                                    @if ($plan->additional_page == 'on')
+                                        <li class="d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                    <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Additional Page') }}
+                                        </li>
+                                    @else
+                                        <li class="text-danger d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Additional Page') }}
+                                        </li>
+                                    @endif
+                                    @if ($plan->blog == 'on')
+                                        <li class="d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                    <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Blog') }}
+                                        </li>
+                                    @else
+                                        <li class="text-danger d-flex align-items-center">
+                                                <span class="theme-avtar">
+                                                    <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Blog') }}
+                                        </li>
+    
+                                    @endif
+                                     <li class="d-flex align-items-center">
+                                        @if ($plan->pwa_store == 'on')
+                                        <span class="theme-avtar">
+                                            <i class="text-primary ti ti-circle-plus"></i
+                                        ></span>
+                                            {{ __('Progressive Web App (PWA)') }}
+                                        @else
+                                            <span class="theme-avtar">
+                                            <i class="text-danger ti ti-circle-plus"></i
+                                            ></span>
+                                        {{ __('Progressive Web App (PWA)') }}
+    
+                                        @endif
+                                    </li>
+                                </ul>
+                                @if ($plan->description)
+                                    <p>
+                                        {{ $plan->description }}<br />
+                                    </p>
                                 @endif
-                            @endif
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6 text-center">
+                                    @if ($plan->max_products == '-1')
+                                        <span class="h5 mb-0">{{ __('Unlimited') }}</span>
+                                    @else
+                                        <span class="h5 mb-0">{{ $plan->max_products }}</span>
+                                    @endif
+                                    <span class="d-block text-sm">{{ __('Products') }}</span>
+                                </div>
+                                <div class="col-6 text-center">
+                                        <span class="h5 mb-0">
+                                            @if ($plan->max_stores == '-1')
+                                                <span class="h5 mb-0">{{ __('Unlimited') }}</span>
+                                            @else
+                                                <span class="h5 mb-0">{{ $plan->max_stores }}</span>
+                                            @endif
+                                        </span>
+                                    <span class="d-block text-sm">{{ __('Store') }}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                @if (\Auth::user()->type != 'super admin')
+                                    @if($plan->price <= 0)
+                                        <div class="col-12">
+                                            <p class="server-plan font-bold text-center mx-sm-5 mt-4">
+                                                {{ __('Unlimited') }}
+                                            </p>
+                                        </div>
+                                    @elseif (\Auth::user()->plan == $plan->id && date('Y-m-d') < \Auth::user()->plan_expire_date && \Auth::user()->is_trial_done != 1)
+                                        <h5 class="h6 my-4">
+                                            {{ __('Expired : ') }}
+                                            {{ \Auth::user()->plan_expire_date? \App\Models\Utility::dateFormat(\Auth::user()->plan_expire_date): __('Unlimited') }}
+                                        </h5>
+                                    @elseif(\Auth::user()->plan == $plan->id && !empty(\Auth::user()->plan_expire_date) && \Auth::user()->plan_expire_date < date('Y-m-d'))
+                                        <div class="col-12">
+                                            <p class="server-plan font-weight-bold text-center mx-sm-5">
+                                                {{ __('Expired') }}
+                                            </p>
+                                        </div>
+                                    @else
+                                        <div class="{{ $plan->id == 1 ? 'col-12' : 'col-8' }}">
+                                            <a href="{{ route('stripe', \Illuminate\Support\Facades\Crypt::encrypt($plan->id)) }}"
+                                               class="btn  btn-primary d-flex justify-content-center align-items-center ">{{ __('Subscribe') }}
+                                                <i class="fas fa-arrow-right m-1"></i></a>
+                                            <p></p>
+                                        </div>
+                                    @endif
+                                @endif
+                                @if (\Auth::user()->type != 'super admin' && \Auth::user()->plan != $plan->id)
+                                    @if ($plan->id != 1)
+                                        @if (\Auth::user()->requested_plan != $plan->id)
+                                            <div class="col-4">
+                                                <a href="{{ route('send.request',[\Illuminate\Support\Facades\Crypt::encrypt($plan->id)]) }}"
+                                                   class="btn btn-primary btn-icon"
+                                                   data-title="{{ __('Send Request') }}"  data-bs-toggle="tooltip" data-bs-placement="top"
+                                                   title="{{ __('Send Request') }}">
+                                                    <span class="btn-inner--icon"><i class="fas fa-share"></i></span>
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div class="col-4">
+                                                <a href="{{  route('request.cancel',\Auth::user()->id) }} }}"
+                                                   class="btn btn-icon m-1 btn-danger"
+                                                   data-title="{{ __('Cancle Request') }}"  data-bs-toggle="tooltip" data-bs-placement="top"
+                                                   title="{{ __('Cancel Request') }}">
+                                                    <span class="btn-inner--icon"><i class="fas fa-times"></i></span>
+                                                </a>
+                                            </div>
+                                        @endif
+                                    @endif
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -250,7 +264,7 @@
                                     <td>{{ $order->payment_type }}</td>
                                     <td>
                                         @if ($order->payment_status == 'succeeded')
-                                            <i class="mdi mdi-circle text-success"></i>
+                                            <i class="mdi mdi-circle text-primary"></i>
                                             {{ ucfirst($order->payment_status) }}
                                         @else
                                             <i class="mdi mdi-circle text-danger"></i>

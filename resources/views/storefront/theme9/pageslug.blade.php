@@ -16,22 +16,17 @@
     $languages=\App\Models\Utility::languages();
 @endphp
 @section('content')
-
-<div class="wrapper mt-7 mb-8">
-    <section class="blog-section padding-top padding-bottom">
-       <div class="container">
-          <div class="row">
-             <div class="col-lg-8 col-12 mx-auto">
-                <div class="blog-car-view">
-                   <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="h4 d-inline-block font-weight-bold mb-0 pt-4"> {{ ucfirst($pageoption->name) }}</h5>
-                   </div>
-                   {!! $pageoption->contents !!}
-                </div>
-             </div>
-       </div>
+<div class="wrapper">
+    <section class="contact-us-section padding-top padding-bottom">
+        <div class="container">
+            <div class="contact-content">
+                <h4> {{ ucfirst($pageoption->name) }}</h4>
+                <p>{!! $pageoption->contents !!}
+                </p>
+            </div>
+        </div>
     </section>
- </div>
+</div>
 @endsection
 
 

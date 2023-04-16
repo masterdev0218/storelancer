@@ -29,4 +29,13 @@ class PlanOrder extends Model
     {
         return PlanOrder::sum('price');
     }
+    public static function total_orders()
+    {
+        return PlanOrder::count();
+    }
+    public function total_coupon_used()
+    {
+	
+        return $this->hasOne('App\Models\UserCoupon', 'order', 'order_id');
+    }
 }

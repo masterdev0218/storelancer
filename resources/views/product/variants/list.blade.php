@@ -13,18 +13,19 @@
         </tr>
         </thead>
         <tbody>
+           
             @foreach($possibilities as $counter => $possibility)
             <tr>
                 @foreach(explode(' : ', $possibility) as $key => $values)
                     <td>
-                        <input type="text" autocomplete="off" spellcheck="false" class="form-control" value="{{ $values }}" name="verians[{{$counter}}][name]" readonly>
+                        <input type="text" autocomplete="off" spellcheck="false" class="form-control wid-100" value="{{ $values }}" name="verians[{{$counter}}][name]" readonly>
                     </td>
                 @endforeach
                 <td>
-                    <input type="number" id="vprice_{{ $counter }}" autocomplete="off" spellcheck="false" placeholder="{{ __('Enter Price') }}" class="form-control" name="verians[{{$counter}}][price]">
+                    <input type="number" id="vprice_{{ $counter }}" autocomplete="off" spellcheck="false" placeholder="{{ __('Enter Price') }}" class="form-control wid-100" name="verians[{{$counter}}][price]">
                 </td>
                 <td>
-                    <input type="number" id="vquantity_{{ $counter }}" autocomplete="off" spellcheck="false" placeholder="{{ __('Enter Quantity') }}" class="form-control" name="verians[{{$counter}}][qty]">
+                    <input type="number" id="vquantity_{{ $counter }}" autocomplete="off" spellcheck="false" placeholder="{{ __('Enter Quantity') }}" class="form-control wid-100" name="verians[{{$counter}}][qty]">
                 </td>
             </tr>
         @endforeach

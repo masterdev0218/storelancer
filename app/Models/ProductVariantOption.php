@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductVariantOption extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'location_id',
         'product_id',
@@ -49,6 +51,26 @@ class ProductVariantOption extends Model
         }
         return $retuen_name;
     }
+
+    public function GetVariant($productId)
+    {
+        $retuen_name = [];
+        if(!empty($name)) {
+            $ProductVariantOption = ProductVariantOption::where('product_id', $productId)->where('created_by', auth()->user()->id)->first();
+            if(!empty($ProductVariantOption)) {
+                foreach(explode(' : ', $name) as $key => $values) {
+                    $retuen_name['has_name'][$key] = 'verians['.$ProductVariantOption->id.'][variants]['.$key.'][]';
+                }
+                $retuen_name['price_val'] = $ProductVariantOption->price;
+                $retuen_name['qty_val'] = $ProductVariantOption->quantity;
+                $retuen_name['price'] = 'verians['.$ProductVariantOption->id.'][price]';
+                $retuen_name['qty'] = 'verians['.$ProductVariantOption->id.'][quantity]';
+                $retuen_name['has_variant'] = 1;
+            }
+        }
+        return $retuen_name;
+    }
+
 
     public function getproductbyvariantId($id){
 

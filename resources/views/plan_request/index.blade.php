@@ -50,7 +50,7 @@
                                         <td>{{ \App\Models\Utility::getDateFormated($prequest->created_at,true) }}</td>
                                         <td>
                                             <div>
-                                                <a href="{{route('response.request',[$prequest->id,1])}}" class="btn btn-success btn-sm">
+                                                <a href="{{route('response.request',[$prequest->id,1])}}" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-check"></i>
                                                 </a>
                                                 <a href="{{route('response.request',[$prequest->id,0])}}" class="btn btn-danger btn-sm">

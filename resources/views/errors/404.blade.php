@@ -1,7 +1,7 @@
 @extends('errors::minimal')
 @section('title', __('Server Error'))
-
 @section('content')
+{{ $exception->getMessage() }}
     <div class="min-vh-100 h-100vh py-5 d-flex align-items-center bg-gradient-primary">
         <div class="bg-absolute-cover vh-100 overflow-hidden d-none d-md-block">
             <figure class="w-100">
@@ -15,17 +15,17 @@
                     <p class="lead text-lg mb-5">
                         {{__("Sorry, the page you are looking for could not be found.")}}
                     </p>
-                    @if(\Auth::check())
+                    {{--  @if(\Auth::check())
                         <a href="{{ route('dashboard') }}" class="btn btn-white btn-icon rounded-pill hover-translate-y-n3">
                             <span class="btn-inner--icon"><i class="fas fa-home"></i></span>
                             <span class="btn-inner--text">{{__('Return home')}}</span>
                         </a>
-                    @else
-                        <a href="{{ route('store.slug','my-store') }}" class="btn btn-white btn-icon rounded-pill hover-translate-y-n3">
+                    @else  --}}
+                        <a class="btn btn-white btn-icon rounded-pill hover-translate-y-n3" onclick="Previous()">
                             <span class="btn-inner--icon"><i class="fas fa-home"></i></span>
                             <span class="btn-inner--text">{{__('Return home')}}</span>
                         </a>
-                    @endif
+                    {{--  @endif  --}}
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
                     <figure class="w-100">
@@ -35,4 +35,9 @@
             </div>
         </div>
     </div>
+    <script>
+        function Previous() {
+            window.history.back()
+        }
+    </script>
 @endsection

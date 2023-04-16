@@ -1,145 +1,146 @@
 @extends('storefront.layout.theme4')
 @section('page-title')
-    {{__('Home')}}
+    {{ __('Home') }}
 @endsection
 @php
-    $imgpath=\App\Models\Utility::get_file('uploads/is_cover_image/');
-
+    $imgpath = \App\Models\Utility::get_file('uploads/is_cover_image/');
+    
 @endphp
 @section('content')
-    <!-- Products -->
-    <div class="top-product pt-8 m-0">
-        @if($products['Start shopping']->count() > 0)
-            <div class="container">
-                <div class="row">
-                    <div class="pr-title mb-4">
-                        <h3 class=" mt-4 store-title text-primary">{{__('Products')}}</h3>
-                        <div class="p-tablist">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                @foreach($categories as $key=>$category)
-                                    <li class="nav-item">
-                                        <a href="#{!!preg_replace('/[^A-Za-z0-9\-]/','_',$category)!!}" data-id="{{$key}}" class="nav-link {{($category==$categorie_name)?'active':''}} productTab" id="electronic-tab" data-toggle="tab" role="tab" aria-controls="home" aria-selected="false">
-                                            {{$category}}
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+    <div class="wrapper">
+        @if ($products['Start shopping']->count() > 0)
+            <section class="product-section padding-top padding-bottom tabs-wrapper">
+                <div class="container">
+                    <div class="section-title-bg section-title d-flex align-items-center justify-content-between">
+                        <h2>{{__('Products')}}</h2>
+                        <ul class="d-flex tabs">
+                            @foreach($categories as $key=>$category)
+                                <li class="tab-link {{($category==$categorie_name)?'active':''}}" data-tab="tab-{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $category)!!}">
+                                    <a href="#{!!preg_replace('/[^A-Za-z0-9\-]/','_',$category)!!}" id="electronic-tab" data-id="{{$key}}">{{$category}}</a>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <div class="tab-content bestsellers-tabs" id="myTabContent">
-                        @foreach($products as $key=>$items)
-                            <div class="tab-pane fade {{($key==$categorie_name)?'active show':''}}" id="{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $key)!!}" role="tabpanel" aria-labelledby="shopping-tab">
-                                <div class="col-lg-12">
-                                    <div class="row">
-                                        @if($items->count() > 0)
-                                            @foreach($items as $product)
-                                                <div class="col-xl-3 col-lg-4 col-sm-6 product-box">
-                                                    <div class="card card-fluid card-product">
-                                                        <div class="card-image bg-white">
-                                                            <a href="{{route('store.product.product_view',[$store->slug,$product->id])}}">
-                                                                @if(!empty($product->is_cover))
-                                                                    <img alt="Image placeholder" src="{{$imgpath.$product->is_cover}}" class="img-center img-fluid">
-                                                                @else
-                                                                    <img alt="Image placeholder" src="{{asset(Storage::url('uploads/is_cover_image/default.jpg'))}}" class="img-center img-fluid">
-                                                                @endif
-                                                            </a>
-                                                        </div>
-                                                        <div class="card-body pt-0">
-                                                            <h6>
-                                                                <a class="t-black13" href="{{route('store.product.product_view',[$store->slug,$product->id])}}">
-                                                                    {{$product->name}}
-                                                                </a>
-                                                            </h6>
-                                                            <p class="text-sm">
-                                                                <span class="td-gray">{{__('Category')}}:</span> {{$product->product_category()}}
-                                                            </p>
-                                                            <span class="static-rating static-rating-sm">
-                                                                @if($store->enable_rating == 'on')
-                                                                    @for($i =1;$i<=5;$i++)
-                                                                        @php
-                                                                            $icon = 'fa-star';
-                                                                            $color = '';
-                                                                            $newVal1 = ($i-0.5);
-                                                                            if($product->product_rating() < $i && $product->product_rating() >= $newVal1)
-                                                                            {
-                                                                                $icon = 'fa-star-half-alt';
-                                                                            }
-                                                                            if($product->product_rating() >= $newVal1)
-                                                                            {
-                                                                                $color = 'text-warning';
-                                                                            }
-                                                                        @endphp
-                                                                        <i class="star fas {{$icon .' '. $color}}"></i>
-                                                                    @endfor
-                                                                @endif
-                                                            </span>
-                                                            <div class="product-price mt-3">
-                                                            <span class="card-price t-black15">
-                                                                @if($product->enable_product_variant == 'on')
-                                                                    {{__('In variant')}}
-                                                                @else
-                                                                    {{\App\Models\Utility::priceFormat($product->price)}}
-                                                                @endif
-                                                            </span>
-                                                            </div>
-                                                            <div class="product-price mt-3">
-                                                                @if($product->enable_product_variant == 'on')
-                                                                    <a href="{{route('store.product.product_view',[$store->slug,$product->id])}}" class="action-item pcart-icon bg-primary">
-                                                                        {{__('Add To Cart')}}
-                                                                        <i class="fas fa-shopping-basket ml-2"></i>
-                                                                    </a>
-                                                                @else
-                                                                    <a class="action-item pcart-icon bg-primary add_to_cart"  data-id="{{$product->id}}">
-                                                                        {{__('Add To Cart')}}
-                                                                        <i class="fas fa-shopping-basket ml-2"></i>
-                                                                    </a>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                        <div class="actions card-product-actions">
-                                                            @if(!empty($wishlist) && isset($wishlist[$product->id]['product_id']))
-                                                                @if($wishlist[$product->id]['product_id'] != $product->id)
-                                                                    <button type="button" class="action-item wishlist-icon bg-light-gray add_to_wishlist wishlist_{{$product->id}}" data-id="{{$product->id}}">
+                    <div class="tabs-container">
+                        @foreach ($products as $key => $items)
+                            <div class="tab-content {{ $key == $categorie_name ? 'active' : '' }}" id="tab-{!! preg_replace('/[^A-Za-z0-9\-]/', '_', $key)!!}">
+                                <div class="row product-row">
+                                    @if ($items->count() > 0)
+                                        @foreach ($items as $product)
+                                            <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                                                <div class="product-card">
+                                                    <div class="card-img">
+                                                        <a
+                                                            href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}">
+                                                            @if (!empty($product->is_cover))
+                                                                <img src="{{ $imgpath . $product->is_cover }}">
+                                                            @else
+                                                                <img
+                                                                    src="{{ asset(Storage::url('uploads/is_cover_image/default.jpg')) }}">
+                                                            @endif
+                                                        </a>
+                                                        {{--  <div class="heart-icon">  --}}
+                                                        @if (Auth::guard('customers')->check())
+                                                            @if (!empty($wishlist) && isset($wishlist[$product->id]['product_id']))
+                                                                @if ($wishlist[$product->id]['product_id'] != $product->id)
+                                                                    <a class="heart-icon action-item wishlist-icon bg-light-gray add_to_wishlist wishlist_{{ $product->id }}"
+                                                                        data-id="{{ $product->id }}">
                                                                         <i class="far fa-heart"></i>
-                                                                    </button>
+                                                                    </a>
                                                                 @else
-                                                                    <button type="button" class="action-item wishlist-icon bg-light-gray" data-id="{{$product->id}}" disabled>
+                                                                    <a class="heart-icon action-item wishlist-icon bg-light-gray add_to_wishlist wishlist_{{ $product->id }}"
+                                                                        data-id="{{ $product->id }}" disabled>
                                                                         <i class="fas fa-heart"></i>
-                                                                    </button>
+                                                                    </a>
                                                                 @endif
                                                             @else
-                                                                <button type="button" class="action-item wishlist-icon bg-light-gray add_to_wishlist wishlist_{{$product->id}}" data-id="{{$product->id}}">
+                                                                <a class="heart-icon action-item wishlist-icon bg-light-gray add_to_wishlist wishlist_{{ $product->id }}"
+                                                                    data-id="{{ $product->id }}">
                                                                     <i class="far fa-heart"></i>
-                                                                </button>
+                                                                </a>
+                                                            @endif
+                                                        @else
+                                                            <a class="heart-icon action-item wishlist-icon bg-light-gray add_to_wishlist wishlist_{{ $product->id }}"
+                                                                data-id="{{ $product->id }}">
+                                                                <i class="far fa-heart"></i>
+                                                            </a>
+                                                        @endif
+                                                        {{--  </div>  --}}
+                                                    </div>
+                                                    <div class="card-content">
+                                                        <h6>
+                                                            <a
+                                                                href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}">
+                                                                {{ $product->name }}</a>
+                                                        </h6>
+                                                        <p>{{ __('Category') }}: {{ $product->product_category() }}
+                                                        </p>
+                                                        <div class="rating">
+                                                            @if ($store->enable_rating == 'on')
+                                                                @for ($i = 1; $i <= 5; $i++)
+                                                                    @php
+                                                                        $icon = 'fa-star';
+                                                                        $color = '';
+                                                                        $newVal1 = $i - 0.5;
+                                                                        if ($product->product_rating() < $i && $product->product_rating() >= $newVal1) {
+                                                                            $icon = 'fa-star-half-alt';
+                                                                        }
+                                                                        if ($product->product_rating() >= $newVal1) {
+                                                                            $color = 'text-warning';
+                                                                        }
+                                                                    @endphp
+                                                                    <i class="star fas {{ $icon . ' ' . $color }}"></i>
+                                                                @endfor
+                                                            @endif
+                                                        </div>
+                                                        <div class="last-btn">
+                                                            <div class="price">
+                                                                <ins>
+                                                                    @if ($product->enable_product_variant == 'on')
+                                                                        {{ __('In variant') }}
+                                                                    @else
+                                                                        {{ \App\Models\Utility::priceFormat($product->price) }}
+                                                                    @endif
+                                                                </ins>
+                                                            </div>
+                                                            @if ($product->enable_product_variant == 'on')
+                                                                <a href="{{ route('store.product.product_view', [$store->slug, $product->id]) }}"
+                                                                    class="cart-btn">{{ __('Add To Cart') }} <i
+                                                                        class="fas fa-shopping-basket"></i></a>
+                                                            @else
+                                                                <a data-id="{{ $product->id }}"
+                                                                    class="cart-btn add_to_cart">{{ __('Add To Cart') }} <i
+                                                                        class="fas fa-shopping-basket"></i></a>
                                                             @endif
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endforeach
-                                        @else
-                                            <div class="col-12 product-box">
-                                                <div class="card card-product">
-                                                    <h6 class="m-0 text-center no_record"><i class="fas fa-ban"></i> {{__('No Record Found')}}</h6>
-                                                </div>
                                             </div>
-                                        @endif
-                                    </div>
+                                        @endforeach
+                                    @else
+                                        <div class="col-12 product-box">
+                                            <div class="card card-product">
+                                                <h6 class="m-0 text-center no_record"><i class="fas fa-ban"></i>
+                                                    {{ __('No Record Found') }}</h6>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 </div>
-            </div>
+            </section>
         @endif
     </div>
 @endsection
 @push('script-page')
     <script>
-        $(".add_to_cart").click(function (e) {
+        $(".add_to_cart").click(function(e) {
             e.preventDefault();
             var id = $(this).attr('data-id');
             var variants = [];
-            $(".variant-selection").each(function (index, element) {
+            $(".variant-selection").each(function(index, element) {
                 variants.push(element.value);
             });
 
@@ -150,13 +151,14 @@
             var variation_ids = $('#variant_id').val();
 
             $.ajax({
-                url: '{{route('user.addToCart', ['__product_id',$store->slug,'variation_id'])}}'.replace('__product_id', id).replace('variation_id', variation_ids ?? 0),
+                url: '{{ route('user.addToCart', ['__product_id', $store->slug, 'variation_id']) }}'.replace(
+                    '__product_id', id).replace('variation_id', variation_ids ?? 0),
                 type: "POST",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     variants: variants.join(' : '),
                 },
-                success: function (response) {
+                success: function(response) {
                     if (response.status == "Success") {
                         show_toastr('Success', response.success, 'success');
                         $("#shoping_counts").html(response.item_count);
@@ -164,22 +166,23 @@
                         show_toastr('Error', response.error, 'error');
                     }
                 },
-                error: function (result) {
+                error: function(result) {
                     console.log('error');
                 }
             });
         });
 
-        $(document).on('click', '.add_to_wishlist', function (e) {
+        $(document).on('click', '.add_to_wishlist', function(e) {
             e.preventDefault();
             var id = $(this).attr('data-id');
             $.ajax({
                 type: "POST",
-                url: '{{route('store.addtowishlist', [$store->slug,'__product_id'])}}'.replace('__product_id', id),
+                url: '{{ route('store.addtowishlist', [$store->slug, '__product_id']) }}'.replace(
+                    '__product_id', id),
                 data: {
                     "_token": "{{ csrf_token() }}",
                 },
-                success: function (response) {
+                success: function(response) {
                     if (response.status == "Success") {
                         show_toastr('Success', response.message, 'success');
                         $('.wishlist_' + response.id).removeClass('add_to_wishlist');
@@ -189,8 +192,7 @@
                         show_toastr('Error', response.message, 'error');
                     }
                 },
-                error: function (result) {
-                }
+                error: function(result) {}
             });
         });
     </script>

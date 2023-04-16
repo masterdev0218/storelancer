@@ -2,17 +2,18 @@
 @section('page-title')
     {{ __('Product') }}
 @endsection
-@section('title')
-    <div class="d-inline-block">
-        <h5 class="h4 d-inline-block text-white font-weight-bold mb-0 ">{{ __('Product') }}</h5>
-    </div>
-@endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('product.index') }}">{{ __('Product') }}</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ __('Edit') }}</li>
+<li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Home') }}</a></li>
+<li class="breadcrumb-item"><a href="{{ route('product.index') }}">{{ __('Product') }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ __('Edit') }}</li>
 @endsection
 @section('action-btn')
+    <div class="pr-2">
+        <a href="{{ route('product.index') }}" class="btn btn-light-secondary me-3"> <i data-feather="x-circle"
+                class="me-2"></i>{{ __('Cancel') }}</a>
+        <a type="submit" id="submit-all" class="btn btn-primary"> <i data-feather="check-circle"
+                class="me-2"></i>{{ __('Save') }}</a>
+    </div>
 @endsection
 @section('filter')
 @endsection
@@ -22,9 +23,19 @@
 @php
     $is_cover_image = \App\Models\Utility::get_file('uploads/is_cover_image/');
     $productimage = \App\Models\Utility::get_file('uploads/product_image/');
-
+    
 @endphp
 @push('script-page')
+    <script src="{{ asset('assets/js/plugins/tinymce/tinymce.min.js') }}"></script>
+    <script>
+        if ($(".pc-tinymce-2").length) {
+            tinymce.init({
+                selector: '.pc-tinymce-2',
+                height: "400",
+                content_style: 'body { font-family: "Inter", sans-serif; }'
+            });
+        }
+    </script>
     <script src="{{ asset('custom/libs/summernote/summernote-bs4.js') }}"></script>
     <script>
         var Dropzones = function() {
@@ -92,7 +103,7 @@
 
             if (isValid) {
                 var hiddenVariantOptions = $('#hiddenVariantOptions').val();
-                console.log();
+                
                 $.ajax({
                     url: form.attr('action'),
                     datType: 'json',
@@ -103,9 +114,15 @@
 
                     },
                     success: function(data) {
-                        $('#hiddenVariantOptions').val(data.hiddenVariantOptions);
+                        if(data.hiddenVariantOptions == null){
+                            $('#hiddenVariantOptions').val(hiddenVariantOptions)
+                        }else{
+
+                            $('#hiddenVariantOptions').val(data.hiddenVariantOptions);
+                        }
                         $('.variant-table').html(data.varitantHTML);
                         $("#commonModal").modal('hide');
+                        
                     }
                 })
             }
@@ -133,6 +150,9 @@
                 fd.append('multiple_files[' + key + ']', $('[data-toggle="dropzone1"]')[0].dropzone
                     .getAcceptedFiles()[key]); // attach dropzone image element
             });
+            $('#description').val(tinyMCE.get("description").getContent())
+            $('#specification').val(tinyMCE.get("specification").getContent())
+            $('#detail').val(tinyMCE.get("detail").getContent())
             var other_data = $('#frmTarget').serializeArray();
 
             $.each(other_data, function(key, input) {
@@ -195,179 +215,164 @@
 @endpush
 @section('content')
     <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    {{ Form::model($product, ['method' => 'POST', 'id' => 'frmTarget', 'enctype' => 'multipart/form-data']) }}
+        <!-- [ sample-page ] start -->
+        {{ Form::model($product, ['method' => 'POST', 'id' => 'frmTarget', 'enctype' => 'multipart/form-data']) }}
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-lg-6">
                     <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('name', __('Name'), ['class' => 'col-form-label']) }}
-                                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter Name')]) !!}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('product_categorie', __('Product Categories'), ['class' => 'col-form-label']) }}
-                                {!! Form::select('product_categorie[]', $product_categorie, explode(',', $product->product_categorie), [
-                                    'class' => 'form-control multi-select',
-                                    'id' => 'choices-multiple',
-                                    'multiple',
-                                ]) !!}
-                                @if (count($product_categorie) == 0)
-                                    {{ __('Add product category') }}
-                                    <a href="{{ route('product_categorie.index') }}">
-                                        {{ __('Click here') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('SKU', __('SKU'), ['class' => 'col-form-label']) }}
-                                {!! Form::text('SKU', null, ['class' => 'form-control', 'placeholder' => __('Enter SKU')]) !!}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('product_tax', __('Product Tax'), ['class' => 'col-form-label']) }}
-                                {{ Form::select('product_tax[]', $product_tax, explode(',', $product->product_tax), ['class' => 'form-control multi-select', 'id' => 'choices-multiple1', 'multiple']) }}
-                                @if (count($product_tax) == 0)
-                                    {{ __('Add product tax') }}
-                                    <a href="{{ route('product_tax.index') }}">
-                                        {{ __('Click here') }}
-                                    </a>
-                                @endif
-                                @error('product_tax')
-                                    <span class="invalid-product_tax" role="alert">
-                                        <strong class="text-danger">{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-6 proprice">
-                            <div class="form-group">
-                                {{ Form::label('price', __('Price'), ['class' => 'col-form-label']) }}
-                                {{ Form::number('price', null, ['step' => 'any', 'class' => 'form-control']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('last_price', __('Last Price'), ['class' => 'col-form-label']) }}
-                                {{ Form::number('last_price', null, ['step' => 'any', 'class' => 'form-control']) }}
-                            </div>
-                        </div>
-                        <div class="col-6 proprice">
-                            <div class="form-group">
-                                {{ Form::label('quantity', __('Stock Quantity'), ['class' => 'col-form-label']) }}
-                                {!! Form::text('quantity', null, ['class' => 'form-control', 'placeholder' => __('Enter Stock Quantity')]) !!}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="attachment" class="col-form-label">{{ __('Attachment') }}</label>
-                                {{-- <input type="file" name="attachment" id="attachment" class="form-control"> --}}
-                                <input type="file" name="attachment" id="attachment" class="form-control"
-                                    onchange="document.getElementById('attach').src = window.URL.createObjectURL(this.files[0])"
-                                    multiple>
-                                <img id="attach" src="" width="25%" />
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="downloadable_prodcut"
-                                    class="col-form-label font-bold-700">{{ __('Downloadable Product') }}</label>
-                                {{-- <input type="file" name="downloadable_prodcut" id="downloadable_prodcut"
-                                    class="form-control"> --}}
-                                <input type="file" name="downloadable_prodcut" id="downloadable_prodcut"
-                                    class="form-control"
-                                    onchange="document.getElementById('downProduct').src = window.URL.createObjectURL(this.files[0])"
-                                    multiple>
-                                <img id="downProduct" src="" width="25%" />
-                                <small>{{ $product->downloadable_prodcut }}</small>
-                            </div>
-
-                        </div>
-                        <div class="col-12">
-                            <h6>{{ __('Custom Field') }} </h6>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_field_1', __('Custom Field'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_field_1', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_value_1', __('Custom Value'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_value_1', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_field_2', __('Custom Field'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_field_2', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_value_2', __('Custom Value'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_value_2', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_field_3', __('Custom Field'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_field_3', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_value_3', __('Custom Value'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_value_3', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_field_4', __('Custom Field'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_field_4', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                {{ Form::label('custom_value_4', __('Custom Value'), ['class' => 'col-form-label']) }}
-                                {{ Form::text('custom_value_4', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <div class="custom-control form-switch">
-                                <input type="checkbox" name="product_display" class="form-check-input" id="product_display"
-                                    {{ $product->product_display == 'on' ? 'checked' : '' }}>
-                                {{ Form::label('product_display', __('Product Display'), ['class' => 'form-check-label']) }}
-                            </div>
-                            @error('product_display')
-                                <span class="invalid-product_display" role="alert">
-                                    <strong class="text-danger">{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        @if (isset($product_variant_names))
-
-                            <div class="form-group col-md-6 py-4">
-                                <div class="custom-control form-switch">
-                                    <input type="checkbox" class="form-check-input" name="enable_product_variant"
-                                        id="enable_product_variant"
-                                        {{ $product['enable_product_variant'] && !empty($productVariantArrays) ? 'checked' : '' }}>
-
-                                    <label class="custom-control-label"
-                                        for="enable_product_variant">{{ __('Display Variants') }}</label>
+                        <div class=" col-lg-6 col-md-6">
+                            <h5>{{ __('Main Informations') }}</h5>
+                            <div class="card shadow-none border border-primary">
+                                <div class="card-body ">
+                                    <div class="form-group">
+                                        {{ Form::label('name', __('Name'), ['class' => 'form-label']) }}
+                                        {{ Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('Enter Name'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('product_categorie', __('Product Categories'), ['class' => 'form-label']) }}
+                                        {!! Form::select('product_categorie[]', $product_categorie, null, [
+                                            'class' => 'form-control multi-select',
+                                            'id' => 'choices-multiple',
+                                            'multiple',
+                                        ]) !!}
+                                        @if (count($product_categorie) == 0)
+                                            {{ __('Add product category') }}
+                                            <a href="{{ route('product_categorie.index') }}">
+                                                {{ __('Click here') }}
+                                            </a>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('SKU', __('SKU'), ['class' => 'form-label']) }}
+                                        {{ Form::text('SKU', null, ['class' => 'form-control', 'placeholder' => __('Enter SKU')]) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('product_tax', __('Product Tax'), ['class' => 'form-label']) }}
+                                        {{ Form::select('product_tax[]', $product_tax, null, ['class' => 'form-control multi-select', 'id' => 'choices-multiple1', 'multiple']) }}
+                                        @if (count($product_tax) == 0)
+                                            {{ __('Add product tax') }}
+                                            <a href="{{ route('product_tax.index') }}">
+                                                {{ __('Click here') }}
+                                            </a>
+                                        @endif
+                                    </div>
+                                    <div class="form-group proprice">
+                                        <div class="row gy-4">
+                                            <div class="col-md-6">
+                                                {{ Form::label('price', __('Price'), ['class' => 'form-label']) }}
+                                                {{ Form::number('price', null, ['step' => 'any', 'class' => 'form-control']) }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ Form::label('last_price', __('Last Price'), ['class' => 'form-label']) }}
+                                                {{ Form::number('last_price', null, ['step' => 'any', 'class' => 'form-control']) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group proprice">
+                                        {{ Form::label('quantity', __('Stock Quantity'), ['class' => 'form-label']) }}
+                                        {{ Form::text('quantity', null, ['class' => 'form-control', 'placeholder' => __('Enter Stock Quantity'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="attachment" class="form-label"
+                                            onchange="loadImg()">{{ __('Attachment') }}</label>
+                                        <input type="file" name="attachment" id="attachment" class="form-control"
+                                            onchange="document.getElementById('blah').src = window.URL.createObjectURL(this.files[0])">
+                                        <img id="blah" src="" width="20%" class="mt-2" />
+                                    </div>
+                                    <div class="form-group mb-0">
+                                        <label for="downloadable_prodcut"
+                                            class="form-label">{{ __('Downloadable Product') }}</label>
+                                        <input type="file" name="downloadable_prodcut" id="downloadable_prodcut"
+                                            class="form-control"
+                                            onchange="document.getElementById('down_product').src = window.URL.createObjectURL(this.files[0])">
+                                        <img id="down_product" src="" width="20%" class="mt-2" />
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class=" col-lg-6 col-md-6">
+                            <h5>{{ __('Custom Field') }}</h5>
+                            <div class="card shadow-none border">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        {{ Form::label('custom_field_1', __('Custom Field'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_field_1', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('custom_value_1', __('Custom Value'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_value_1', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('custom_field_2', __('Custom Field'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_field_2', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('custom_value_2', __('Custom Value'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_value_2', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('custom_field_3', __('Custom Field'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_field_3', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('custom_value_3', __('Custom Value'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_value_3', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('custom_field_4', __('Custom Field'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_field_4', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Field'), 'required' => 'required']) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ Form::label('custom_value_4', __('Custom Value'), ['class' => 'form-label']) }}
+                                        {{ Form::text('custom_value_4', null, ['class' => 'form-control', 'placeholder' => __('Enter Custom Value'), 'required' => 'required']) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="card shadow-none border">
+                                    <div class="card-body">
+                                        <div class="col-12">
+                                            <div class="form-group mb-0">
+                                                <div class="row gy-3">
+                                                    @if (isset($product_variant_names))
+                                                        <div class="col-lg-6">
+                                                            <div class="form-check form-switch custom-switch-v1">
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    name="enable_product_variant" id="enable_product_variant"  {{ $product['enable_product_variant'] && !empty($productVariantArrays) ? 'checked' : '' }}>
+                                                                    <input type="hidden" name="hiddenhidden" id="hiddenhidden" value="">
+                                                                <label class="form-check-label"
+                                                                    for="enable_product_variant">{{ __('Display Variants') }}</label>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    <div class="col-lg-6">
+                                                        <div class="form-check form-switch custom-switch-v1">
+                                                            <input type="checkbox" name="product_display" class="form-check-input"
+                                                                id="product_display" {{ $product->product_display == 'on' ? 'checked' : '' }}>
+                                                            {{ Form::label('product_display', __('Product Display'), ['class' => 'form-check-label']) }}
+                                                        </div>
+                                                        @error('product_display')
+                                                            <span class="invalid-product_display" role="alert">
+                                                                <strong class="text-danger">{{ $message }}</strong>
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (isset($product_variant_names))
                             <div id="productVariant" class="col-md-12">
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="card my-3">
+                                        <div class="card shadow-none border my-3">
                                             <div class="card-header">
                                                 <div class="row flex-grow-1">
 
@@ -390,7 +395,7 @@
                                                 <div class="row form-group">
                                                     <div class="table-responsive">
                                                         <div class="card-body">
-                                                            {{-- @DD($product) --}}
+                                                            
                                                             <input type="hidden" id="hiddenVariantOptions"
                                                                 name="hiddenVariantOptions"
                                                                 value="{{ $product->variants_json }}">
@@ -414,15 +419,14 @@
                                                                         @if (isset($productVariantArrays))
                                                                         @foreach ($productVariantArrays as $counter => $productVariant)
                                                                         {{-- @DD($productVariant['product_variants']['product_id']) --}}
-                                                                                <tr
-                                                                                    data-id="{{ $productVariant['product_variants']['id'] }}">
+                                                                                <tr data-id="{{ $productVariant['product_variants']['id'] }}">
                                                                                     @foreach (explode(' : ', $productVariant['product_variants']['name']) as $key => $values)
                                                                                         <td>
                                                                                             <input type="text"
                                                                                                 name="variants[{{ $productVariant['product_variants']['id'] }}][variants][{{ $key }}][]"
                                                                                                 autocomplete="off"
                                                                                                 spellcheck="false"
-                                                                                                class="form-control"
+                                                                                                class="form-control wid-100"
                                                                                                 value="{{ $values }}" readonly>
                                                                                         </td>
                                                                                     @endforeach
@@ -432,7 +436,7 @@
                                                                                             autocomplete="off"
                                                                                             spellcheck="false"
                                                                                             placeholder="{{ __('Enter Price') }}"
-                                                                                            class="form-control vprice_{{ $counter }}"
+                                                                                            class="form-control wid-100 vprice_{{ $counter }}"
                                                                                             value="{{ $productVariant['product_variants']['price'] }}">
                                                                                     </td>
                                                                                     <td>
@@ -441,15 +445,14 @@
                                                                                             autocomplete="off"
                                                                                             spellcheck="false"
                                                                                             placeholder="{{ __('Enter Quantity') }}"
-                                                                                            class="form-control vquantity_{{ $counter }}"
+                                                                                            class="form-control wid-100 vquantity_{{ $counter }}"
                                                                                             value="{{ $productVariant['product_variants']['quantity'] }}">
                                                                                     </td>
                                                                                     <td
                                                                                         class="d-flex align-items-center mt-3 border-0">
 
-                                                                                        <div
-                                                                                            class="action-btn bg-danger ms-2">
-                                                                                            <a class="bs-pass-para align-items-center btn btn-sm d-inline-flex"
+                                                                                        <div class="d-flex">
+                                                                                            <a class="bs-pass-para align-items-center btn btn-sm btn-icon bg-light-secondary d-inline-flex"
                                                                                                 href="#"
                                                                                                 data-title="{{ __('Delete Lead') }}"
                                                                                                 data-confirm="{{ __('Are You Sure?') }}"
@@ -491,164 +494,130 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="col-12 border-0">
-                            <div class="row">
-                                <div class="col-6">
-                                    <h5 class="mb-0">{{ __('Product Image') }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        {{ Form::label('sub_images', __('Upload Product Images'), ['class' => 'col-form-label']) }}
-                                        <div class="dropzone dropzone-multiple" data-toggle="dropzone1"
-                                            data-dropzone-url="http://" data-dropzone-multiple>
-                                            <div class="fallback">
-                                                <div class="custom-file">
-                                                    <input type="file" class="custom-file-input" id="dropzone-1"
-                                                        name="file" multiple>
-                                                    <label class="custom-file-label"
-                                                        for="customFileUpload">{{ __('Choose file') }}</label>
-                                                </div>
-                                            </div>
-                                            <ul
-                                                class="dz-preview dz-preview-multiple list-group list-group-lg list-group-flush">
-                                                <li class="list-group-item px-0">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-auto">
-                                                            <div class="avatar">
-                                                                <img class="rounded" src=""
-                                                                    alt="Image placeholder" data-dz-thumbnail>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col">
-                                                            <h6 class="text-sm mb-1" data-dz-name>...</h6>
-                                                            <p class="small text-muted mb-0" data-dz-size></p>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <a href="#" class="dropdown-item" data-dz-remove>
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-wrapper p-3 lead-common-box">
-                                            {{-- @DD($product_image) --}}
-                                            @foreach ($product_image as $file)
-                                                <div class="card mb-3 border shadow-none product_Image"
-                                                    data-id="{{ $file->id }}">
-                                                    <div class="px-3 py-3">
-                                                        <div class="row align-items-center">
-                                                            <div class="col ml-n2">
-                                                                <p class="card-text small text-muted">
-                                                                    <img class="rounded"
-                                                                        src=" {{ $productimage . $file->product_images }}"
-                                                                        width="70px" alt="Image placeholder"
-                                                                        data-dz-thumbnail>
-                                                                </p>
-                                                            </div>
-                                                            <div class="col-auto actions">
-                                                                <a class="action-item"
-                                                                    href=" {{ $product_image . $file->product_images }}"
-                                                                    download="" data-toggle="tooltip"
-                                                                    data-original-title="{{ __('Download') }}">
-                                                                    <i class="fas fa-download"></i>
-                                                                </a>
-                                                            </div>
-
-                                                            <div class="col-auto actions">
-                                                                <a name="deleteRecord" class="action-item deleteRecord"
-                                                                    data-id="{{ $file->id }}">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="is_cover_image"
-                                            class="col-form-label">{{ __('Upload Cover Image') }}</label>
-                                        {{-- <input type="file" name="is_cover_image" id="is_cover_image"
-                                            class="form-control"> --}}
-                                        <input type="file" name="is_cover_image" id="is_cover_image"
-                                            class="form-control"
-                                            onchange="document.getElementById('coverImg').src = window.URL.createObjectURL(this.files[0])"
-                                            multiple>
-                                        <img id="coverImg"src="" width="20%" class="mt-2" />
-                                    </div>
-
-                                    <div class="card-wrapper p-3 lead-common-box">
-                                        <div class="card mb-3 border shadow-none">
-                                            <div class="px-3 py-3">
-                                                <div class="row align-items-center">
-                                                    <div class="col ml-n2">
-                                                        <p class="card-text small text-muted">
-                                                            <img class="rounded"
-                                                                src=" {{ $is_cover_image . $product->is_cover }}"
-                                                                width="70px" alt="Image placeholder" data-dz-thumbnail>
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-auto actions">
-                                                        <a class="action-item"
-                                                            href=" {{ $is_cover_image . $product->is_cover }}"
-                                                            download="" data-toggle="tooltip"
-                                                            data-original-title="{{ __('Download') }}">
-                                                            <i class="fas fa-download"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 pt-4">
-                            <div class="form-group">
-                                {{ Form::label('description', 'Product Description', ['class' => 'col-form-label']) }}
-                                {!! Form::textarea('description', !empty($product->description) ? $product->description : '', [
-                                    'class' => 'form-control summernote-simple',
-                                    'rows' => 2,
-                                    'placeholder' => 'Product Description',
-                                ]) !!}
-                            </div>
-                        </div>
-                        <div class="col-12 pt-4">
-                            <div class="form-group">
-                                {{ Form::label('specification', 'Product Specification', ['class' => 'col-form-label']) }}
-                                {{ Form::textarea('specification', !empty($product->specification) ? $product->specification : '', ['class' => 'form-control summernote-simple', 'rows' => 3, 'placeholder' => 'Product Specification']) }}
-                            </div>
-                        </div>
-                        <div class="col-12 pt-4">
-                            <div class="form-group">
-                                {{ Form::label('detail', 'Product Details', ['class' => 'col-form-label']) }}
-                                {{ Form::textarea('detail', !empty($product->detail) ? $product->detail : '', ['class' => 'form-control summernote-simple', 'rows' => 3, 'placeholder' => 'Product Details']) }}
-                            </div>
-                        </div>
                     </div>
-                    <div class="form-group col-12 d-flex justify-content-end col-form-label">
-                        <a href="{{ route('product.index') }}"
-                            class="btn btn-secondary btn-light">{{ __('Cancel') }}</a>
-                        <input type="button" id="submit-all" value="{{ __('Update') }}" class="btn btn-primary ms-2">
+                    
+                </div>
+                <div class="col-xl-3 col-lg-6 col-md-6">
+                    <h5>{{ __('Product Image') }}</h5>
+                    <div class="card shadow-none border">
+                        <div class="card-body">
+                            <div class="form-group">
+                                {{ Form::label('sub_images', __('Upload Product Images'), ['class' => 'form-label']) }}
+                                <div class="dropzone dropzone-multiple" data-toggle="dropzone1"
+                                    data-dropzone-url="http://" data-dropzone-multiple>
+                                    <div class="fallback">
+                                        <div class="custom-file">
+                                            {{-- <input type="file" class="custom-file-input" id="dropzone-1" name="file"
+                                                multiple> --}}
+                                                <input type="file" class="custom-file-input" id="dropzone-1" name="file" multiple>
+                                            <label class="custom-file-label" for="customFileUpload">{{ __('Choose file') }}</label>
+                                        </div>
+                                    </div>
+                                    <ul class="dz-preview dz-preview-multiple list-group list-group-lg list-group-flush">
+                                        <li class="list-group-item px-0">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="avatar">
+                                                        <img class="rounded" src="" alt="Image placeholder"
+                                                            data-dz-thumbnail>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <h6 class="text-sm mb-1" data-dz-name>...</h6>
+                                                    <p class="small text-muted mb-0" data-dz-size>
+                                                    </p>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <a href="#" class="dropdown-item" data-dz-remove>
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="row gy-3 gx-3">
+                                        @foreach ($product_image as $file)
+                                            <div class="col-sm-6 product_Image" data-id="{{ $file->id }}">
+                                                <div class="position-relative p-2 border rounded border-primary overflow-hidden rounded">
+                                                    <img src="{{ $productimage . $file->product_images }}" alt="" class="w-100">
+                                                    <div class="position-absolute text-center top-50 end-0 start-0 ps-3 pb-3">
+                                                        <a href="{{ $productimage . $file->product_images }}" download="" data-original-title="{{ __('Download') }}" class="btn btn-sm btn-primary me-2"><i class="ti ti-download"></i></a>
+                                                        <a class="btn btn-sm btn-danger deleteRecord" name="deleteRecord" data-id="{{ $file->id }}"><i class="ti ti-trash"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="is_cover_image" class="col-form-label">{{ __('Upload Cover Image') }}</label>
+                                <input type="file" name="is_cover_image" id="is_cover_image"
+                                    class="form-control"
+                                    onchange="document.getElementById('coverImg').src = window.URL.createObjectURL(this.files[0])"
+                                    multiple>
+                                <img id="coverImg"src="" width="20%" class="mt-2" />
+                            </div>
+                            @if(!empty($product->is_cover))
+                                <div class="form-group">
+                                    <div class="row gy-3 gx-3">
+                                        <div class="col-sm-6">
+                                            <div class="position-relative p-2 border rounded border-primary overflow-hidden rounded">
+                                                <img src="{{ $is_cover_image . $product->is_cover }}" alt="" class="w-100">
+                                                <div class="position-absolute text-center top-50 end-0 start-0 ps-3 pb-3">
+                                                    <a href="{{ $is_cover_image . $product->is_cover }}" class="btn btn-sm btn-primary me-2"><i class="ti ti-download"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                {{ Form::close() }}
+                <div class="col-xl-3 col-lg-6 col-md-6">
+                    <h5>{{ __('About product') }}</h5>
+                    <div class="card shadow-none border">
+                        <div class="card-body">
+                            <div class="form-group">
+                                {{ Form::label('description', __('Product Description'), ['class' => 'form-label']) }}
+                                {{ Form::textarea('description', !empty($product->description) ? $product->description : '', ['class' => 'form-control pc-tinymce-2', 'rows' => 1, 'placeholder' => __('Product Description'), 'id' => 'description']) }}
+                            </div>
+                            <div class="form-group">
+                                {{ Form::label('specification', __('Product Specification'), ['class' => 'form-label']) }}
+                                {{ Form::textarea('specification', !empty($product->specification) ? $product->specification : '', ['class' => 'form-control pc-tinymce-2', 'rows' => 1, 'placeholder' => __('Product Specification'), 'id' => 'specification']) }}
+                            </div>
+                            <div class="form-group">
+                                {{ Form::label('detail', __('Product Details'), ['class' => 'form-label']) }}
+                                {{ Form::textarea('detail', !empty($product->detail) ? $product->detail : '', ['class' => 'form-control pc-tinymce-2', 'rows' => 1, 'placeholder' => __('Product Details'), 'id' => 'detail']) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        {{ Form::close() }}
     </div>
 @endsection
 
 @push('script-page')
+    <script>
+        $(document).ready(function(){
+            
+            if($("#enable_product_variant").prop('checked') == false){
+                $("#enable_product_variant").click(function(){
+                    if($("#enable_product_variant").prop('checked') == true){
+                        $('#hiddenhidden').val('now_in_var');
+                    }else{
+                        
+                        $('#hiddenhidden').val('');
+                    }
+                })
+            }
+        });
+    </script>
     <script>
         $(document).on('click', '.get-variants', function(e) {
 
@@ -688,6 +657,7 @@
                         hiddenVariantOptions: hiddenVariantOptions
                     },
                     success: function(data) {
+                        
                         $('#hiddenVariantOptions').val(data.hiddenVariantOptions);
                         $('.variant-table').html(data.varitantHTML);
                         $("#commonModal").modal('hide');
@@ -695,8 +665,9 @@
                 })
             }
         });
+      //  $(document).on('click', '.delet-posibility', function(e) {
+       //     $(this).parent().parent().remove()
 
-
-        // enable_product_variant
+      //  })
     </script>
 @endpush

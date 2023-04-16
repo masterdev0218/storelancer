@@ -98,7 +98,7 @@ class Product extends Model
                 $result[] = $prefix . $selected;
             }
         }
-
+       
         return $result;
     }
 

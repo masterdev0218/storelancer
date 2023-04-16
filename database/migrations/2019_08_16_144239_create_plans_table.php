@@ -24,6 +24,7 @@ class CreatePlansTable extends Migration
             $table->string('enable_custdomain')->default('off');
             $table->string('image')->nullable();
             $table->text('description')->nullable();
+            // $table->string('pwa_store')->default('off');
             $table->timestamps();
         }
         );

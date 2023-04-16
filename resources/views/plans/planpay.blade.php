@@ -28,7 +28,7 @@
 
     var brick = new Brick({
         public_key: '{{ $admin_payment_setting['paymentwall_public_key']  }}', // please update it to Brick live key before launch your project
-        amount: {{$plandata->price}},
+        amount: {{ isset($data['total_price']) ? $data['total_price'] : $plandata->price}},
         currency: '{{ env('CURRENCY_SYMBOL')  }}',
         container: 'payment-form-container',
         action: '{{route("paymentwall.payment",[$data["plan_id"],"coupon" => $data["coupon"]])}}',

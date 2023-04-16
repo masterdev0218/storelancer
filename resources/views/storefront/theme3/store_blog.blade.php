@@ -24,30 +24,27 @@
         $currantLang = $store->lang;
     }
     $languages=\App\Models\Utility::languages();
-    $imgpath=\App\Models\Utility::get_file('uploads/store_logo/');
+    $imgpath=\App\Models\Utility::get_file('uploads/blog_cover_image/');
 @endphp
 @section('content')
-    <hr>
-    <div class="container mt-10">
-        <div class="row">
-            <div class="card-group">
+<div class="wrapper">
+    <section class="blog-section padding-top padding-bottom ">
+        <div class="container">
+            <div class="row post-row">
                 @foreach($blogs as $blog)
-                    <div class="{{($blogs->count() == 1)?'col-6':'col-lg-4'}}">
-                        <div class="card border-0 text-white hover-scale-110 hover-shadow-lg overflow-hidden">
-                            <figure class="figure">
-                                @if(!empty($blog->blog_cover_image))
-                                    <img alt="Image placeholder" class="img-fluid" src="{{ $imgpath.$blog->blog_cover_image}}">
-                                @else
-                                    <img src="{{asset(Storage::url('uploads/store_logo/default.jpg'))}}" class="img-center img-fluid">
-                                @endif
-                            </figure>
-                            <span class="mask hover-mask bg-dark opacity-7"></span>
-                            <div class="card-img-overlay d-flex flex-column justify-content-end">
-                                <div class="text-center">
-                                    <div class="animate-item--visible opacity-10">
-                                        <a href="{{route('store.store_blog_view',[$store->slug,$blog->id])}}" class="h3 text-white mb-1 stretched-link">{{$blog->title}}</a>
-                                        <p class="card-text text-white">{{\App\Models\Utility::dateFormat($blog->created_at)}}</p>
-                                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="blog-card">
+                            <div class="blog-card-inner">
+                                <div class="blog-img">
+                                    <a href="{{route('store.store_blog_view',[$store->slug,$blog->id])}}">
+                                        <img src="{{$imgpath.$blog->blog_cover_image}}">
+                                    </a>
+                                </div>
+                                <div class="blog-content">
+                                    <h3>
+                                        <a href="{{route('store.store_blog_view',[$store->slug,$blog->id])}}">{{$blog->title}}</a>
+                                    </h3>
+                                    <p>{{\App\Models\Utility::dateFormat($blog->created_at)}}</p>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +52,8 @@
                 @endforeach
             </div>
         </div>
-    </div>
+    </section>
+</div>
 @endsection
 @push('script')
     <script>

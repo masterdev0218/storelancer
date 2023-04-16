@@ -25,6 +25,7 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => 'Super Admin',
                 'email' => 'superadmin@example.com',
+                'email_verified_at' => date("Y-m-d H:i:s"),
                 'password' => Hash::make('1234'),
                 'type' => 'super admin',
                 'lang' => 'en',
@@ -38,6 +39,7 @@ class UsersTableSeeder extends Seeder
             [
                 'name' => 'Owner',
                 'email' => 'owner@example.com',
+                'email_verified_at' => date("Y-m-d H:i:s"),
                 'password' => Hash::make('1234'),
                 'type' => 'Owner',
                 'created_by' => $superAdmin->id,
@@ -69,7 +71,7 @@ To collect the order you need to show the receipt at the counter.
 Thanks {store_name}
 ',
                 'item_variable' => '{sku} : {quantity} x {product_name} - {variant_name} + {item_tax} = {item_total}',
-                'store_theme' => 'green-color.css',
+                'store_theme' => 'theme1-v1',
                 'theme_dir' => 'theme1',
                 'enable_rating' => 'on',
                 'logo' => 'logo.png',

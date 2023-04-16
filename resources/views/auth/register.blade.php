@@ -5,9 +5,9 @@
 @section('language-bar')
     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
-            <select name="language" id="language" class="btn-primary custom_btn ms-2 me-2 language_option_bg" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
+            <select name="language" id="language" class="btn btn-light-primary dropdown-toggle custom_btn ms-2 me-2 language_option_bg" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
                 @foreach(App\Models\Utility::languages() as $language)
-                    <option @if($lang == $language) selected @endif value="{{ route('register',$language) }}">{{Str::upper($language)}}</option>
+                    <option class="dropdown-item" @if($lang == $language) selected @endif value="{{ route('login',$language) }}">{{Str::upper($language)}}</option>
                 @endforeach
             </select>
         </li>
@@ -15,6 +15,11 @@
 @endsection
 @section('content')
 <div class="card">
+      @if (session('status'))
+        <div class="mb-4 font-medium text-lg text-green-600 text-danger">
+            {{ __('Email SMTP settings does not configured so please contact to your site admin.') }}
+        </div>
+    @endif
     <div class="row align-items-center">
         <div class="col-xl-6">
             <form method="POST" action="{{ route('register') }}" class="needs-validation" novalidate="">
@@ -99,49 +104,14 @@
         </div>
         <div class="col-xl-6 img-card-side">
             <div class="auth-img-content">
-                <img src="{{asset('assets/images/auth/img-auth-3.svg')}}" alt="" class="img-fluid">
-                <h3 class="text-white mb-4 mt-5">{{ __('“Attention is the new currency”') }}</h3>
+                <img src="{{ asset('assets/images/auth/img-auth-3.svg') }}" alt="" class="img-fluid">
+                <h3 class="text-white mb-4 mt-5"> {{ __('“Attention is the new currency”') }}</h3>
+                <p class="text-white"> {{__('The more effortless the writing looks, the more effort the writer
+                    actually put into the process.')}}</p>
             </div>
         </div>
     </div>
 </div>
-
-  <script>
- 
-    $(".navbar-toggler").click(function(){
-    $(".collapse").addClass("show");
-});
-
-$('html').click(function() {
-    $(".collapse.show").removeClass("show");
-});
-
-$('.collapse').click(function(event){
-    event.stopPropagation();
-});
- 
-    $(document).ready(function(){ 
-    $('.navbar-toggler').click(
-        function(){ 
-            $('.collapse').removeClass('show'); 
-            $('.collapse').toggleClass('show'); 
-            return false;       
-        }); 
-});
-
-$(document).mouseup(function (e)
-{
-    var container = $(".navbar-toggler");
-
-    if (!container.is(e.target) // if the target of the click isn't the container...
-        && container.has(e.target).length === 0) // ... nor a descendant of the container
-    {
-        container.removeClass('show');
-    }
-});
- 
-  </script>
-
 @endsection
 @push('custom-scripts')
 @if(env('RECAPTCHA_MODULE') == 'yes')

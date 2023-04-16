@@ -111,7 +111,6 @@ class PlanRequestController extends Controller
     public function userRequest($plan_id)
     {
         $objUser = Auth::user();
-
         if ($objUser->requested_plan == 0) {
             $planID = \Illuminate\Support\Facades\Crypt::decrypt($plan_id);
 
@@ -146,6 +145,7 @@ class PlanRequestController extends Controller
                 if ($response == 1) {
                     $user->requested_plan = $plan_request->plan_id;
                     $user->plan = $plan_request->plan_id;
+                    $user->	requested_plan = '0';
                     $user->save();
 
                     $plan = Plan::find($plan_request->plan_id);

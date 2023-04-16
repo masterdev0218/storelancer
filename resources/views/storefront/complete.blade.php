@@ -1,5 +1,19 @@
+@php
+if (!empty(session()->get('lang'))) {
+    $currantLang = session()->get('lang');
+} else {
+    $currantLang = $store->lang;
+}
+\App::setLocale($currantLang);
+    $data = DB::table('settings');
+    $data = $data
+        ->where('created_by', '>', 1)
+        ->where('store_id', $store->id)
+        ->where('name', 'SITE_RTL')
+        ->first(); 
+@endphp
 <!DOCTYPE html>
-<html lang="en" dir="{{env('SITE_RTL') == 'on'?'rtl':''}}">
+<html lang="en" dir="{{ empty($data) ? '' : ($data->value == 'on' ? 'rtl' : '' )}}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -20,7 +34,7 @@
     <link rel="stylesheet" href="{{asset('assets/css/customizer.css') }}">
     <link rel="stylesheet" href="{{asset('assets/css/landing.css') }}"/>
 
-    @if(env('SITE_RTL')=='on')
+    @if(isset($data->value) && $data->value == 'on')
         <link rel="stylesheet" href="{{ asset('css/bootstrap-rtl.css') }}">
     @endif
 

@@ -12,21 +12,17 @@
     <li class="breadcrumb-item active" aria-current="page">{{ __('Product') }}</li>
 @endsection
 @section('action-btn')
-    <div class="pr-2">
-        <a href="#" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip" data-bs-placement="top"
-            title="{{ __('Import') }}" data-ajax-popup="true" data-size="lg"
-            data-title="{{ __('Import customer CSV file') }}" data-url="{{ route('product.file.import') }}"><i
-                class="ti ti-file-import"></i></a>
-
-        <a href="{{ route('product.export') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="{{ __('Export') }}"><i class="ti ti-file-export"></i></a>
-
-        <a href="{{ route('product.index') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
+    <a class="btn btn-sm btn-icon  bg-light-secondary me-2" href="{{ route('product.export') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Export') }}"> 
+        <i  data-feather="download"></i>
+    </a>
+    <a class="btn btn-sm btn-icon  bg-light-secondary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Import') }}" data-ajax-popup="true" data-size="lg" data-title="{{ __('Import Product CSV File') }}" data-url="{{ route('product.file.import') }}">
+        <i  data-feather="upload"></i>
+    </a>
+    <a href="{{ route('product.index') }}" class="btn btn-sm btn-icon  bg-light-secondary me-2" data-bs-toggle="tooltip"
             data-bs-placement="top" title="{{ __('List View') }}"><i class="fas fa-list"></i></a>
-
-        <a href="{{ route('product.create') }}" class="btn btn-sm btn-primary btn-icon m-1" data-bs-toggle="tooltip"
-            data-bs-placement="top" title="{{ __('Create Product') }}"><i class="ti ti-plus"></i></i></a>
-    </div>
+    <a class="btn btn-sm btn-icon  btn-primary me-2" href="{{ route('product.create') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Create') }}">
+        <i  data-feather="plus"></i>
+    </a>
 @endsection
 @section('filter')
 @endsection
@@ -125,8 +121,8 @@
                 <div class="bg-primary proj-add-icon">
                     <i class="ti ti-plus"></i>
                 </div>
-                <h6 class="mt-4 mb-2">New Product</h6>
-                <p class="text-muted text-center">Click here to add New Product</p>
+                <h6 class="mt-4 mb-2">{{ __('New Product') }}</h6>
+                <p class="text-muted text-center">{{ __('Click here to add New Product') }}</p>
             </a>
         </div>
     </div>

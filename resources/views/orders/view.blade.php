@@ -14,7 +14,7 @@
 @endsection
 @section('action-btn')
     <div class="pr-2">
-        <a href="#" id="{{ env('APP_URL')  . $store->slug . '/order/' . $order_id }}" class="btn btn-sm btn-primary btn-icon m-1"  onclick="copyToClipboard(this)" title="Copy link" data-bs-toggle="tooltip" data-original-title="{{__('Click to copy')}}"><i class="ti ti-link text-white"></i></a>
+        <a href="#" id="{{ env('APP_URL') .'/' . $store->slug . '/order/' . $order_id }}" class="btn btn-sm btn-primary btn-icon m-1"  onclick="copyToClipboard(this)" title="Copy link" data-bs-toggle="tooltip" data-original-title="{{__('Click to copy')}}"><i class="ti ti-link text-white"></i></a>
 
         <a href="{{ route('order.receipt', $order->id) }}" class="btn btn-sm btn-primary btn-icon m-1"
             data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Receipt') }}"><i class="ti ti-receipt"></i></a>
@@ -23,7 +23,7 @@
             data-bs-toggle="tooltip" data-bs-placement="top" title="{{ __('Print') }}"><i class="ti ti-printer"></i></a>
 
         <div class="btn-group " id="deliver_btn">
-            <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">{{ __('Status') }} : {{ __(ucfirst($order->status)) }}</button>
             <div class="dropdown-menu">
                 <h6 class="dropdown-header">{{ __('Set order status') }}</h6>
@@ -68,12 +68,14 @@
                                             <th>{{ __('Quantity') }}</th>
                                             <th>{{ __('Price') }}</th>
                                             <th>{{ __('Total') }}</th>
+                                            <th>{{ __('Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @php
                                             $sub_tax = 0;
                                             $total = 0;
+                                            $order_id = trim($order->order_id,'#');
                                         @endphp
                                         @foreach ($order_products as $key => $product)
                                             @if (isset($product->variant_id) && $product->variant_id != 0)
@@ -114,6 +116,16 @@
                                                     </td>
                                                     <td>
                                                         {{ App\Models\Utility::priceFormat($product->variant_price * $product->quantity + $total_tax) }}
+                                                    </td>
+                                                    <td>
+                                                        <div class="action-btn bg-light-secondary ms-2">
+                                                            {!! Form::open(['method' => 'DELETE',
+                                                            'route' => ['delete.order_item', $product->id , $product->variant_id,$order_id,$key],]) !!}
+                                                            <a class="show_confirm align-items-center btn btn-sm d-inline-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="{{__('Delete')}}">
+                                                            <span><i class="ti ti-trash"></i></span>
+                                                            </a>
+                                                            {!! Form::close() !!}
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @else
@@ -156,6 +168,16 @@
                                                     <td>
                                                         {{ App\Models\Utility::priceFormat($product->price * $product->quantity + $total_tax) }}
                                                     </td>
+                                                    <td>
+                                                        <div class="action-btn bg-light-secondary ms-2">
+                                                            {!! Form::open(['method' => 'DELETE',
+                                                            'route' => ['delete.order_item', $product->id , $product->variant_id,$order_id,$key],]) !!}
+                                                            <a class="show_confirm align-items-center btn btn-sm d-inline-flex" data-bs-toggle="tooltip" data-bs-placement="top" title="{{__('Delete')}}">
+                                                            <span ><i class="ti ti-trash"></i></span>
+                                                            </a>
+                                                            {!! Form::close() !!}
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             @endif
                                         @endforeach
@@ -174,21 +196,23 @@
                                     <address class="mb-0 text-sm">
                                         <dl class="row mt-4 align-items-center">
                                             <dt class="col-sm-4 h6 text-sm">{{ __('Name') }}</dt>
-                                            <dd class="col-sm-8 text-sm"> {{ $user_details->name }}</dd>
+                                            <dd class="col-sm-8 text-sm"> {{ !empty($user_details->name) ? $user_details->name : '' }}</dd>
                                             <dt class="col-sm-4 h6 text-sm">{{ __('Company') }}</dt>
-                                            <dd class="col-sm-8 text-sm"> {{ $user_details->shipping_address }}</dd>
+                                            <dd class="col-sm-8 text-sm"> {{ !empty($user_details->shipping_address) ? $user_details->shipping_address  : '' }}</dd>
                                             <dt class="col-sm-4 h6 text-sm">{{ __('City') }}</dt>
-                                            <dd class="col-sm-8 text-sm">{{ $user_details->shipping_city }}</dd>
+                                            <dd class="col-sm-8 text-sm">{{ !empty($user_details->shipping_city) ? $user_details->shipping_city : '' }}</dd>
                                             <dt class="col-sm-4 h6 text-sm">{{ __('Country') }}</dt>
-                                            <dd class="col-sm-8 text-sm"> {{ $user_details->shipping_country }}</dd>
+                                            <dd class="col-sm-8 text-sm"> {{ !empty($user_details->shipping_country) ? $user_details->shipping_country : '' }}</dd>
                                             <dt class="col-sm-4 h6 text-sm">{{ __('Postal Code') }}</dt>
-                                            <dd class="col-sm-8 text-sm">{{ $user_details->shipping_postalcode }}</dd>
+                                            <dd class="col-sm-8 text-sm">{{ !empty($user_details->shipping_postalcode) ? $user_details->shipping_postalcode : '' }}</dd>
                                             <dt class="col-sm-4 h6 text-sm">{{ __('Phone') }}</dt>
                                             <dd class="col-sm-8 text-sm">
+												@if(!empty($user_details->phone))
                                                 <a href="{{ $url = 'https://api.whatsapp.com/send?phone=' . str_replace(' ', '', $user_details->phone) . '&text=Hi' }}"
                                                     target="_blank">
-                                                    {{ $user_details->phone }}
+                                                    {{ !empty($user_details->phone) ? $user_details->phone : '' }}
                                                 </a>
+												@endif
                                             </dd>
                                             @if (!empty($location_data && $shipping_data))
                                                 <dt class="col-sm-4 h6 text-sm">{{ __('Location') }}</dt>
@@ -210,21 +234,23 @@
                                 <div class="card-body pt-0">
                                     <dl class="row mt-4 align-items-center">
                                         <dt class="col-sm-4 h6 text-sm">{{ __('Name') }}</dt>
-                                        <dd class="col-sm-8 text-sm"> {{ $user_details->name }}</dd>
+                                        <dd class="col-sm-8 text-sm"> {{ !empty($user_details->name) ? $user_details->name : '' }}</dd>
                                         <dt class="col-sm-4 h6 text-sm">{{ __('Company') }}</dt>
-                                        <dd class="col-sm-8 text-sm"> {{ $user_details->billing_address }}</dd>
+                                        <dd class="col-sm-8 text-sm"> {{ !empty($user_details->billing_address) ? $user_details->billing_address  : '' }}</dd>
                                         <dt class="col-sm-4 h6 text-sm">{{ __('City') }}</dt>
-                                        <dd class="col-sm-8 text-sm">{{ $user_details->billing_city }}</dd>
+                                        <dd class="col-sm-8 text-sm">{{ !empty($user_details->billing_city) ? $user_details->billing_city : '' }}</dd>
                                         <dt class="col-sm-4 h6 text-sm">{{ __('Country') }}</dt>
-                                        <dd class="col-sm-8 text-sm"> {{ $user_details->billing_country }}</dd>
+                                        <dd class="col-sm-8 text-sm"> {{ !empty($user_details->billing_country) ? $user_details->billing_country : '' }}</dd>
                                         <dt class="col-sm-4 h6 text-sm">{{ __('Postal Code') }}</dt>
-                                        <dd class="col-sm-8 text-sm">{{ $user_details->billing_postalcode }}</dd>
+                                        <dd class="col-sm-8 text-sm">{{ !empty($user_details->billing_postalcode) ? $user_details->billing_postalcode : '' }}</dd>
                                         <dt class="col-sm-4 h6 text-sm">{{ __('Phone') }}</dt>
                                         <dd class="col-sm-8 text-sm">
+											@if(!empty($user_details->phone))
                                             <a href="{{ $url = 'https://api.whatsapp.com/send?phone=' . str_replace(' ', '', $user_details->phone) . '&text=Hi' }}"
                                                 target="_blank">
                                                 {{ $user_details->phone }}
                                             </a>
+											@endif
                                         </dd>
                                         @if (!empty($location_data && $shipping_data))
                                             <dt class="col-sm-4 h6 text-sm">{{ __('Location') }}</dt>

@@ -43,13 +43,12 @@ $dir = asset(Storage::url('uploads/plan'));
                     coupon: coupon
                 },
                 success: function (data) {
-
-                    $('.final-price').text(data.final_price);
+                    $('.final-price').val(data.price);
                     $('#final_price_pay').val(data.price);
                     $('#mollie_total_price').val(data.price);
                     $('#skrill_total_price').val(data.price);
                     $('#coingate_total_price').val(data.price);
-                    $('#stripe_coupon, #paypal_coupon, #skrill_coupon,#coingate_coupon').val(coupon);
+                    $('#stripe_coupon, #paypal_coupon, #skrill_coupon,#coingate_coupon,#toyyibpay_coupan').val(coupon);
                     if (data.is_success == true) {
                         show_toastr('Success', data.message, 'success');
                     } else if (data.is_success == false) {
@@ -372,6 +371,10 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                         class="list-group-item list-group-item-action border-0">{{ __('Paymentwall') }}<div
                                             class="float-end"><i class="ti ti-chevron-right"></i></div></a>
                                 @endif
+                                @if (isset($admin_payments_details['is_toyyibpay_enabled']) && $admin_payments_details['is_toyyibpay_enabled'] == 'on')
+                                    <a href="#toyyibpay_payment" class="list-group-item list-group-item-action border-0">{{ __('Toyyibpay') }}<div
+                                            class="float-end"><i class="ti ti-chevron-right"></i></div></a>
+                                @endif
                             </div>
                         </div>
                         <div class="mt-5">
@@ -385,7 +388,7 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                     @if (\Auth::user()->type == 'Owner' && \Auth::user()->plan == $plan->id)
                                         <div class="d-flex flex-row-reverse m-0 p-0 ">
                                             <span class="d-flex align-items-center ">
-                                                <i class="f-10 lh-1 fas fa-circle text-success"></i>
+                                                <i class="f-10 lh-1 fas fa-circle text-primary"></i>
                                                 <span class="ms-2">{{ __('Active') }}</span>
                                             </span>
                                         </div>
@@ -414,59 +417,59 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                                 {{ $plan->description }}<br />
                                             </p>
                                         @endif
-                                        <ul class="list-unstyled  my-5">
+                                        <ul class="list-unstyled d-inline-block my-5">
                                             @if ($plan->enable_custdomain == 'on')
-                                                <li>
+                                                <li class="d-flex align-items-center">
                                                     <span class="theme-avtar">
                                                     <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Custom Domain') }}
                                                 </li>
                                                 @else
-                                                    <li class="text-danger">
+                                                    <li class="text-danger d-flex align-items-center">
                                                         <span class="theme-avtar">
                                                         <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Custom Domain') }}
                                                     </li>
                                                 @endif
                                                 @if ($plan->enable_custsubdomain == 'on')
-                                                    <li>
+                                                    <li class="d-flex align-items-center">
                                                         <span class="theme-avtar">
                                                         <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Sub Domain') }}
                                                     </li>
                                                 @else
-                                                    <li class="text-danger">
+                                                    <li class="text-danger d-flex align-items-center">
                                                             <span class="theme-avtar">
                                                         <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Sub Domain') }}
                                                     </li>
                                                 @endif
                                                 @if ($plan->shipping_method == 'on')
-                                                    <li>
+                                                    <li class="d-flex align-items-center">
                                                         <span class="theme-avtar">
                                                             <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Shipping Method') }}
                                                     </li>
                                                 @else
-                                                    <li class="text-danger">
+                                                    <li class="text-danger d-flex align-items-center">
                                                         <span class="theme-avtar">
                                                             <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Shipping Method') }}
                                                     </li>
                                                 @endif
 
                                                 @if ($plan->additional_page == 'on')
-                                                    <li>
+                                                    <li class="d-flex align-items-center">
                                                         <span class="theme-avtar">
                                                             <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Additional Page') }}
                                                     </li>
                                                 @else
-                                                    <li class="text-danger">
+                                                    <li class="text-danger d-flex align-items-center">
                                                         <span class="theme-avtar">
                                                         <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Additional Page') }}
                                                     </li>
                                                 @endif
                                                 @if ($plan->blog == 'on')
-                                                    <li>
-                                                        <span class="theme-avtar">
+                                                    <li class="d-flex align-items-center">
+                                                        <span class="theme-avtar d-flex align-items-center">
                                                             <i class="text-primary ti ti-circle-plus"></i></span>{{ __('Blog') }}
                                                     </li>
                                                 @else
-                                                    <li class="text-danger">
+                                                    <li class="text-danger d-flex align-items-center">
                                                         <span class="theme-avtar">
                                                             <i class="text-danger ti ti-circle-plus"></i></span>{{ __('Blog') }}
                                                     </li>
@@ -512,6 +515,7 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                 id="stripe_payment">
                                 <form role="form" action="{{ route('stripe.payment') }}" method="post" class="require-validation" id="payment-form">
                                     @csrf
+                                    <input type="hidden" name="total_price" value="{{ $plan->price }}" class="form-control final-price">
                                     <div class="border p-3 rounded stripe-payment-div">
                                         <div class="row">
                                             <div class="col-sm-8">
@@ -597,14 +601,13 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                 <form class="w3-container w3-display-middle w3-card-4" method="POST" id="payment-form"
                                     action="{{ route('plan.pay.with.paypal') }}">
                                     @csrf
-                                    <input type="hidden" name="plan_id"
-                                        value="{{ \Illuminate\Support\Facades\Crypt::encrypt($plan->id) }}">
-
+                                    <input type="hidden" name="plan_id" value="{{ \Illuminate\Support\Facades\Crypt::encrypt($plan->id) }}">
                                     <div class="border p-3 mb-3 rounded">
                                         <div class="row">
                                             <div class="col-md-12 mt-4 row">
                                                 <div class="d-flex align-items-center">
                                                     <div class="form-group w-100">
+                                                        <input type="hidden" name="total_price" value="{{ $plan->price }}" class="form-control final-price">
                                                         <label for="paypal_coupon"
                                                             class="form-label">{{ __('Coupon') }}</label>
                                                         <input type="text" id="paypal_coupon" name="coupon"
@@ -695,7 +698,7 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                     @csrf
                                     <input type="hidden" name="plan_id"
                                         value="{{ \Illuminate\Support\Facades\Crypt::encrypt($plan->id) }}">
-
+                                    <input type="hidden" name="total_price" value="{{ $plan->price }}" class="form-control final-price">
                                     <div class="border p-3 mb-3 rounded payment-box row">
                                         <div class="d-flex align-items-center">
                                             <div class="form-group w-100">
@@ -744,7 +747,7 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                     @csrf
                                     <input type="hidden" name="plan_id"
                                         value="{{ \Illuminate\Support\Facades\Crypt::encrypt($plan->id) }}">
-
+                                    <input type="hidden" name="total_price" value="{{ $plan->price }}" class="form-control final-price">
                                     <div class="border p-3 mb-3 rounded payment-box row">
                                         <div class="d-flex align-items-center">
                                             <div class="form-group w-100">
@@ -794,7 +797,7 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                     @csrf
                                     <input type="hidden" name="plan_id"
                                         value="{{ \Illuminate\Support\Facades\Crypt::encrypt($plan->id) }}">
-
+                                    <input type="hidden" name="total_price" value="{{ $plan->price }}" class="form-control final-price">
                                     <div class="border p-3 mb-3 rounded payment-box row">
                                         <div class="d-flex align-items-center">
                                             <div class="form-group w-100">
@@ -856,20 +859,20 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                                         placeholder="{{ __('Enter Mobile Number') }}">
                                                 </div>
                                             </div>
-                                                <div class="d-flex align-items-center row">
-                                                    <div class="form-group w-100">
-                                                        <label for="paytm_coupon"
-                                                            class="form-label">{{ __('Coupon') }}</label>
-                                                        <input type="text" id="paytm_coupon" name="coupon"
-                                                            class="form-control coupon"
-                                                            placeholder="{{ __('Enter Coupon Code') }}">
-                                                    </div>
-
-                                                    <div class="form-group ms-3 mt-4">
-                                                        <a href="javascript:void(0)" class="text-muted apply-coupon" data-toggle="tooltip"
-                                                            data-title="{{ __('Apply') }}"><i class="fas fa-save"></i></a>
-                                                    </div>
+                                            <div class="d-flex align-items-center">
+                                                <div class="form-group w-100">
+                                                    <label for="paytm_coupon"
+                                                        class="form-label">{{ __('Coupon') }}</label>
+                                                    <input type="text" id="paytm_coupon" name="coupon"
+                                                        class="form-control coupon"
+                                                        placeholder="{{ __('Enter Coupon Code') }}">
                                                 </div>
+
+                                                <div class="form-group ms-3 mt-4">
+                                                    <a href="javascript:void(0)" class="text-muted apply-coupon" data-toggle="tooltip"
+                                                        data-title="{{ __('Apply') }}"><i class="fas fa-save"></i></a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-12 my-2 px-2">
@@ -952,6 +955,7 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                             value="{{ date('Y-m-d') }}-{{ strtotime(date('Y-m-d H:i:s')) }}-payatm">
                                         <input type="hidden" name="order_id"
                                             value="{{ str_pad(!empty($order->id) ? $order->id + 1 : 0 + 1, 4, '100', STR_PAD_LEFT) }}">
+
                                         @php
                                             $skrill_data = [
                                                 'transaction_id' => md5(date('Y-m-d') . strtotime('Y-m-d H:i:s') . 'user_id'),
@@ -1081,6 +1085,7 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                                                 <div class="text-end">
                                                   <input type="hidden" name="plan_id"
                                                     value="{{ \Illuminate\Support\Facades\Crypt::encrypt($plan->id) }}">
+                                                    <input type="hidden" name="total_price" value="{{ $plan->price }}" class="form-control final-price">
                                                 <button class="btn btn-xs btn-primary" type="submit"
                                                     id="pay_with_paymentwall">
                                                      {{ __('Pay Now') }}
@@ -1096,7 +1101,46 @@ $dir_payment = asset(Storage::url('uploads/payments'));
                         </div>
                         {{-- Paymentwall end --}}
                     @endif
-                    </div>
+                    @if (isset($admin_payments_details['is_toyyibpay_enabled']) && $admin_payments_details['is_toyyibpay_enabled'] == 'on')
+                        <div id="toyyibpay_payment" class="card">
+                            <div class="card-header">
+                                <h5>{{ __('Toyyibpay') }}</h5>
+                            </div>
+                            <div class="tab-pane " id="Toyyibpay_payment">
+                                <form role="form" action="{{ route('toyyibpay.prepare.plan') }}" method="post"
+                                    id="toyyibpay-payment-form" class="w3-container w3-display-middle w3-card-4">
+                                    @csrf
+                                    <div class="border p-3 mb-3 rounded payment-box row">
+                                        <div class="d-flex align-items-center">
+                                            <div class="form-group w-100">
+                                                <label for="toyyibpay_coupan"
+                                                    class="form-label">{{ __('Coupon') }}</label>
+                                                <input type="text" id="toyyibpay_coupan" name="coupon"
+                                                    class="form-control coupon"
+                                                    placeholder="{{ __('Enter Coupon Code') }}">
+                                            </div>
+
+                                            <div class="form-group ms-3 mt-4">
+                                                <a href="javascript:void(0)" class="text-muted apply-coupon" data-toggle="tooltip"
+                                                    data-title="{{ __('Apply') }}"><i class="fas fa-save"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 my-2 px-2">
+                                        <div class="text-end">
+                                            <input type="hidden" name="plan_id"
+                                            value="{{ \Illuminate\Support\Facades\Crypt::encrypt($plan->id) }}">
+                                            <input type="hidden" name="total_price" value="{{ $plan->price }}" class="form-control final-price">
+                                        <button class="btn btn-xs btn-primary" type="submit"
+                                            id="pay_with_toyyibpay">
+                                                {{ __('Pay Now') }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
