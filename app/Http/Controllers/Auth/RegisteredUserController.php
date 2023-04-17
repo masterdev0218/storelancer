@@ -137,14 +137,15 @@ class RegisteredUserController extends Controller
             try {
                 event(new Registered($objUser));
 
-                Auth::login($objUser);
+                // Auth::login($objUser);
             } catch (\Exception $e) {
 
                 $objUser->delete();
 
                 return redirect('/register/lang?')->with('status', __('Email SMTP settings does not configure so please contact to your site admin.'));
             }
-            return redirect(RouteServiceProvider::HOME);
+
+            return redirect('/login')->with('email_verification_message', __('Successfully registered please check your inbox to verify your email.'));
         }
         else{
             if (env('RECAPTCHA_MODULE') == 'yes') {

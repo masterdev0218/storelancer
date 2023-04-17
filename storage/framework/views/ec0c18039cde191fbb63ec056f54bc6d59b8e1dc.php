@@ -21,6 +21,9 @@
                 <div class="">
                     <h2 class="mb-3 f-w-600"><?php echo e(__('Login')); ?></h2>
                 </div>
+                <?php if(session('email_verification_message')): ?>
+                <div class="alert alert-success"><?php echo e(session('email_verification_message')); ?></div>
+                <?php endif; ?>
                 <form method="POST" action="<?php echo e(route('login')); ?>" class="needs-validation" novalidate="">
                     <?php echo csrf_field(); ?>
                     <div>

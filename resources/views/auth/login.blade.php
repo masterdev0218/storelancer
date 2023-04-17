@@ -21,6 +21,9 @@
                 <div class="">
                     <h2 class="mb-3 f-w-600">{{ __('Login') }}</h2>
                 </div>
+                @if (session('email_verification_message'))
+                <div class="alert alert-success">{{ session('email_verification_message') }}</div>
+                @endif
                 <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
                     @csrf
                     <div>
