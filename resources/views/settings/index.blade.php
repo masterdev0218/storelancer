@@ -2308,6 +2308,8 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @else
+                                            <p class="alert alert-warning">{{ __('Please upgrade your plan to use payment gateways.') }}</p>
                                             @endif
 
                                         </div>
