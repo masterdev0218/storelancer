@@ -1187,7 +1187,7 @@
                                 <div class="faq justify-content-center">
                                     <div class="col-sm-12 col-md-10 col-xxl-12">
                                         <div class="accordion accordion-flush" id="accordionExample">
-
+                                            @if ($plan->name !== 'Free Plan')
                                             <!-- COD -->
                                             <div class="accordion-item card">
                                                 <h2 class="accordion-header" id="heading-2-2">
@@ -1326,7 +1326,6 @@
                                                 </div>
                                             </div>
 
-                                            @if ($plan->name !== 'Free Plan')
                                             <!-- Bank Transfer -->
                                             <div class="accordion-item card">
                                                 <h2 class="accordion-header" id="heading-2-2">
