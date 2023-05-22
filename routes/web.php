@@ -8,6 +8,8 @@ use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PageBuilder;
+use App\Http\Controllers\PageBuilderController;
 use App\Http\Controllers\PageOptionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentWallController;
@@ -338,7 +340,7 @@ Route::group(['middleware' => ['verified']], function () {
 });
 
 // customer side
-Route::get('page/{slug?}', [StoreController::class, 'pageOptionSlug'])->name('pageoption.slug');
+// Route::get('page/{slug?}', [StoreController::class, 'pageOptionSlug'])->name('pageoption.slug');
 Route::get('store-blog/{slug?}', [StoreController::class, 'StoreBlog'])->name('store.blog');
 Route::get('store-blog-view/{slug?}/blog/{id}', [StoreController::class, 'StoreBlogView'])->name('store.store_blog_view');
 
@@ -449,3 +451,5 @@ Route::put('{slug}/customer-profile/{id}', [CustomerLoginController::class, 'pro
 Route::put('{slug}/customer-profile-password/{id}', [CustomerLoginController::class, 'updatePassword'])->name('customer.profile.password')->middleware('customerauth');
 Route::post('{slug}/customer-logout', [CustomerLoginController::class, 'logout'])->name('customer.logout');
 
+Route::middleware(['auth:sanctum', 'XSS'])->get('/page-builder/{page}', [PageBuilderController::class, 'get']);
+Route::get('/page/{page:slug}', [PageBuilderController::class, 'loadPage']);

@@ -46,6 +46,7 @@ return array(
     'App\\Http\\Controllers\\LanguageController' => $baseDir . '/app/Http/Controllers/LanguageController.php',
     'App\\Http\\Controllers\\LocationController' => $baseDir . '/app/Http/Controllers/LocationController.php',
     'App\\Http\\Controllers\\OrderController' => $baseDir . '/app/Http/Controllers/OrderController.php',
+    'App\\Http\\Controllers\\PageBuilderController' => $baseDir . '/app/Http/Controllers/PageBuilderController.php',
     'App\\Http\\Controllers\\PageOptionController' => $baseDir . '/app/Http/Controllers/PageOptionController.php',
     'App\\Http\\Controllers\\PaymentController' => $baseDir . '/app/Http/Controllers/PaymentController.php',
     'App\\Http\\Controllers\\PaymentWallController' => $baseDir . '/app/Http/Controllers/PaymentWallController.php',

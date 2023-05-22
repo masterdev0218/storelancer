@@ -434,8 +434,8 @@ class ComposerStaticInit8342c07d9161854d53f44a94c2ace5e8
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -782,6 +782,7 @@ class ComposerStaticInit8342c07d9161854d53f44a94c2ace5e8
         'App\\Http\\Controllers\\LanguageController' => __DIR__ . '/../..' . '/app/Http/Controllers/LanguageController.php',
         'App\\Http\\Controllers\\LocationController' => __DIR__ . '/../..' . '/app/Http/Controllers/LocationController.php',
         'App\\Http\\Controllers\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderController.php',
+        'App\\Http\\Controllers\\PageBuilderController' => __DIR__ . '/../..' . '/app/Http/Controllers/PageBuilderController.php',
         'App\\Http\\Controllers\\PageOptionController' => __DIR__ . '/../..' . '/app/Http/Controllers/PageOptionController.php',
         'App\\Http\\Controllers\\PaymentController' => __DIR__ . '/../..' . '/app/Http/Controllers/PaymentController.php',
         'App\\Http\\Controllers\\PaymentWallController' => __DIR__ . '/../..' . '/app/Http/Controllers/PaymentWallController.php',

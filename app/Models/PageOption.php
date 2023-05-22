@@ -10,6 +10,8 @@ class PageOption extends Model
         'name',
         'slug',
         'contents',
+        'html',
+        'css',
         'enable_page_header',
         'enable_page_footer',
         'store_id',

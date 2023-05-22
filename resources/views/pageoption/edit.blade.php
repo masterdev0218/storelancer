@@ -18,7 +18,7 @@
             {{ Form::label('enable_page_header', __('Page Header Display'), ['class' => 'form-check-label mb-3']) }}
         </div>
     </div>
-    <div class="form-group col-md-12">
+    {{-- <div class="form-group col-md-12">
         {{ Form::label('contents', __('Contents'), ['class' => 'col-form-label']) }}
         {{ Form::textarea('contents', null, ['class' => 'form-control summernote-simple','rows' => 3,'placeholder' => __('Contents')]) }}
         @error('contents')
@@ -26,6 +26,9 @@
                 <strong class="text-danger">{{ $message }}</strong>
             </span>
         @enderror
+    </div> --}}
+    <div>
+        <button onclick="window.open('/page-builder/{{ $pageOption->id }}')" type="button" class="btn btn-primary ms-2 w-100">Edit Page</button>
     </div>
 </div>
 <div class="form-group col-12 d-flex justify-content-end col-form-label">
